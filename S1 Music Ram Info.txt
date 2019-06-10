@@ -1,0 +1,110 @@
+; ================================================
+; MUSIC VARIABLES (USING "GREEN HILL ZONE" MUSIC)
+; ================================================
+
+byte 00		=	???
+byte 01		=	Upper Temp (All Chnl)
+byte 02		=	Lower Temp (All Chnl)
+byte 03		=	Music Pause (if 00, then not paused)
+byte 04		=	???
+byte 05		=	???
+byte 06		=	???
+byte 07		=	??? (A CODE IN THERE) 01
+byte 08		=	???
+byte 09		=	??? (A CODE IN THERE) 80
+byte 0A		=	If Music or SFX is played (If 00, then no Music or SFX is being played)
+byte 0B		=	???
+byte 0C		=	???
+byte 0D		=	???
+byte 0E		=	??? (A CODE IN THERE) 40
+byte 0F		=	???
+byte 10		=	???
+byte 11		=	???
+byte 12		=	???
+byte 13		=	???
+byte 14		=	???
+byte 15		=	???
+byte 16		=	???
+byte 17		=	???
+lnwr 18		=	Voice pointer (e.g. 00074C63)
+byte 1C		=	???
+byte 1D		=	???
+byte 1E		=	???
+byte 1F		=	???
+byte 20		=	???
+byte 21		=	???
+byte 22		=	???
+byte 23		=	???
+byte 24		=	???
+byte 25		=	???
+byte 26		=	???
+byte 27		=	???
+byte 28		=	??? (A CODE IN THERE) 03
+byte 29		=	??? if the music has 6 FM channels or not (00 = 6FM/07 = 5FM & 1DAC)
+byte 2A		=	???
+byte 2B		=	???
+byte 2C		=	???
+byte 2D		=	???
+byte 2E		=	???
+byte 2F		=	???
+byte 30		=	???
+byte 31		=	???
+byte 32		=	???
+byte 33		=	???
+byte 34		=	???
+byte 35		=	???
+byte 36		=	???
+byte 37		=	???
+byte 38		=	???
+byte 39		=	???
+byte 3A		=	???
+byte 3B		=	???
+byte 3C		=	???
+byte 3D		=	???
+byte 3E		=	???
+byte 3F		=	???
+
+; ================================================
+; CHANNEL 00
+; ================================================
+
+byte 40	(00)	=	??? (A CODE IN THERE) 80 82 88 8E
+byte 41		=	??? (A CODE IN THERE) 00 06
+byte 42		=	the channel slot that "channel 00" is using (DAC uses slot 6, FM 1 uses slot 1, etc)
+byte 43		=	channel 00, if it has stopped (from F2 flag)
+lnwr 44		=	channel 00's current note set to play location (e.g. 00074C2D)
+byte 48		=	channel 00's current pitch
+byte 49		=	channel 00's current Volume
+byte 4A		=	channel 00's Panning (Left speaker/Right Speaker, etc)
+byte 4B		=	channel 00's current Voice ID using
+byte 4C		=	??? (Seems Redundent) 00
+byte 4D		=	??? (A CODE IN THERE) 28 2C 30
+byte 4E		= 	Current Delay Time (Constantly counts down to 01 at a fast rate, Like a timer)
+byte 4F		=	Last Time Delay that was Set
+byte 50	(10)	=	??? Second half byte changes to the note being played
+byte 51		=	??? changes to the note being played
+byte 52		=	Current Delay Time (For "Note Fill Amount", same function as 4E except counts to 00 and stays at 00 until next note is played)
+byte 53		=	Last Note Fill Amount that was set
+lnwr 54		=	"I think" it's modulation property location (For when modulation starts)
+byte 58		=	Current Delay Time (Before "Modulation" starts, same function as 52)
+byte 59		=	"I think" it's current modulation speed
+byte 5A		=	Current Modulation Note to increase/decrease to
+byte 5B		=	Current Delay Time (before "Modulation Note Inc/Dec" can change, only starts when 58's Current Delay Time has reached 00)
+byte 5C		=	whether the current modulation note is in possitive or negative (00 = Pos/01 = Neg)
+byte 5D		=	Current Modulation Note
+word 5E		=	"I think" it's storage location for F7 flag
+byte 60	(20)	=	??? (Seems Redundent) 00
+byte 61		=	??? (Seems Redundent) 00
+byte 62		=	??? (Seems Redundent) 00
+byte 63		=	??? (Seems Redundent) 00
+byte 64		=	Number of times left to repeat (For F7 flag "FOR A LOOP THAT JUMPS OVER A LOOP") 
+byte 65		=	Number of times left to repeat (For F7 flag)
+byte 66		=	??? (Seems Redundent) 00
+byte 67		=	??? (Seems Redundent) 00
+byte 68		=	??? (Seems Redundent) 00
+byte 69		=	??? (Seems Redundent) 00
+byte 6A		=	??? (Seems Redundent) 00
+byte 6B		=	??? (Seems Redundent) 00
+lnwr 6C		=	storage location for F8 flag (Points to YY of the flag (F8YYXX))
+
+; ================================================

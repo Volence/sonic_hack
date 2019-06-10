@@ -1,0 +1,37 @@
+Type: 254
+
+Zone ID:    0
+Act ID:     0
+
+Object Def: objdef\s2obj
+
+8x8 Tiles:     ..\art\kosinski\EHZ.bin
+
+16x16 Tiles:   ..\mappings\16x16\EHZ.bin
+
+128x128 Tiles: ..\mappings\128x128\EHZ.bin
+
+Level Layout:  ..\level\layout\EHZ_1.bin
+
+Objects:       ..\level\objects\EHZ_1.bin
+Rings:         ..\level\rings\EHZ_1.bin
+Misc:          NONE
+
+Palettes-
+
+ Number of files: 1
+
+  Palette 1-
+
+   Start index:        0
+   Number of entries: 64
+   File:              ..\art\palettes\EHZ top.bin
+
+Angle Array:             ..\collision\Curve and resistance mapping.bin
+Collision Array:         ..\collision\Collision array 1.bin
+Rotated Collision Array: ..\collision\Collision array 2.bin
+
+Collision Index 1: ..\collision\EHZ primary 16x16 collision index.bin
+Collision Index 2: ..\collision\EHZ secondary 16x16 collision index.bin
+
+-EOF-
