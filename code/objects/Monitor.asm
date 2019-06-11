@@ -4,17 +4,17 @@
 ; ----------------------------------------------------------------------------
 
 Monitor:
-	lea	Monitor_Data(pc),a2
-	jsr	Load_Object2
+	lea		Monitor_Data(pc),a2
+	jsr		Load_Object2
 	moveq	#0,d0
 	move.b	respawn_index(a0),d0
 	beq.s	+
-	lea	(Object_Respawn_Table).w,a2
+	lea		(Object_Respawn_Table).w,a2
 	bclr	#7,2(a2,d0.w)
 	btst	#0,2(a2,d0.w)		; if this bit is set it means the monitor is already broken
 	beq.s	+
-	lea	Monitor_Broken_Data,a2
-	jsr	Load_Object4
+	lea		Monitor_Broken_Data,a2
+	jsr		Load_Object4
 	bra.w	ObjMonitor_Display
 +
 	move.b	subtype(a0),anim(a0)	; subtype = icon to display
