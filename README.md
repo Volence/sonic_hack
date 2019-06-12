@@ -5,6 +5,8 @@ A modification of sonic the hedgehog 2 for research/entertainment purposes
 
 ### Bug List:
 - General Collision Bugs
+  - Certain collision routines (looking at you SolidObject) are handled outside the object touch response, they should be included
+  - Monitor also has some code that needs to be put into the object touch response
 - Fix Tails' Tails
 - Fix Knuckles Climbing (as well as when he comes out of debug mode)
 - Fix Bubble Shield
