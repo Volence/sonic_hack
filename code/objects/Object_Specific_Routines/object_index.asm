@@ -16,7 +16,7 @@ Obj_Index:
 	dc.w SignPost-ObjBase		; 8 Sign Post
 	dc.w Egg_Prison-ObjBase		; 9 Egg Prison
 	dc.w 0				; A
-	dc.w Pitcher_Plant_Badnik-ObjBase	; B Pitcher Plant Badnik
+	dc.w PitcherPlant-ObjBase	; B Pitcher Plant Badnik
 	dc.w 0				; C
 	dc.w 0				; D
 	dc.w 0				; E
@@ -37,7 +37,7 @@ Obj_Index:
 	dc.w 0				; 1D
 	dc.w 0				; 1E
 	dc.w 0				; 1F
-	dc.w Pitcher_Plant_Badnik-ObjBase	; 20
+	dc.w PitcherPlant-ObjBase	; 20
 	dc.w 0
 	dc.w 0
 	dc.w 0

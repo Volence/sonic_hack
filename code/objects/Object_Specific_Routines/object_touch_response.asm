@@ -42,7 +42,7 @@ TouchResponse__WidthCheck:
 TouchResponse__WidthCheckRight:	
 	sub.w	d0,d3	; subtract character's/main item's x position from the x position of the current object
 	bhs.s	TouchResponse__WidthCheckLeft ; if the main item's x position is less than or same as the object's x position, branch to check if it's within the width
-	;lsl.w	#1,d2	; Doubling the width, I don't think this is needed
+	lsl.w	#1,d2	; Doubling the width
 	add.w	d2,d3 ; if the width of the object is within the distance of main object, check height
 	bcs.s	TouchResponse__HeightCheck
 	bra.s	TouchResponse__ObjectLoop ; else skip this object
@@ -56,28 +56,28 @@ TouchResponse__HeightCheck:
 	ext.w	d2
 	move.w	y_pos(a1),d3
 
-
-	sub.w	d1,d3
-	bcc.s	OCCHeightCheck2
+TouchResponse__HeightCheckAbove:
+	sub.w	d1,d3	; subtract main object's y position from current object's y
+	bcc.s	TouchResponse__HeightCheckBelow ; if it's higher, branch (lower on the map)
 	lsl.w	#1,d2
 	add.w	d2,d3
-	bcs.s	OCCjmp1
+	bcs.s	TouchResponse__InitTouchedObject
 	bra.w	TouchResponse__ObjectLoop
 
-OCCHeightCheck2:
+TouchResponse__HeightCheckBelow:
 	cmp.w	d5,d3
 	bhi.w	TouchResponse__ObjectLoop
 
-OCCjmp1:
+TouchResponse__InitTouchedObject:
 	bset	#7,mappings(a1)
 	moveq	#$00,d1
 	move.b	collision_response(a1),d1
 	ext.w	d1
 	add.w	d1,d1
 	add.w	d1,d1
-	jmp	OCCCheckValue(pc,d1.w)
+	jmp	TouchResponse__ResponseTypeTable(pc,d1.w)
 	
-OCCCheckValue:
+TouchResponse__ResponseTypeTable:
 	bra.w		Touch_Enemy		; 0
 	bra.w		Touch_Enemy		; 1
 	bra.w		Touch_Boss		; 2
