@@ -4253,7 +4253,7 @@ InitPlayers_TailsAlone:
     rts
 
 InitPlayers_KnuxAlone:
-    move.w    #objroutine(Knuckles),($FFFFB000).w
+    move.w    #objroutine(Knuckles),MainCharacter
     move.w    #objroutine(Water_Splash_Object),($FFFFD100).w
     rts
 
@@ -13902,7 +13902,7 @@ Ani_Water_Splash_Object:	Include "animations/Sprite/Spindash Dust And Water Spla
 		even
 Ani_Plain_Shield:	Include "animations/Sprite/Shield.asm"
 		even
-Pitcher_Plant_Badnik_Animate:	Include	"animations/Sprite/Pitcher Plant.asm"
+PitcherPlant__Animate:	Include	"animations/Sprite/Pitcher Plant.asm"
 		even
 ; ===========================================================================
 ; water sprite animation 'script' (custom format for this object)

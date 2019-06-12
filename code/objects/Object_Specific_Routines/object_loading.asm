@@ -7,13 +7,12 @@ SingleObjLoad:
 	lea	(Dynamic_Object_RAM).w,a1 ; a1=object
 	move.w	#(Dynamic_Object_RAM_End-Dynamic_Object_RAM)/object_size-1,d0 ; search to end of table
 
-loc_17FEC:
+SingleObjLoad__MainLoop:
 	tst.w	(a1)			; is object RAM slot empty?
-	beq.s	return_17FF8
+	beq.s	+
 	lea	next_object(a1),a1	; load obj address ; goto next object RAM slot
-	dbf	d0,loc_17FEC		; repeat until end
-
-return_17FF8:
+	dbf	d0,SingleObjLoad__MainLoop		; repeat until end
++	
 	rts
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -27,15 +26,14 @@ SingleObjLoad2:
 	sub.w	a0,d0			; subtract current object location
 	lsr.w	#object_align,d0	; divide by $40
 	subq.w	#1,d0			; keep from going over the object zone
-	bcs.s	return_18014
+	bcs.s	+
 
-loc_18008:
+SingleObjLoad2__MainLoop:
 	tst.w	(a1)			; is object RAM slot empty?
-	beq.s	return_18014		; if yes, branch
+	beq.s	+		; if yes, branch
 	lea	next_object(a1),a1	; load obj address ; goto next object RAM slot
-	dbf	d0,loc_18008		; repeat until end
-
-return_18014:
+	dbf	d0,SingleObjLoad2__MainLoop		; repeat until end
++	
 	rts
 ; ===========================================================================
 ; ---------------------------------------------------------------------------
@@ -50,13 +48,12 @@ SingleObjLoad3:
 	movea.l	a3,a1
 	move.w	#$B,d0
 
-loc_1801C:
+SingleObjLoad3__MainLoop:
 	tst.w	(a1)	; is object RAM slot empty?
-	beq.s	return_18028	; if yes, branch
+	beq.s	+	; if yes, branch
 	lea	next_object(a1),a1 ; load obj address ; goto next object RAM slot
-	dbf	d0,loc_1801C	; repeat until end
-
-return_18028:
+	dbf	d0,SingleObjLoad3__MainLoop	; repeat until end
++ 	
 	rts
 
 ; ===========================================================================		
@@ -64,11 +61,11 @@ SingleObjLoad4:
 	lea	(Dynamic_Object_RAM).w,a1 ; a1=object
 	move.w	#(Dynamic_Object_RAM_End-Dynamic_Object_RAM)/object_size-1,d0 ; search to end of table
 
-SOJ4_Loop:
+SingleObjLoad4__Loop:
 	tst.w	(a1)			; is object RAM slot empty?
 	beq.s	+
 	lea	next_object(a1),a1	; load obj address ; goto next object RAM slot
-	dbf	d0,SOJ4_Loop		; repeat until end
+	dbf	d0,SingleObjLoad4__Loop		; repeat until end
 	jmp	DeleteObject	
 +
 	rts	
@@ -77,13 +74,14 @@ BadnikWeaponLoad:
 	lea	(Dynamic_Object_RAM).w,a1 ; a1=object
 	move.w	#(Dynamic_Object_RAM_End-Dynamic_Object_RAM)/object_size-1,d0 ; search to end of table
 
-BWL_Loop:
+BadnikWeaponLoad__Loop:
 	tst.w	(a1)			; is object RAM slot empty?
-	beq.s	+
+	beq.s	BadnikWeaponLoad__LoadObjectData
 	lea	next_object(a1),a1	; load obj address ; goto next object RAM slot
-	dbf	d0,BWL_Loop		; repeat until end
+	dbf	d0,BadnikWeaponLoad__Loop		; repeat until end
 	jmp	DeleteObject
-+	
+
+BadnikWeaponLoad__LoadObjectData:	
 	move.w	(a2)+,(a1)
 	move.l	(a2)+,mappings(a1)
 	move.w	(a2)+,art_tile(a1)
@@ -102,8 +100,6 @@ BWL_Loop:
 +	
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
-
-BWL_Loc:
 	rts
 ; ===========================================================================
 ; Load up a moving object
