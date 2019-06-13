@@ -9,8 +9,9 @@ A modification of sonic the hedgehog 2 for research/entertainment purposes
   - Monitor also has some code that needs to be put into the object touch response
 - Fix Tails' Tails
 - Fix Knuckles Climbing (as well as when he comes out of debug mode)
-- Fix Bubble Shield
 - Bubbles spawning better
+- Monitors Respawn
+- Monitors if they don't respawn sometimes spawn an empty object that has collision like a monitor and creates a 'moving up' broken monitor when 'broken'
 
 ### Feature List:
 - Update all objects code and take any objects not spawned in layout off the list (and change their names)
@@ -22,6 +23,10 @@ A modification of sonic the hedgehog 2 for research/entertainment purposes
 - Implement "Tile, Block, Chunk and Section" system
 
 ## Changelog:
+ * 06/12/2019
+   * Fixed shield art, shield items now correspond with correct mappings
+   * Fixed up object in layout, objects placed are now correct from the object_index
+   * Fixed up naming of items in soned2 to correlate with the object_index
  * 06/11/2019
    * Cleaned up the Pitcher Plant badnik code, commented it a bit as well
    * Commented more of the object touch response code
