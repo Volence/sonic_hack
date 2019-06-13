@@ -159,7 +159,7 @@ ObjMonitor_Icon:
 	tst.w	(Two_player_mode).w	; is it two player mode?
 	beq.s	loc_128C6		; if not, branch
 	; give 'random' item in two player mode
-	move.w	(Timer_frames).w,d0	; use the timer to determine wich item
+	move.w	(Timer_frames).w,d0	; use the timer to determine which item
 	andi.w	#7,d0	; and 7 means there are 8 different items
 	addq.w	#1,d0	; add 1 to prevent getting the static monitor
 	tst.w	(Two_player_items).w	; are monitors set to 'teleport only'?
@@ -213,13 +213,20 @@ ObjMonitor_Icon_Types:
 	dc.w ObjMonitor_Robotnik - ObjMonitor_Icon_Types	; 3 - Robotnik
 	dc.w ObjMonitor_Rings - ObjMonitor_Icon_Types		; 4 - Super Ring
 	dc.w ObjMonitor_Shoes - ObjMonitor_Icon_Types		; 5 - Speed Shoes
-	dc.w ObjMonitor_Invincible - ObjMonitor_Icon_Types	; 6 - Invincibility
-	dc.w ObjMonitor_Fire - ObjMonitor_Icon_Types		; 7 - Fire Shield
-	dc.w ObjMonitor_Lightning - ObjMonitor_Icon_Types	; 8 - Lightning Shield
-	dc.w ObjMonitor_Bubble - ObjMonitor_Icon_Types		; 9 - Bubble Shield
+	dc.w ObjMonitor_Bubble - ObjMonitor_Icon_Types		; 6 - Bubble Shield
+	dc.w ObjMonitor_Invincible - ObjMonitor_Icon_Types	; 7 - Invincibility
+	dc.w ObjMonitor_Null - ObjMonitor_Icon_Types		; 8 - Null
+	dc.w ObjMonitor_SuperSonic - ObjMonitor_Icon_Types	; 9 - SuperSonic
+	dc.w ObjMonitor_Broken - ObjMonitor_Icon_Types		; A - Broken
+	dc.w ObjMonitor_Lightning - ObjMonitor_Icon_Types	; B - Lightning Shield
+	dc.w ObjMonitor_Fire - ObjMonitor_Icon_Types		; C - Fire Shield
 ; ============== END RELATIVE POINTER LIST ==================================
 ; Robotnik Monitor
 ; hurts the player
+ObjMonitor_Broken:
+ObjMonitor_SuperSonic:
+ObjMonitor_Null:
+	rts
 
 ObjMonitor_Robotnik:
 	addq.w	#1,(a2)
@@ -229,7 +236,7 @@ ObjMonitor_Robotnik:
 ; gives Sonic an extra life, or Tails in a 'Tails alone' game
 
 ObjMonitor_Sonic:
-	addq.w	#1,(Monitors_Broken).w
+	addq.w	#1,(a2)
 	addq.b	#1,(Life_count).w
 	addq.b	#1,(Update_HUD_lives).w
 	move.w	#MusID_ExtraLife,d0
