@@ -18524,7 +18524,11 @@ DPLC_FireShield:	BINCLUDE  "mappings/spriteDPLC/S2 fireshield.bin"
 		even
 Map_LighteningShield:	INCLUDE "mappings/sprite/S2 Lightningshield.asm"
 		even
+Map_WindShield:	INCLUDE "mappings/sprite/S2 Windshield.asm"
+		even
 DPLC_LighteningShield:	BINCLUDE  "mappings/spriteDPLC/S2 lightshield.bin"
+		even
+DPLC_WindShield:	BINCLUDE  "mappings/spriteDPLC/S2 windshield.bin"
 		even
 Map_BubbleShield:	BINCLUDE "mappings/sprite/S2 BubbleShield.bin"
 		even
@@ -18538,6 +18542,8 @@ ArtUnc_LighteningShield_Sparks:	BINCLUDE	"art/uncompressed/Spark.bin"
 		even
 ArtUnc_LighteningShield:BINCLUDE	"art/uncompressed/LighteningShield.bin"
 		even
+ArtUnc_WindShield:BINCLUDE	"art/uncompressed/WindShield.bin"
+		even		
 ArtUnc_BubbleShield:	BINCLUDE	"art/uncompressed/watershield.bin"
 		even
 	if padToPowerOfTwo && (*)&(*-1)

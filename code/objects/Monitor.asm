@@ -59,7 +59,7 @@ ObjMonitor_Solid_Sonic:
 	btst	d6,status(a0)		; is Sonic standing on the monitor?
 	bne.s	ObjMonitor_ChkOverEdge	; if yes, branch
 	cmpi.b	#2,anim(a1)		; is Sonic spinning?
-	beq.b	locret_12756		; if so, return
+	beq.b	locret_12756		; if so, rMonitors_Brokenturn
 	jmp	SolidObject2		; if not, branch
 
 ObjMonitor_Solid_Tails:
@@ -143,7 +143,7 @@ Monitor_SpawnSmoke:
 	moveq	#0,d0
 	move.b	respawn_index(a0),d0
 	bset	#0,2(a2,d0.w)				; mark monitor as destroyed
-	move.b	#$A,anim(a0)				; switch to broken frame
+	move.b	#1,anim(a0)				; switch to broken frame
 	jmp	DisplaySprite
 
 ObjMonitor_Icon:
@@ -177,7 +177,7 @@ ObjMonitor_Icon:
 	move.b	d0,anim(a0)
 
 loc_128C6:			; Determine correct mappings offset.
-	addq.b	#1,d0
+	;addq.b	#1,d0
 	move.b	d0,mapping_frame(a0)
 	movea.l	#Monitor_MapUnc_12D36,a1
 	add.b	d0,d0
@@ -207,19 +207,19 @@ ObjMonitor_Icon_Raise:
 
 ; ============== RELATIVE POINTER LIST     ==================================
 ObjMonitor_Icon_Types:
-	dc.w ObjMonitor_Robotnik - ObjMonitor_Icon_Types	; 0 - Static
-	dc.w ObjMonitor_Sonic - ObjMonitor_Icon_Types		; 1 - Sonic 1 - up
-	dc.w ObjMonitor_Tails - ObjMonitor_Icon_Types		; 2 - Tails 1 - up
-	dc.w ObjMonitor_Robotnik - ObjMonitor_Icon_Types	; 3 - Robotnik
-	dc.w ObjMonitor_Rings - ObjMonitor_Icon_Types		; 4 - Super Ring
-	dc.w ObjMonitor_Shoes - ObjMonitor_Icon_Types		; 5 - Speed Shoes
-	dc.w ObjMonitor_Bubble - ObjMonitor_Icon_Types		; 6 - Bubble Shield
+	dc.w ObjMonitor_Null - ObjMonitor_Icon_Types		; 0 - Null
+	dc.w ObjMonitor_Broken - ObjMonitor_Icon_Types		; 1 - Broken
+	dc.w ObjMonitor_Sonic - ObjMonitor_Icon_Types		; 2 - Sonic 1 - up
+	dc.w ObjMonitor_Tails - ObjMonitor_Icon_Types		; 3 - Tails 1 - up
+	dc.w ObjMonitor_Robotnik - ObjMonitor_Icon_Types	; 4 - Robotnik
+	dc.w ObjMonitor_Rings - ObjMonitor_Icon_Types		; 5 - Super Ring
+	dc.w ObjMonitor_Shoes - ObjMonitor_Icon_Types		; 6 - Speed Shoes
 	dc.w ObjMonitor_Invincible - ObjMonitor_Icon_Types	; 7 - Invincibility
-	dc.w ObjMonitor_Null - ObjMonitor_Icon_Types		; 8 - Null
-	dc.w ObjMonitor_SuperSonic - ObjMonitor_Icon_Types	; 9 - SuperSonic
-	dc.w ObjMonitor_Broken - ObjMonitor_Icon_Types		; A - Broken
-	dc.w ObjMonitor_Lightning - ObjMonitor_Icon_Types	; B - Lightning Shield
-	dc.w ObjMonitor_Fire - ObjMonitor_Icon_Types		; C - Fire Shield
+	dc.w ObjMonitor_SuperSonic - ObjMonitor_Icon_Types	; 8 - SuperSonic
+	dc.w ObjMonitor_Bubble - ObjMonitor_Icon_Types		; 9 - Bubble Shield
+	dc.w ObjMonitor_Lightning - ObjMonitor_Icon_Types	; A - Lightning Shield
+	dc.w ObjMonitor_Fire - ObjMonitor_Icon_Types		; B - Fire Shield
+	dc.w ObjMonitor_Wind - ObjMonitor_Icon_Types		; C - Wind Shield
 ; ============== END RELATIVE POINTER LIST ==================================
 ; Robotnik Monitor
 ; hurts the player
@@ -312,8 +312,8 @@ ObjMonitor_Shoes:
 
 ObjMonitor_Fire:
 	addq.w 	#1,(a2)
-	andi.b	#shield_del,status2(a1)	; remove any current shield
-	ori.b	#shield_fire,status2(a1)	; give player a fire shield
+	move.b	#0,shields(a1)	; remove any current shield
+	move.b	#shield_fire,shields(a1)	; give player a fire shield
 	move.b	#$F5,d0					; play the fire shield get sound
 	jsr	PlaySound
 	bra.b	ObjMonitor_ChooseShield
@@ -348,8 +348,8 @@ ObjMonitor_Invincible_Return:
 
 ObjMonitor_Lightning:
 	addq.w 	#1,(a2)
-	andi.b	#shield_del,status2(a1)	; remove any current shield
-	ori.b	#shield_lightning,status2(a1)	; give player a lightning shield
+	move.b	#0,shields(a1)	; remove any current shield
+	move.b	#shield_lightning,shields(a1)	; give player a lightning shield
 	move.b	#$F6,d0					; play the lightning shield get sound
 	jsr	PlaySound
 	bra.b	ObjMonitor_ChooseShield
@@ -358,12 +358,21 @@ ObjMonitor_Lightning:
 
 ObjMonitor_Bubble:
 	addq.w 	#1,(a2)
-	andi.b	#shield_del,status2(a1)	; remove any current shield
-	ori.b	#shield_water,status2(a1)	; give player a water shield
+	move.b	#0,shields(a1)	; remove any current shield
+	move.b	#shield_water,shields(a1)	; give player a water shield
 	move.b	#$F7,d0					; play the water shield get sound
 	jsr	PlaySound
 	bra.b	ObjMonitor_ChooseShield
 ; ===========================================================================
+; Wind Shield
+
+ObjMonitor_Wind:
+	addq.w 	#1,(a2)
+	move.b	#0,shields(a1)	; remove any current shield
+	move.b	#shield_wind,shields(a1)	; give player a wind shield
+	move.b	#$F7,d0					; play the water shield get sound
+	jsr	PlaySound
+	bra.b	ObjMonitor_ChooseShield
 ; ---------------------------------------------------------------------------
 ; Holds icon in place for a while, then destroys it
 ; ---------------------------------------------------------------------------

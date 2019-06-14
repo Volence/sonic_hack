@@ -2393,19 +2393,19 @@ Type 63   Val0:   7
    Description: Monitor
  Num Bitfields:   5
     BitField 0: 00001111
-       Desc  0: Robotnik          (harmful)
-       Desc  1: Sonic
-       Desc  2: Tails          (no effect)
-       Desc  3: Robotnik         (harmful)
-       Desc  4: Super Ring
-       Desc  5: Super Sneakers
-       Desc  6: Bubble Shield
+       Desc  0: Null
+       Desc  1: Broken
+       Desc  2: Sonic
+       Desc  3: Tails          (no effect)
+       Desc  4: Robotnik         (harmful)
+       Desc  5: Super Ring
+       Desc  6: Super Sneakers
        Desc  7: Invincible
-       Desc  8: Null
-       Desc  9: Super Sonic
-       Desc  A: Broken
-       Desc  B: Lightning Shield
-       Desc  C: Fire Shield
+       Desc  8: Super Sonic
+       Desc  9: Bubble Shield
+       Desc  A: Lightning Shield
+       Desc  B: Fire Shield
+       Desc  C: Wind Shield
        Desc  D: Invalid
        Desc  E: Invalid
        Desc  F: Invalid

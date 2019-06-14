@@ -69,7 +69,7 @@ next_tilt =				$36 ; angle on ground in front of sprite
 tilt =					$37 ; angle on ground
 interact_obj =			$38 ; and $39 ; RAM address of the last object Sonic stood on
 spindash_counter =		$3A ; and $3B
-;player_off24 =			$3C ; routine counter
+shields =				$3C ; shield flag
 air_action =			$3D ; used by Sonic's bubble bounce and Knuckles' gliding
 layer =					$3E ; collision plane, track switching...
 layer_plus =			$3F ; always same as layer+1 ?? used for collision somehow
@@ -154,6 +154,7 @@ shield_none		= 0
 shield_water		= 1
 shield_fire		= 2
 shield_lightning	= 3
+shield_wind		= 4
 
 ; next 2 bits of status2(a0)
 power_mask		= $C
