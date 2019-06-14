@@ -24,12 +24,29 @@ dbglistobj macro   obj, mapaddr,  decl, frame, flags, vram
     endm
 
 DbgObjList_Def: dbglistheader
-	dbglistobj 0, Basic_Ring_MapUnc_12382,   0,   0,  2, $6BC ; Basic_Ring = ring
-	dbglistobj 0, Monitor_MapUnc_12D36,   8,   0,  0, $680 ; Monitor = monitor
+	dbglistobj 1, Basic_Ring_MapUnc_12382,   0,   0,  2, $6BC
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   3,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   5,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   6,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   7,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   8,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $A,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $B,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $C,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $D,  0, $680
 DbgObjList_Def_End
 
 DbgObjList_EHZ: dbglistheader
-	dbglistobj 0, Basic_Ring_MapUnc_12382,   0,   0,  2, $6BC
-	dbglistobj 0, Monitor_MapUnc_12D36,   8,   0,  0, $680
+	dbglistobj 1, Basic_Ring_MapUnc_12382,   0,   0,  2, $6BC
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   3,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   5,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   6,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   7,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,   8,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $A,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $B,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $C,  0, $680
+	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $D,  0, $680
+
 DbgObjList_EHZ_End
 

@@ -2691,7 +2691,8 @@ ChooseShield:
 	bne.b	ChooseShield_Super		; if so, branch
 	btst	#s2b_2,d0			; is player invincible?
 	bne.b	ChooseShield_Invincible		; if so, branch
-	andi.b	#shield_mask,d0			; get the type of shield
+	move.b	shields(a0),d0
+	tst.b	d0			; get the type of shield
 	beq.b	ChooseShield_None		; if no shield, branch
 	add.w	d0,d0				; load corresponding object
 	move.w	ChooseShield_Objects-2(pc,d0.w),Sonic_Shield-MainCharacter(a0)
@@ -2704,6 +2705,7 @@ ChooseShield_Objects:
 	dc.w	objroutine(Bubble_Shield)
 	dc.w	objroutine(Fire_Shield)
 	dc.w	objroutine(Lightning_Shield)
+	dc.w	objroutine(Wind_Shield)
 ; ===========================================================================
 
 ChooseShield_Super:				; load super stars

@@ -415,6 +415,42 @@ Lightning_Shield_Spark_Destroy:
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
+; Wind shield
+; ----------------------------------------------------------------------------
+
+Wind_Shield:
+	lea	Wind_Shield_Data(pc),a2
+	bsr.w	Shield_Load
+	lea	MainCharacter-Sonic_Shield(a0),a1
+	jsr	(ResumeMusic).l
+
+Wind_Shield_Main:
+	lea	MainCharacter-Sonic_Shield(a0),a2
+	move.w	x_pos(a2),x_pos(a0)
+	move.w	y_pos(a2),y_pos(a0)
+	move.b	status(a2),status(a0)
+	andi.b	#1,status(a0)		; Only orientation flag is kept
+	andi.w	#$7FFF,art_tile(a0)
+	tst.w	art_tile(a2)
+	bpl.s	Wind_Shield_Display
+	ori.w	#$8000,art_tile(a0)
+
+Wind_Shield_Display:
+	lea	(Ani_LightningShield).l,a1
+	jsr	(AnimateSprite).l
+	move.w	#$80,priority(a0)
+	cmp.b	#$E,mapping_frame(a0)
+	bcs.s	+
+	move.w	#$200,priority(a0)
++	jsr	LoadShieldsDynPLC
+	jmp	DisplaySprite
+; ===========================================================================
+
+Wind_Shield_Destroy:
+       andi.b	#shield_del,status2(a2)    ; Clear all shield flags
+       jmp	DeleteObject
+; ===========================================================================
+; ----------------------------------------------------------------------------
 ; Bubble shield
 ; ----------------------------------------------------------------------------
 
@@ -570,6 +606,20 @@ Lightning_Shield_Data:
 		dc.w	1
 		dc.l	DPLC_LighteningShield
 		dc.l	ArtUnc_LighteningShield
+		dc.b	-1
+		even
+
+Wind_Shield_Data:
+		dc.w	objroutine(Wind_Shield_Main)
+		dc.l	Map_WindShield
+		dc.w	$4BE
+		dc.b	4
+		dc.w	$80
+		dc.b	$18
+		dc.b	$18
+		dc.w	1
+		dc.l	DPLC_WindShield
+		dc.l	ArtUnc_WindShield
 		dc.b	-1
 		even
 		

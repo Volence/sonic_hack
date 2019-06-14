@@ -23,6 +23,13 @@ A modification of sonic the hedgehog 2 for research/entertainment purposes
 - Implement "Tile, Block, Chunk and Section" system
 
 ## Changelog:
+ * 06/13/2019
+   * Started work on new shield type: Wind Shield
+     * Art is about halfway done, loading in
+     * Needs more plr for the monitor, the icon is taking over rings
+   * Fixed debug mode objects
+   * Re-arranged the monitors to make more sense
+   * Took out the shield flags for status2, moved it to a new constant, shields ($3C)
  * 06/12/2019
    * Fixed shield art, shield items now correspond with correct mappings
    * Fixed up object in layout, objects placed are now correct from the object_index

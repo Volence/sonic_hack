@@ -1,0 +1,127 @@
+{
+    "description": "Flex 2 Project File",
+    "name": "Sonic 4",
+    "objects": [
+        {
+            "name": "Monitors",
+            "palettes": [
+                {
+                    "path": "art/palettes/EHZ top.bin",
+                    "length": 1
+                }
+            ],
+            "art": {
+                "path": "art/nemesis/Monitor and contents.bin",
+                "compression": "Nemesis",
+                "accessor": ""
+            },
+            "mappings": {
+                "path": "mappings/sprite/monitor.bin",
+                "format": "Sonic 2",
+                "customDefinition": "",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "format": "Sonic 1",
+                "customDefinition": "",
+                "label": ""
+            }
+        },
+        {
+            "name": "Bird Boss",
+            "palettes": [],
+            "art": {
+                "path": "art/nemesis/birdart.bin",
+                "compression": "Nemesis"
+            },
+            "mappings": {
+                "path": "mappings/sprite/birdmaps.asm",
+                "format": "Sonic 2",
+                "customDefinition": "",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "format": "Sonic 1",
+                "customDefinition": "",
+                "label": ""
+            }
+        },
+        {
+            "name": "Pitcher Plant Badnik",
+            "palettes": [
+                {
+                    "path": "art/palettes/EHZ top.bin",
+                    "length": 1
+                }
+            ],
+            "art": {
+                "path": "art/nemesis/plantbadnikart.bin",
+                "compression": "Nemesis"
+            },
+            "mappings": {
+                "path": "mappings/sprite/plantbadmaps.asm",
+                "format": "Sonic 2",
+                "customDefinition": "",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "format": "Sonic 1",
+                "customDefinition": "",
+                "label": ""
+            }
+        },
+        {
+            "name": "Boss Orb",
+            "palettes": [],
+            "art": {
+                "path": "art/nemesis/orbsart.bin",
+                "compression": "Nemesis"
+            },
+            "mappings": {
+                "path": "mappings/sprite/orbsmaps.asm",
+                "format": "Sonic 2",
+                "customDefinition": "",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": false,
+                "path": "",
+                "format": "Sonic 1",
+                "customDefinition": "",
+                "label": ""
+            }
+        },
+        {
+            "name": "Wind Shield",
+            "palettes": [
+                {
+                    "path": "art/palettes/EHZ top.bin",
+                    "length": 1
+                }
+            ],
+            "art": {
+                "path": "art/uncompressed/WindShield.bin",
+                "compression": "Uncompressed"
+            },
+            "mappings": {
+                "path": "mappings/sprite/S2 windshield.asm",
+                "format": "Sonic 2",
+                "customDefinition": "",
+                "label": ""
+            },
+            "dplcs": {
+                "enabled": true,
+                "path": "mappings/spriteDPLC/S2 windshield.bin",
+                "format": "Sonic 2/3&K",
+                "customDefinition": "",
+                "label": ""
+            }
+        }
+    ]
+}
