@@ -1,22 +1,18 @@
-; ---------------------------------------------------------------------------
-; OBJECT POINTER ARRAY ; object pointers ; sprite pointers ; object list ; sprite list
-;
-; This array contains the pointers to all the objects used in the game.
-; The item in the comment is the hex pointer index value used by the game
-; (and our hacking guides) to reference an object.
-; ---------------------------------------------------------------------------
+; =============================================================================
+; Object Pointer Index
+; -----------------------------------------------------------------------------
+; Array of object routine pointers (offsets from ObjBase).
+; The comment at right shows the pointer index in hex ($01, $02, ...).
+; =============================================================================
 Obj_Index:
-	dc.w Basic_Ring-ObjBase		; 1 Ring 
-	dc.w Monitor-ObjBase		; 2 Monitor
-	dc.w Path_Swapper-ObjBase	; 3 Collision plane/layer switcher
-	dc.w CheckPoint-ObjBase		; 4 Star pole / starpost / checkpoint
-	dc.w Bubbles_Base-ObjBase	; 5 Bubbles
-	dc.w Spring-ObjBase			; 6 Spring
-	dc.w Spikes-ObjBase			; 7 Spikes
-	dc.w SignPost-ObjBase		; 8 Sign Post
-	dc.w Egg_Prison-ObjBase		; 9 Egg Prison
-	dc.w 0				; A
-	dc.w PitcherPlant-ObjBase	; B Pitcher Plant Badnik
-
-
-; ===========================================================================
+    dc.w Basic_Ring-ObjBase          ; $01  Ring
+    dc.w Monitor-ObjBase             ; $02  Monitor
+    dc.w Path_Swapper-ObjBase        ; $03  Collision plane/layer switcher
+    dc.w CheckPoint-ObjBase          ; $04  Star pole / starpost / checkpoint
+    dc.w Bubbles_Base-ObjBase        ; $05  Bubbles
+    dc.w Spring-ObjBase              ; $06  Spring
+    dc.w Spikes-ObjBase              ; $07  Spikes
+    dc.w SignPost-ObjBase            ; $08  Sign Post
+    dc.w Egg_Prison-ObjBase          ; $09  Egg Prison
+    dc.w 0                           ; $0A  (unused/null)
+    dc.w PitcherPlant-ObjBase        ; $0B  Pitcher Plant Badnik

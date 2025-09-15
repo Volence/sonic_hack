@@ -67,6 +67,10 @@ PitcherPlant__InitMapFrame         = 0
 PitcherPlant__Bullet_Anim          = 1
 PitcherPlant__Bullet_MapFrame      = 5
 
+; how far above/below Sonic can be and still trigger (in pixels if $100=1px)
+PitcherPlant__VerticalTolerance = $60
+
+
 ; ===========================================================================
 ; Object 0B - Pitcher Plant Badnik
 ; ===========================================================================
@@ -85,29 +89,44 @@ PitcherPlant__WaitSonic:
 
 PP__do_scan:
         lea     MainCharacter,a1
+
+        ; --- horizontal delta for facing/range ---
         move.w  x_pos(a1),d2
         move.w  x_pos(a0),d3
-        sub.w   d2,d3                       ; d3 = plant_x - sonic_x
+        sub.w   d2,d3                       ; d3 = plant_x - sonic_x   (sign matters)
 
+        ; --- vertical gate: require |ΔY| <= tolerance ---
+        move.w  y_pos(a0),d4
+        sub.w   y_pos(a1),d4                ; d4 = plant_y - sonic_y
+        bpl.s   .vy_abs
+        neg.w   d4
+.vy_abs:
+        cmp.w   #PitcherPlant__VerticalTolerance,d4
+        bgt.w   PitcherPlant__Display       ; too high/low → don't shoot
+
+        ; --- facing / horizontal distance checks (with CCR restored from d3) ---
         btst    #0,render_flags(a0)
-        bne.w   PP__facing_right               ; bit set → facing right
+        bne.w   PP__facing_right            ; bit set → facing right
 
         ; ---- facing LEFT ----
-        bmi.w   PitcherPlant__Display
+        tst.w   d3                          ; restore CCR for d3 sign
+        bmi.w   PitcherPlant__Display       ; Sonic to the right -> ignore
         cmp.w   #PitcherPlant__DistanceFromSonicToAttack,d3
-        bge.w   PitcherPlant__Display
+        bge.w   PitcherPlant__Display       ; too far to the left -> ignore
         move.w  #objroutine(PitcherPlant__Shoot),(a0)
         move.b  #PitcherPlant__ShootPrepTime,PitcherPlant__Timer(a0)
         bra.w   PitcherPlant__Display
 
 PP__facing_right:
         ; ---- facing RIGHT ----
-        bpl.w   PitcherPlant__Display
+        tst.w   d3                          ; restore CCR for d3 sign
+        bpl.w   PitcherPlant__Display       ; Sonic to the left -> ignore
         cmp.w   #-PitcherPlant__DistanceFromSonicToAttack,d3
-        ble.w   PitcherPlant__Display
+        ble.w   PitcherPlant__Display       ; too far to the right -> ignore
         move.w  #objroutine(PitcherPlant__Shoot),(a0)
         move.b  #PitcherPlant__ShootPrepTime,PitcherPlant__Timer(a0)
         ; fall through
+
 
 ; -------------------------
 ; COMMON DISPLAY

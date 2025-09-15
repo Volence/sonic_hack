@@ -7457,7 +7457,7 @@ DeformBgLayer:
 
 loc_C4D0:
 	jsr		RunDynamicArtLoading
-	jsr		RunActTransitions
+	jsr		ActTransition_CheckAndRun
 	bsr.w	RunDynamicLevelEvents
 	move.w	(Camera_Y_pos).w,(Vscroll_Factor).w
 	move.w	(Camera_BG_Y_pos).w,(Vscroll_Factor+2).w
@@ -9527,7 +9527,7 @@ RunDynamicLevelEvents:
 ; ===========================================================================
 ; Routine to Check for act transitions and run them
 ; ===========================================================================
-RunActTransitions
+ActTransition_CheckAndRun
 	tst.b	(Current_Act).w
 	bne.w	NoActTransitions
 	moveq	#0,d0
@@ -9538,14 +9538,14 @@ RunActTransitions
 	move.w	a0,d0
 	move.w	(camera_X_pos).w,d1
 	cmp.w	d0,d1
-	bge.w	TriggerEvent
+	bge.w	ActTransition_Trigger
 	rts
 NoActTransitions:
 	rts
 WrdArr_ActTransitionCheck:
 	dc.w	$7E00
 	dc.w	$7E00
-TriggerEvent:
+ActTransition_Trigger:
 		tst.b	(ActTransitionStartFlag).w
 		beq.w	NoActTransitions
 		clr.b	(ActTransitionStartFlag).w
@@ -9560,7 +9560,7 @@ TriggerEvent:
 		clr.b	(Current_Boss_ID).w
 		jsr	LoadLevelLayout
 		jsr	(LoadCollisionIndexes).l
-		jsr	sub_4F8F8(pc)
+		jsr	Flags_ClearButtonVineBlock(pc)
 		movem.l	(sp)+,d7-a0/a2-a3
 		move.w	(Camera_X_pos).w,d0
 		sub.w	d0,(MainCharacter+8).w
@@ -9570,8 +9570,8 @@ TriggerEvent:
 		move.w	(Camera_X_pos_copy).w,($FFFFEEB4).w
 		sub.w	d0,(Camera_Min_X_pos).w
 		sub.w	d0,(Camera_Max_X_pos).w
-		jsr	sub_54CF4(pc)		; keeps sign in place
-		jsr	UpdateRoundedCameraValues(pc)
+		jsr	ActTransition_CullAndAdjustObjs(pc)		; keeps sign in place
+		jsr	Camera_UpdateRounded(pc)
 		move.b	#1,(Dirty_flag).w
 		jsr	LoadLevelSizeActTransition
 loc_54C3C:
@@ -9579,16 +9579,16 @@ loc_54C3C:
 		move.w	(Camera_X_pos_copy).w,d0
 		move.w	#$100,d2
 		move.w	#$200,d3
-		jsr	sub_4F368(pc)
-		jsr	sub_54C68(pc)
-		lea	($FFFFEE90).w,a6
-		lea	($FFFFEE96).w,a5
+		jsr	Scroll_AccumDeltaWithClamp(pc)
+		jsr	Scroll_CalcDerivedOffsets(pc)
+		lea	(FG_RowIndex_Y).w,a6
+		lea	(FG_RowIndex_Y_Prev).w,a5
 		moveq	#0,d1
 		moveq	#$20,d6
-		jsr	UpdateLevelFGRows(pc)
-		jmp	sub_4F072(pc)
+		jsr	FG_UpdateRowsForScroll(pc)
+		jmp	Scroll_FillHorizTable(pc)
 ; ===============================================================================
-sub_4F8F8:
+Flags_ClearButtonVineBlock:
 		lea	($FFFFF7E0).w,a1
 		moveq	#7,d0
 
@@ -9596,8 +9596,8 @@ loc_4F8FE:
 		clr.l	(a1)+
 		dbf	d0,loc_4F8FE
 		rts
-; End of function sub_4F8F8
-UpdateRoundedCameraValues:
+; End of function Flags_ClearButtonVineBlock
+Camera_UpdateRounded:
 		move.w	(Camera_X_pos_copy).w,d0
 		move.w	d0,d1
 		and.w	#-$10,d0
@@ -9606,9 +9606,9 @@ UpdateRoundedCameraValues:
 		and.w	(Camera_Y_round_value).w,d0
 		move.w	d0,(Camera_Y_pos_rounded).w
 		rts
-; End of function UpdateRoundedCameraValues
+; End of function Camera_UpdateRounded
 ; ==============================================================================
-UpdateLevelFGRows:
+FG_UpdateRowsForScroll:
 		move.w	(a6),d0
 		and.w	(Camera_Y_round_value).w,d0
 		move.w	(a5),d2
@@ -9628,15 +9628,15 @@ loc_4EAFA:
 		cmp.w	#$10,d2
 		sne	(Dirty_flag).w
 		movem.w	d1/d6,-(sp)
-		bsr.s	sub_4EB6C
+		bsr.s	FG_QueueRedrawRows 
 		movem.w	(sp)+,d1/d6
 		tst.b	(Dirty_flag).w
 		beq.w	return_4EC46
 		add.w	#$10,d0
 		and.w	(Camera_Y_round_value).w,d0
-;		bra.s	sub_4EB6C
+;		bra.s	FG_QueueRedrawRows 
 ; =============================================================================
-sub_4EB6C:
+FG_QueueRedrawRows:
 		asr.w	#4,d1
 		move.w	d1,d2
 		move.w	d1,d4
@@ -9665,8 +9665,8 @@ sub_4EB6C:
 		add.w	d5,d5
 		add.w	d5,d5
 		add.w	d5,a0
-		jsr	sub_4EC48(pc)
-		bra.s	sub_4EBF2
+		jsr	FG_ComputeRowBasePtr(pc)
+		bra.s	FG_BlitRowToBuffer
 ; ---------------------------------------------------------------------------
 loc_4EBB2:
 		neg.w	d5
@@ -9684,8 +9684,8 @@ loc_4EBB2:
 		add.w	d4,d4
 		add.w	d4,d4
 		add.w	d4,a0
-		bsr.s	sub_4EC48
-		bsr.s	sub_4EBF2
+		bsr.s	FG_ComputeRowBasePtr
+		bsr.s	FG_BlitRowToBuffer
 		move.w	(sp)+,d6
 		move.w	d0,d5
 		and.w	#$F0,d5
@@ -9699,13 +9699,13 @@ loc_4EBB2:
 		add.w	d5,d5
 		add.w	d5,d5
 		add.w	d5,a0
-; End of function sub_4EB6C
+; End of function FG_QueueRedrawRows 
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_4EBF2:
+FG_BlitRowToBuffer:
 		move.w	(a5,d2.w),d3
 		move.w	d3,d4
 		and.w	#$3FF,d3
@@ -9746,18 +9746,18 @@ loc_4EC30:
 		bsr.s	loc_4EC54
 
 loc_4EC40:
-		dbf	d6,sub_4EBF2
+		dbf	d6,FG_BlitRowToBuffer
 		clr.w	(a0)
 
 return_4EC46:
 		rts
-; End of function sub_4EBF2
+; End of function FG_BlitRowToBuffer
 
 
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_4EC48:
+FG_ComputeRowBasePtr:
 		move.w	d0,d3
 		asr.w	#5,d3
 ;		and.w	(Level_row_count).w,d3
@@ -9774,14 +9774,13 @@ loc_4EC54:
 		add.w	d4,d3
 		move.l	d3,a5
 		rts
-; End of function sub_4EC48
+; End of function FG_ComputeRowBasePtr
 
 
 ; =============== S U B	R O U T	I N E =======================================
-; =============== S U B	R O U T	I N E =======================================
 
 
-sub_54C68:
+Scroll_CalcDerivedOffsets:
 		move.w	(Camera_Y_pos_copy).w,d0
 		swap	d0
 		clr.w	d0
@@ -9791,8 +9790,8 @@ sub_54C68:
 		add.l	d1,d0
 		swap	d0
 		add.w	#$76,d0
-		move.w	d0,(word_FFFFEE90).w
-		move.w	(unk_FFFFEEB6).w,d0
+		move.w	d0,(FG_RowIndex_Y).w
+		move.w	(HScroll_SmoothDelta).w,d0
 		swap	d0
 		clr.w	d0
 		asr.l	#1,d0
@@ -9801,23 +9800,23 @@ sub_54C68:
 		sub.l	d1,d0
 		asr.l	#1,d1
 		swap	d0
-		move.w	d0,(unk_FFFFEE8C).w
+		move.w	d0,(FG_HScroll_Offset).w
 		swap	d0
 		sub.l	d1,d0
 		swap	d0
-		move.w	d0,(unk_FFFFEEE2).w
+		move.w	d0,(Parallax_Mid_Offset).w
 		swap	d0
 		sub.l	d1,d0
 		swap	d0
-		move.w	d0,(unk_FFFFEEE4).w
+		move.w	d0,(Parallax_Far_Offset).w
 		rts
-; End of function sub_54C68
+; End of function Scroll_CalcDerivedOffsets
 
 ; ---------------------------------------------------------------------------
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_4F368:
+Scroll_AccumDeltaWithClamp:
 		move.w	(a1),d1
 		move.w	d0,(a1)+
 		sub.w	d1,d0
@@ -9840,11 +9839,11 @@ loc_4F37C:
 loc_4F382:
 		add.w	d0,(a1)+
 		rts
-; End of function sub_4F368
+; End of function Scroll_AccumDeltaWithClamp
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_54CF4:
+ActTransition_CullAndAdjustObjs:
 		lea	($FFFFB800).w,a1
 		moveq	#$5F,d2
 
@@ -9865,19 +9864,19 @@ loc_54D26:
 		lea	$40(a1),a1
 		dbf	d2,loc_54CFA
 		rts
-; End of function sub_54CF4
+; End of function ActTransition_CullAndAdjustObjs
 loc_2B962:
 	;	jmp	MarkObjNotGone
 		rts
 ; =============== S U B	R O U T	I N E =======================================
 
 
-sub_4F072:
+Scroll_FillHorizTable:
 		lea	($FFFFE000).w,a1
 		move.w	(Camera_X_pos_copy).w,d0
 		neg.w	d0
 		swap	d0
-		move.w	(unk_FFFFEE8C).w,d0
+		move.w	(FG_HScroll_Offset).w,d0
 		neg.w	d0
 		moveq	#$37,d1
 
@@ -9888,7 +9887,7 @@ loc_4F086:
 		move.l	d0,(a1)+
 		dbf	d1,loc_4F086
 		rts
-; End of function sub_4F072
+; End of function Scroll_FillHorizTable
 ; ===========================================================================
 ; Dynamic art loading check
 ; ===========================================================================
