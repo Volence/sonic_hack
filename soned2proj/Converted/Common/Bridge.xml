@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ObjDef xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Namespace="SonED2.ZoneCommon" TypeName="Bridge" Language="cs" Name="Bridge" Image="Image1" RememberState="false" DefaultSubtype="08" Debug="false" xmlns="http://www.sonicretro.org">
+  <Images>
+    <ImageFromBitmap id="Image1" filename="Sprites/s2objsprite2-5.png" />
+  </Images>
+  <Properties>
+    <BitsProperty name="Property1" type="Enum1" startbit="0" length="5" />
+  </Properties>
+  <Enums>
+    <Enum name="Enum1">
+      <EnumMember name="Invalid" />
+      <EnumMember name="Invalid2" />
+      <EnumMember name="Invalid3" />
+      <EnumMember name="Invalid4" />
+      <EnumMember name="Invalid5" />
+      <EnumMember name="Invalid6" />
+      <EnumMember name="Invalid7" />
+      <EnumMember name="Invalid8" />
+      <EnumMember name="8 Logs" />
+      <EnumMember name="9 Logs (buggy)" />
+      <EnumMember name="10 Logs" />
+      <EnumMember name="11 Logs (buggy)" />
+      <EnumMember name="12 Logs" />
+      <EnumMember name="13 Logs (buggy)" />
+      <EnumMember name="14 Logs" />
+      <EnumMember name="15 Logs (buggy)" />
+      <EnumMember name="16 Logs" />
+      <EnumMember name="Invalid9" />
+      <EnumMember name="Invalid10" />
+      <EnumMember name="Invalid11" />
+      <EnumMember name="Invalid12" />
+      <EnumMember name="Invalid13" />
+      <EnumMember name="Invalid14" />
+      <EnumMember name="Invalid15" />
+      <EnumMember name="Invalid16" />
+      <EnumMember name="Invalid17" />
+      <EnumMember name="Invalid18" />
+      <EnumMember name="Invalid19" />
+      <EnumMember name="Invalid20" />
+      <EnumMember name="Invalid21" />
+      <EnumMember name="Invalid22" />
+      <EnumMember name="Invalid23" />
+    </Enum>
+  </Enums>
+  <Display>
+    <DisplayOption>
+      <Condition property="Property1" value="8 Logs" />
+      <ImageRef image="Image1">
+        <Offset X="-72" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-56" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-40" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="40" Y="-8" />
+      </ImageRef>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Property1" value="10 Logs" />
+      <ImageRef image="Image1">
+        <Offset X="-88" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-72" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-56" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-40" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="40" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="56" Y="-8" />
+      </ImageRef>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Property1" value="12 Logs" />
+      <ImageRef image="Image1">
+        <Offset X="-104" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-88" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-72" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-56" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-40" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="40" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="56" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="72" Y="-8" />
+      </ImageRef>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Property1" value="14 Logs" />
+      <ImageRef image="Image1">
+        <Offset X="-120" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-104" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-88" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-72" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-56" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-40" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="40" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="56" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="72" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="88" Y="-8" />
+      </ImageRef>
+    </DisplayOption>
+    <DisplayOption>
+      <Condition property="Property1" value="16 Logs" />
+      <ImageRef image="Image1">
+        <Offset X="-136" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-120" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-104" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-88" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-72" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-56" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-40" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="-8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="8" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="24" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="40" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="56" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="72" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="88" Y="-8" />
+      </ImageRef>
+      <ImageRef image="Image1">
+        <Offset X="104" Y="-8" />
+      </ImageRef>
+    </DisplayOption>
+  </Display>
+</ObjDef>

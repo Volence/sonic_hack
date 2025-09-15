@@ -60,6 +60,7 @@ Sonic_Init_Continued:
 ; ---------------------------------------------------------------------------
 ; loc_1A030: Obj_01_Sub_2:
 Sonic_Control:
+	eori.b  #1,(Wind_Hover_Div2).w
 	tst.w	(Debug_placement_mode).w	; is debug mode being used?
 	beq.s	+			; if not, branch
 	jmp		(DebugMode).l
@@ -321,19 +322,119 @@ return_1A2DE:
 ; Called if Sonic is airborne, but not in a ball (thus, probably not jumping)
 ; loc_1A2E0: Sonic_MdJump
 Sonic_MdAir:
-	bsr.w	SonicShoot
-	bsr.w	ClearInstaShield_Air
-	bsr.w	Sonic_JumpHeight
-	bsr.w	Sonic_ChgJumpDir
-	bsr.w	Sonic_LevelBound
-	jsr	(ObjectMoveAndFall).l
-	btst	#6,status(a0)	; is Sonic underwater?
-	beq.s	+		; if not, branch
-	subi.w	#$28,y_vel(a0)	; reduce gravity by $28 ($38-$28=$10)
-+
-	bsr.w	Sonic_JumpAngle
-	bsr.w	Sonic_DoLevelCollision
-	rts
+    bsr.w   SonicShoot
+    bsr.w   ClearInstaShield_Air
+    bsr.w   Sonic_JumpHeight
+    bsr.w   Sonic_ChgJumpDir
+    bsr.w   Sonic_LevelBound
+    jsr     (ObjectMoveAndFall_Sonic).l
+
+    ; --- Underwater gravity tweak, but skip if actively Wind-hovering ---
+    btst    #6,status(a0)                         ; underwater?
+    beq.s   SonicMdAir_AfterUnderwater
+    move.b  shields(a0),d0
+    cmpi.b  #shield_wind,d0
+    bne.s   SonicMdAir_ApplyUnderwaterSub
+    move.b  (Ctrl_1_Held_Logical).w,d0
+    andi.b  #jump_mask,d0
+    beq.s   SonicMdAir_ApplyUnderwaterSub
+    tst.b   air_action(a0)                        ; byte timer > 0?
+    beq.s   SonicMdAir_ApplyUnderwaterSub
+    bra.s   SonicMdAir_AfterUnderwater            ; skip extra subtraction
+
+SonicMdAir_ApplyUnderwaterSub:
+    subi.w  #$28,y_vel(a0)
+
+SonicMdAir_AfterUnderwater:
+    bsr.w   Sonic_JumpAngle
+    bsr.w   Sonic_DoLevelCollision
+    rts
+
+
+; ===========================================================
+; Sonic-only move+fall with Wind hover (hold jump to slow fall)
+; ===========================================================
+WindHoverTotal     EQU 60     ; drain every other frame -> ~6s total
+WindHoverMaxFall    EQU $0180
+WindHoverMaxRise    EQU $0200
+; ===========================================================
+; Sonic-only move+fall with Wind directional hover (A/B/C held)
+;  - Uses byte timer at air_action(a0)
+;  - Drains every other frame via Wind_Hover_Div2 flip-flop
+;  - UP   = gentle ascent (capped)
+;  - DOWN = fast-fall (heavier gravity)
+;  - neutral = slow-fall (reduced gravity + fall clamp)
+; ===========================================================
+ObjectMoveAndFall_Sonic:
+    ; --- X integrate (unchanged) ---
+    move.w  x_vel(a0),d0
+    ext.l   d0
+    lsl.l   #8,d0
+    add.l   d0,x_pos(a0)
+
+    ; --- Default gravity this frame ---
+    moveq   #$38,d1
+
+    ; --- Wind hover gate: Wind + any jump held + time left ---
+    move.b  shields(a0),d2
+    cmpi.b  #shield_wind,d2
+    bne.s   WindHover_ApplyGravity
+
+    move.b  (Ctrl_1_Held_Logical).w,d2
+    andi.b  #jump_mask,d2
+    beq.s   WindHover_ApplyGravity
+
+    tst.b   air_action(a0)                  ; byte budget
+    beq.s   WindHover_ApplyGravity
+
+    ; --- Internal half-rate divider (no globals needed) ---
+    eori.b  #1,wind_hover_div2(a0)          ; flip 0/1 every hover frame
+    tst.b   wind_hover_div2(a0)
+    beq.s   WindHover_SkipDrain             ; drain only on "1" frames
+    subq.b  #1,air_action(a0)
+WindHover_SkipDrain:
+
+    ; --- Direction choice (UP / DOWN / neutral) ---
+    move.b  (Ctrl_1_Held_Logical).w,d3
+
+    ; UP -> gentle upward thrust, cap rise, neutralize gravity this frame
+    andi.b  #button_up_mask,d3
+    beq.s   WindHover_CheckDown
+    sub.w   #$20,y_vel(a0)
+    cmpi.w  #-WindHoverMaxRise,y_vel(a0)
+    bge.s   WindHover_EndUp
+    move.w  #-WindHoverMaxRise,y_vel(a0)
+WindHover_EndUp:
+    moveq   #0,d1
+    bra.s   WindHover_AfterChoice
+
+WindHover_CheckDown:
+    ; DOWN -> heavier gravity (fast-fall)
+    move.b  (Ctrl_1_Held_Logical).w,d3
+    andi.b  #button_down_mask,d3
+    beq.s   WindHover_Neutral
+    moveq   #$50,d1
+    bra.s   WindHover_AfterChoice
+
+WindHover_Neutral:
+    ; Neutral hover -> reduced gravity + clamp fall
+    moveq   #$08,d1
+    cmpi.w  #WindHoverMaxFall,y_vel(a0)
+    ble.s   WindHover_AfterChoice
+    move.w  #WindHoverMaxFall,y_vel(a0)
+
+WindHover_AfterChoice:
+    ; (underwater subtraction is handled in MdAir/MdJump)
+
+WindHover_ApplyGravity:
+    ; --- Integrate Y using pre-gravity velocity (vanilla feel) ---
+    move.w  y_vel(a0),d0
+    add.w   d1,y_vel(a0)
+
+    ext.l   d0
+    lsl.l   #8,d0
+    add.l   d0,y_pos(a0)
+    rts
 ; End of subroutine Sonic_MdAir
 ; ===========================================================================
 ; Start of subroutine Sonic_MdRoll
@@ -373,7 +474,7 @@ Sonic_MdJump:
 	bne.w	+
 	jsr	Sonic_DoubleJump2
 +
-	jsr	(ObjectMoveAndFall).l
+	jsr	(ObjectMoveAndFall_Sonic).l
 	btst	#6,status(a0)	; is Sonic underwater?
 	beq.s	+		; if not, branch
 	subi.w	#$28,y_vel(a0)	; reduce gravity by $28 ($38-$28=$10)
@@ -2479,20 +2580,23 @@ Sonic_DoubleJump2:					; controls the shield attacks
 	bclr	#4,status(a0)				; clear uncontrolled jump flag
 	moveq	#0,d0
 	move.b	status2(a0),d0			; get the secondary status
-	move.w	d0,d1
 	andi.b	#power_mask,d0				; does Sonic have invincibility?
 	bne.b	Sonic_Flash				; if so, check for Hyper Sonic
-	andi.b	#shield_mask,d1				; get shield type
-	add.w	d1,d1					; do corresponding action
-	move.w	Sonic_DoubleJumpActions(pc,d1.w),d1
-	jmp	Sonic_DoubleJumpActions(pc,d1.w)
+
+    moveq   #0,d1
+    move.b  shields(a0),d1          ; 0..4 expected
+    add.w   d1,d1                   ; 2-byte entries
+    lea     Sonic_DoubleJumpActions_ByShield(pc),a1
+    move.w  (a1,d1.w),d1
+    jmp     (a1,d1.w)
 ; ===========================================================================
 
-Sonic_DoubleJumpActions:
-	dc.w	Sonic_InstaShield-Sonic_DoubleJumpActions
-	dc.w	Sonic_BubbleBounce-Sonic_DoubleJumpActions
-	dc.w	Sonic_FireDash-Sonic_DoubleJumpActions
-	dc.w	Sonic_LightningJump-Sonic_DoubleJumpActions
+Sonic_DoubleJumpActions_ByShield:
+    dc.w    Sonic_InstaShield     - Sonic_DoubleJumpActions_ByShield ; 0 none
+    dc.w    Sonic_BubbleBounce    - Sonic_DoubleJumpActions_ByShield ; 1 water
+    dc.w    Sonic_FireDash        - Sonic_DoubleJumpActions_ByShield ; 2 fire
+    dc.w    Sonic_LightningJump   - Sonic_DoubleJumpActions_ByShield ; 3 lightning
+    dc.w    Sonic_WindBurst       - Sonic_DoubleJumpActions_ByShield ; 4 wind
 ; ===========================================================================
 
 Sonic_Flash:
@@ -2556,7 +2660,7 @@ Sonic_LightningJump:
 	move.w	#objroutine(Lightning_Shield_Spark),(a1)		; Load object E1 (lightning shield spark)
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
-	move.l	#Map_LighteningShield,mappings(a1)
+	move.l	#Map_LightningShield,mappings(a1)
 	move.w	#$4D5,art_tile(a1)
 	move.b	#4,render_flags(a1)
 	move.w	#$80,priority(a1)
@@ -2632,6 +2736,21 @@ BounceRecoil:
 
 BounceRecoil_Return:
 	rts
+
+; ----------------------------------------------------------------------------
+; Wind shield double-jump action: quick directional gust with slight lift
+; ----------------------------------------------------------------------------
+Sonic_WindBurst:
+	move.b  #WindHoverTotal,air_action(a0)
+	clr.b   wind_hover_div2(a0)             ; start divider in a known state
+    # move.b  #1,(Sonic_Shield+anim).w    ; optional: animate the shield
+    move.w  #$0010,invulnerable_time(a0) ; brief grace window
+    move.b  #2,anim(a0)                  ; bouncing animation
+
+    move.w  #$E3,d0          ; play wind SFX (alias if needed)
+    jsr     (PlaySound).l
+    rts
+
 ; ===========================================================================
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
 

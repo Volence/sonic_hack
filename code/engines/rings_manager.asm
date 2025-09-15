@@ -195,21 +195,22 @@ Touch_Rings:
 	movea.l	(Ring_start_addr_ROM).w,a1
 	movea.l	(Ring_end_addr_ROM).w,a2
 	cmpa.w	#MainCharacter,a0
-	beq.s	loc_170D0
+	beq.s	Ring_LightningAttractEntry
 	movea.l	(Ring_start_addr_ROM_P2).w,a1
 	movea.l	(Ring_end_addr_ROM_P2).w,a2
 
-loc_170D0:
+Ring_LightningAttractEntry:
 	cmpa.l	a1,a2
-	beq.w	return_17166
+	beq.b	Ring_LightningAttractReturn
 	movea.w	(Ring_start_addr_RAM).w,a4
 	cmpa.w	#MainCharacter,a0
-	beq.s	+
+	beq.s	Ring_UseP1Rings
 	movea.w	(Ring_start_addr_RAM_P2).w,a4
-+	move.b	status2(a0),d0			; get the secondary status
-	andi.b	#shield_mask,d0				; get shield type
-	cmpi.b	#shield_lightning,d0			; is it a lightning shield?
-	bne.s	Touch_Rings_NoAttraction		; if not, do not attract rings
+
+Ring_UseP1Rings:
+    move.b  shields(a0),d0                 ; 0 = none, 1=water, 2=fire, 3=lightning, 4=wind
+    cmpi.b  #shield_lightning,d0
+    bne.s   Touch_Rings_NoAttraction       ; no lightning → no attraction
 	move.w	x_pos(a0),d2
 	move.w	y_pos(a0),d3
 	subi.w	#$40,d2
@@ -218,9 +219,9 @@ loc_170D0:
 	move.w	#$C,d6
 	move.w	#$80,d4
 	move.w	#$80,d5
-	bra.s	loc_17112
-+
+	bra.s	Ring_Attract_Scan
 
+Ring_LightningAttractReturn:
 	rts
 ; ===========================================================================
 
@@ -243,7 +244,7 @@ Touch_Rings_NoAttraction:
 	move.w	#$10,d4
 	add.w	d5,d5
 
-loc_17112:
+Ring_Attract_Scan:
 	tst.w	(a4)
 	bne.w	loc_1715C
 	move.w	(a1),d0
@@ -274,10 +275,9 @@ loc_17142:
 	bhi.w	loc_1715C
 
 loc_17148:
-	move.b	status2(a0),d0			; get the secondary status
-	andi.b	#shield_mask,d0				; get shield type
-	cmpi.b	#shield_lightning,d0			; is it a lightning shield?
-	beq.s	AttractRing				; if so, attract the ring
+    move.b  shields(a0),d0              ; which shield is equipped? (0 = none)
+    cmpi.b  #shield_lightning,d0        ; lightning (magnet) shield?
+    beq.s   AttractRing                 ; yes → run ring attraction
 
 loc_17148_cont:
 	move.w	#$604,(a4)
@@ -294,9 +294,9 @@ loc_1715C:
 	addq.w	#4,a1
 	addq.w	#2,a4
 	cmpa.l	a1,a2
-	bne.w	loc_17112
+	bne.w	Ring_Attract_Scan
 
-return_17166:
+Touch_Rings_Return:
 	rts
 ; ===========================================================================
 

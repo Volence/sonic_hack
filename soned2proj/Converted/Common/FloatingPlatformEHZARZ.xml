@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ObjDef xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Namespace="SonED2.ZoneCommon" TypeName="FloatingPlatformEHZARZ" Language="cs" Name="Floating Platform (EHZ\ARZ)" Image="Image1" RememberState="false" Debug="false" xmlns="http://www.sonicretro.org">
+  <Images>
+    <ImageFromBitmap id="Image1" filename="Sprites/s2objsprite2-3.png" />
+  </Images>
+  <Properties>
+    <BitsProperty name="Property1" type="Enum1" startbit="0" length="2" />
+    <BitsProperty name="Property2" type="Enum2" startbit="2" length="1" />
+    <BitsProperty name="Property3" type="Enum3" startbit="3" length="1" />
+    <BitsProperty name="Property4" type="Enum4" startbit="4" length="1" />
+    <BitsProperty name="Property5" type="Enum5" startbit="5" length="1" />
+    <BitsProperty name="Property6" type="Enum6" startbit="6" length="1" />
+    <BitsProperty name="Property7" type="Enum7" startbit="7" length="1" />
+  </Properties>
+  <Enums>
+    <Enum name="Enum1">
+      <EnumMember name="Stationary" />
+      <EnumMember name="Horizontal" />
+      <EnumMember name="Vertical" />
+      <EnumMember name="Falling" />
+    </Enum>
+    <Enum name="Enum2">
+      <EnumMember name="Unknown" />
+      <EnumMember name="Unknown2" />
+    </Enum>
+    <Enum name="Enum3">
+      <EnumMember name="Unknown" />
+      <EnumMember name="Unknown2" />
+    </Enum>
+    <Enum name="Enum4">
+      <EnumMember name="Small Art" />
+      <EnumMember name="Large Art" />
+    </Enum>
+    <Enum name="Enum5">
+      <EnumMember name="Unknown" />
+      <EnumMember name="Unknown2" />
+    </Enum>
+    <Enum name="Enum6">
+      <EnumMember name="Visible" />
+      <EnumMember name="Invisible" />
+    </Enum>
+    <Enum name="Enum7">
+      <EnumMember name="Solid on top (small)" />
+      <EnumMember name="Solid on all sides (large)" />
+    </Enum>
+  </Enums>
+  <Display>
+    <DisplayOption>
+      <Condition property="Property4" value="Small Art" />
+      <ImageRef image="Image1">
+        <Offset X="-32" Y="-12" />
+      </ImageRef>
+    </DisplayOption>
+  </Display>
+</ObjDef>

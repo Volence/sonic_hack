@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ObjDef xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Namespace="SonED2.ZoneCommon" TypeName="EggPrison" Language="cs" Name="Egg Prison" Image="Image1" RememberState="false" Debug="false" xmlns="http://www.sonicretro.org">
+  <Images>
+    <ImageFromBitmap id="Image1" filename="Sprites/s2objsprite1-13.png" />
+    <ImageFromBitmap id="Image2" filename="Sprites/s2objsprite1-14.png" />
+  </Images>
+  <Display>
+    <DisplayOption>
+      <ImageRef image="Image1">
+        <Offset X="-16" Y="-46" />
+      </ImageRef>
+      <ImageRef image="Image2">
+        <Offset X="-32" Y="-26" />
+      </ImageRef>
+    </DisplayOption>
+  </Display>
+</ObjDef>

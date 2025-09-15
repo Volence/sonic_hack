@@ -333,7 +333,7 @@ Fire_Shield_Explosion_Display:
 ; ----------------------------------------------------------------------------
 
 Lightning_Shield:
-	move.l	#ArtUnc_LighteningShield_Sparks,d1
+	move.l	#ArtUnc_LightningShield_Sparks,d1
 	move.w	#$9AA0,d2		; VRAM transfer location
 	move.w	#$50,d3			; Transfer length
 	jsr	(QueueDMATransfer).l
@@ -597,15 +597,15 @@ Fire_Shield_Explosion_Data:
 		
 Lightning_Shield_Data:
 		dc.w	objroutine(Lightning_Shield_Main)
-		dc.l	Map_LighteningShield
+		dc.l	Map_LightningShield
 		dc.w	$4BE
 		dc.b	4
 		dc.w	$80
 		dc.b	$18
 		dc.b	$18
 		dc.w	1
-		dc.l	DPLC_LighteningShield
-		dc.l	ArtUnc_LighteningShield
+		dc.l	DPLC_LightningShield
+		dc.l	ArtUnc_LightningShield
 		dc.b	-1
 		even
 

@@ -183,17 +183,43 @@ Attracted_Ring:
 	move.b	#8,height_pixels(a0)
 	move.b	#5,collision_response(a0)	
 
+; ----------------------------------------------------------------------------
+; ObjRing_Attract — ring update while in "attract" mode
+;   Pulls toward a player if that player has Lightning shield.
+;   If parent is missing, fall back to Player 1.
+; ----------------------------------------------------------------------------
 ObjRing_Attract:
-	bsr.w	ObjRing_Move				; move the ring
-	movea.w	parent(a0),a1				; get the parent
-	move.b	status2(a1),d0			; get the secondary status
-	andi.b	#shield_mask,d0				; get shield type
-	cmpi.b	#shield_lightning,d0			; is it a lightning shield?
-	beq.s	+					; if so, branch
-	move.w	#objroutine(ObjRing_Bounce),(a0)	; change to a scattered ring object
-	move.b	#-1,(Ring_spill_anim_counter).w		; reset the scattered rings counter
-+	move.b	(Rings_anim_frame).w,mapping_frame(a0)
-	jmp	DisplaySprite
+    bsr.w   ObjRing_Move                         ; move the ring first
+
+    ; ---------- Resolve player pointer ----------
+    move.w  parent(a0),d0
+    beq.s   ORA_FallbackP1
+    movea.w d0,a1                                ; a1 = parent object (word address in your build)
+    bra.s   ORA_HavePlayer
+
+ORA_FallbackP1:
+    movea.l #MainCharacter,a1                    ; P1 player object address
+
+ORA_HavePlayer:
+    ; ---------- Lightning shield present? ----------
+    move.b  shields(a1),d0                       ; source of truth: 0..N
+    cmpi.b  #shield_lightning,d0
+    beq.s   ORA_Draw                             ; yes → stay in attract mode
+
+    ; ---------- No lightning → revert to bounce ----------
+    move.w  #objroutine(ObjRing_Bounce),(a0)
+    move.b  #-1,(Ring_spill_anim_counter).w      ; reset spill counter
+
+ORA_Draw:
+    move.b  (Rings_anim_frame).w,mapping_frame(a0)
+    jmp     DisplaySprite
+
+ObjRing_Attract_NoAttract:
+    ; Switch back to scattered/bounce behavior
+    move.w  #objroutine(ObjRing_Bounce),(a0)
+    move.b  #-1,(Ring_spill_anim_counter).w      ; reset spill anim counter
+    move.b  (Rings_anim_frame).w,mapping_frame(a0)
+    jmp     DisplaySprite
 
 ObjRing_Move:
 	movea.w	parent(a0),a1

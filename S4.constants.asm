@@ -45,6 +45,7 @@ respawn_index =		  	$22		; byte, handled via object manager
 
 ; ---------------------------------------------------------------------------
 ; seem to have been added by Malevolence
+wind_hover_time =		$23
 knuckles_unk =		subtype ; will probably change when we know what it actually is
 shield_art =            $24
 shield_dplc =           $28
@@ -147,7 +148,7 @@ s2b_speedshoes		= 6
 s2b_nofriction		= 7
 
 ; lower 2 bits of status2(a0)
-shield_mask		= 3
+shield_mask		= 2
 shield_del		= $FF-shield_mask
 
 shield_none		= 0
@@ -176,6 +177,7 @@ s3b_jumping		= 5
 lock_mask		= 3
 lock_del		= $FF-lock_mask
 
+
 ; ---------------------------------------------------------------------------
 ; Controller Buttons
 ;
@@ -196,7 +198,20 @@ button_right_mask:		EQU	1<<button_right	; $08
 button_B_mask:			EQU	1<<button_B	; $10
 button_C_mask:			EQU	1<<button_C	; $20
 button_A_mask:			EQU	1<<button_A	; $40
+jump_mask:           	EQU button_A_mask|button_B_mask|button_C_mask   ; $70
 button_start_mask:		EQU	1<<button_start	; $80
+
+; ----------------------------------------
+; Touch Response Type IDs
+; ----------------------------------------
+TR_Enemy        EQU 1
+TR_Boss         EQU 2
+TR_ChkHurt      EQU 3
+TR_Monitor      EQU 4
+TR_Ring         EQU 5
+TR_Bubble       EQU 6
+TR_Projectile   EQU 7
+TR_MaxIndex     EQU 7               ; highest valid type
 
 ; ---------------------------------------------------------------------------
 ; Constants that can be used instead of hard-coded IDs for various things.
@@ -1060,7 +1075,8 @@ Plc_Buffer:			ds.b	$80	; Pattern load queue
 Plc_Buffer_End:
 
 Misc_Variables:
-				ds.w	1	; unused
+Wind_Hover_Div2:       ds.b 1   ; <— flip-flop used to drain Wind hover every other frame
+				ds.b	1	; unused
 
 ; extra variables for the second player (CPU) in 1-player mode
 Tails_control_counter:		ds.w	1	; how long until the CPU takes control

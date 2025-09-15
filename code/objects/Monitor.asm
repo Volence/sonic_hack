@@ -36,8 +36,13 @@ ObjMonitor_Main:
 
 ObjMonitor_Solid:
 	ckhit.w	ObjMonitor_Break
-	move.w	#$1A,d1			; monitor's width
-	move.w	#$F,d2			; height/2
+	moveq   #0,d1
+	move.b  width_pixels(a0),d1
+
+	; Monitor: height/2 → d2  (byte at $F, then divide by 2)
+	moveq   #0,d2
+	move.b  height_pixels(a0),d2
+	lsr.w   #1,d2
 	move.w	d2,d3
 	addq.w	#1,d3
 	move.w	x_pos(a0),d4
@@ -60,7 +65,7 @@ ObjMonitor_Solid_Sonic:
 	bne.s	ObjMonitor_ChkOverEdge	; if yes, branch
 	cmpi.b	#2,anim(a1)		; is Sonic spinning?
 	beq.b	locret_12756		; if so, rMonitors_Brokenturn
-	jmp	SolidObject2		; if not, branch
+	jmp	Solid_Flat_Alt		; if not, branch
 
 ObjMonitor_Solid_Tails:
 	btst	d6,status(a0)		; is Tails standing on the monitor?
@@ -70,7 +75,7 @@ ObjMonitor_Solid_Tails:
 	; in one player mode monitors always behave as solid for Tails
 	cmpi.b	#2,anim(a1)		; is Tails spinning?
 	beq.b	locret_12756		; if so, return
-+	jmp	SolidObject2		; if not, branch
++	jmp	Solid_Flat_Alt		; if not, branch
 
 locret_12756:
 	rts
@@ -171,19 +176,23 @@ ObjMonitor_Icon:
 	move.b	(Update_HUD_timer).w,d1
 	add.b	(Update_HUD_timer_2P).w,d1
 	cmpi.b	#2,d1	; is either player done with the act?
-	beq.s	+	; if not, branch
+	beq.s	+	; if yes, branch
 	moveq	#7,d0	; give invincibility, instead
 +
 	move.b	d0,anim(a0)
 
 loc_128C6:			; Determine correct mappings offset.
-	;addq.b	#1,d0
-	move.b	d0,mapping_frame(a0)
-	movea.l	#Monitor_MapUnc_12D36,a1
-	add.b	d0,d0
-	adda.w	(a1,d0.w),a1
-	addq.w	#2,a1
-	move.l	a1,mappings(a0)
+	cmpi.b  #$0C,d0                    ; <= adjust if your table has more/less frames
+	bls.s   +
+	moveq   #0,d0                      ; fallback to 0 if out of range
++	move.b  d0,mapping_frame(a0)
+
+	; Select pointer to that frame from the Monitor table
+	movea.l #Monitor_MapUnc_12D36,a1   ; base of the monitor mappings table
+	add.b   d0,d0                      ; word-sized entries → index*2
+	adda.w  (a1,d0.w),a1               ; a1 = base + frame offset
+	addq.w  #2,a1                      ; (keep this as your engine expects)
+	move.l  a1,mappings(a0)
 
 ObjMonitor_Icon_Raise:
 	tst.w	y_vel(a0)	; is icon still floating up?
@@ -300,10 +309,10 @@ ObjMonitor_Shoes:
 	addq.w	#1,(a2)
 	bset	#2,status2(a1)	; give super sneakers status
 	move.w	#$4B0,speedshoes_time(a1)
-	move.w	a0,-(sp)
-	move.w	a1,a0
+	move.l	a0,-(sp)
+	movea.l	a1,a0
 	bsr.w	ChooseSpeeds
-	move.w	(sp)+,a0
+	movea.l	(sp)+,a0
 	move.w	#MusID_SpeedUp,d0
 	jmp	(PlayMusic).l	; Speed up tempo
 ; ===========================================================================
@@ -336,10 +345,10 @@ ObjMonitor_Invincible:
 	jsr	(PlayMusic).l
 
 ObjMonitor_ChooseShield:
-	move.w	a0,-(sp)
-	move.w	a1,a0
+	move.l	a0,-(sp)
+	movea.l	a1,a0
 	bsr.w	ChooseShield
-	move.w	(sp)+,a0
+	movea.l	(sp)+,a0
 
 ObjMonitor_Invincible_Return:
 	rts
@@ -370,7 +379,7 @@ ObjMonitor_Wind:
 	addq.w 	#1,(a2)
 	move.b	#0,shields(a1)	; remove any current shield
 	move.b	#shield_wind,shields(a1)	; give player a wind shield
-	move.b	#$F7,d0					; play the water shield get sound
+	move.b	#$F7,d0					; uses water-shield SFX
 	jsr	PlaySound
 	bra.b	ObjMonitor_ChooseShield
 ; ---------------------------------------------------------------------------
@@ -397,6 +406,5 @@ Monitor_Data:
 		
 Monitor_Broken_Data:
 		dc.w	objroutine(ObjMonitor_Display)
-		dc.b	$B	;Mapping
-		dc.b	$A	;Animation
-		
+		dc.b	$B							; Mapping
+		dc.b	$A							; Animation

@@ -50,7 +50,7 @@ ObjSpring_Up:
 	lea	(MainCharacter).w,a1 ; a1=character
 	moveq	#3,d6
 	movem.l	d1-d4,-(sp)
-	jsr	loc_1978E
+	jsr	Solid_FastMv_Cont
 	btst	#3,status(a0)
 	beq.s	loc_189A8
 	bsr.s	loc_189CA
@@ -59,7 +59,7 @@ loc_189A8:
 	movem.l	(sp)+,d1-d4
 	lea		(Sidekick).w,a1 ; a1=character
 	moveq	#4,d6
-	jsr	loc_1978E
+	jsr	Solid_FastMv_Cont
 	btst	#4,status(a0)
 	beq.s	loc_189C0
 	bsr.s	loc_189CA
@@ -149,7 +149,7 @@ ObjSpring_Side:
 	lea	(MainCharacter).w,a1 ; a1=character
 	moveq	#3,d6
 	movem.l	d1-d4,-(sp)
-	jsr	loc_1978E
+	jsr	Solid_FastMv_Cont
 	btst	#5,status(a0)
 	beq.s	loc_18AB0
 	move.b	status(a0),d1
@@ -167,7 +167,7 @@ loc_18AB0:
 	movem.l	(sp)+,d1-d4
 	lea	(Sidekick).w,a1 ; a1=character
 	moveq	#4,d6
-	jsr	loc_1978E
+	jsr	Solid_FastMv_Cont
 	btst	#6,status(a0)
 	beq.s	loc_18AE0
 	move.b	status(a0),d1
@@ -333,7 +333,7 @@ ObjSpring_Down:
 	lea	(MainCharacter).w,a1 ; a1=character
 	moveq	#3,d6
 	movem.l	d1-d4,-(sp)
-	jsr	loc_1978E
+	jsr	Solid_FastMv_Cont
 	cmpi.w	#-2,d4
 	bne.s	loc_18CA6
 	bsr.s	loc_18CC6
@@ -342,7 +342,7 @@ loc_18CA6:
 	movem.l	(sp)+,d1-d4
 	lea	(Sidekick).w,a1 ; a1=character
 	moveq	#4,d6
-	jsr	loc_1978E
+	jsr	Solid_FastMv_Cont
 	cmpi.w	#-2,d4
 	bne.s	loc_18CBC
 	bsr.s	loc_18CC6
@@ -424,7 +424,7 @@ ObjSpring_DiagUp:
 	lea	(MainCharacter).w,a1 ; a1=character
 	moveq	#3,d6
 	movem.l	d1-d4,-(sp)
-	jsr	SolidObject_Simple
+	jsr	Solid_Simple_Cont
 	btst	#3,status(a0)
 	beq.s	loc_18D92
 	bsr.s	loc_18DB4
@@ -433,7 +433,7 @@ loc_18D92:
 	movem.l	(sp)+,d1-d4
 	lea	(Sidekick).w,a1 ; a1=character
 	moveq	#4,d6
-	jsr	SolidObject_Simple
+	jsr	Solid_Simple_Cont
 	btst	#4,status(a0)
 	beq.s	loc_18DAA
 	bsr.s	loc_18DB4
@@ -543,7 +543,7 @@ ObjSpring_DiagDown:
 	lea	(MainCharacter).w,a1 ; a1=character
 	moveq	#3,d6
 	movem.l	d1-d4,-(sp)
-	jsr	SolidObject_Simple
+	jsr	Solid_Simple_Cont
 	cmpi.w	#-2,d4
 	bne.s	loc_18EC4
 	bsr.s	loc_18EE6
@@ -552,7 +552,7 @@ loc_18EC4:
 	movem.l	(sp)+,d1-d4
 	lea	(Sidekick).w,a1 ; a1=character
 	moveq	#4,d6
-	jsr	SolidObject_Simple
+	jsr	Solid_Simple_Cont
 	cmpi.w	#-2,d4
 	bne.s	loc_18EDA
 	bsr.s	loc_18EE6

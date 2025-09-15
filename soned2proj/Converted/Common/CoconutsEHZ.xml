@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ObjDef xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Namespace="SonED2.ZoneCommon" TypeName="CoconutsEHZ" Language="cs" Name="Coconuts (EHZ)" Image="Image1" DefaultSubtype="1E" Debug="false" xmlns="http://www.sonicretro.org">
+  <Images>
+    <ImageFromBitmap id="Image1" filename="Sprites/s2objsprite2-1.png" />
+  </Images>
+  <Display>
+    <DisplayOption>
+      <ImageRef image="Image1">
+        <Offset X="-9" Y="-22" />
+      </ImageRef>
+    </DisplayOption>
+  </Display>
+</ObjDef>

@@ -37,34 +37,39 @@ Spikes:
 	move.w	#objroutine(ObjSpikes_Ground),(a0)	; go to routine Ground
 
 ObjSpikes_Ground:
-	bsr.w	ObjSpikes_Move
-	moveq	#0,d1
-	move.b	width_pixels(a0),d1
-	lsr.b	#1,d1
-	addi.w	#$B,d1
-	moveq	#0,d2
-	move.b	height_pixels(a0),d2
-	lsr.b	#1,d2
-	move.w	d2,d3
-	addq.w	#1,d3
-	move.w	x_pos(a0),d4
-	jsr	SolidObject
-	move.b	status(a0),d6
-	andi.b	#$18,d6
-	beq.s	ObjSpikes_Done
-	move.b	d6,d0
-	andi.b	#8,d0
-	beq.s	+
-	lea	(MainCharacter).w,a1 ; a1=character
-	bsr.w	Touch_ChkHurt2
-+	andi.b	#$10,d6
-	beq.s	ObjSpikes_Done
-	lea	(Sidekick).w,a1 ; a1=character
-	bsr.w	Touch_ChkHurt2
+    bsr.w   ObjSpikes_Move
+
+    ; --- Sonic ---
+    lea     (MainCharacter).w,a1
+    moveq   #3,d6
+    jsr     PrepSolid_Player          ; d1..d4 based on a1
+    jsr     Solid_Flat_CheckOne
+
+    ; --- Tails ---
+    lea     (Sidekick).w,a1
+    moveq   #4,d6
+    jsr   PrepSolid_Player
+    jsr     Solid_Flat_CheckOne
+
+    ; interpret legacy top-contact bits (#3/#4)
+    move.b  status(a0),d6
+    andi.b  #$18,d6
+    beq.s   ObjSpikes_Done
+    move.b  d6,d0
+    andi.b  #8,d0
+    beq.s   +
+    lea     (MainCharacter).w,a1
+    bsr.w   Touch_ChkHurt2
++
+    andi.b  #$10,d6
+    beq.s   ObjSpikes_Done
+    lea     (Sidekick).w,a1
+    bsr.w   Touch_ChkHurt2
 
 ObjSpikes_Done:
-	move.w	objoff_30(a0),d0
-	jmp	MarkObjGone2
+    move.w  objoff_30(a0),d0
+    jmp     MarkObjGone2
+
 ; ===========================================================================
 
 ObjSpikes_WallsP:
@@ -72,65 +77,79 @@ ObjSpikes_WallsP:
 	move.w	#objroutine(ObjSpikes_Walls),(a0)	; go to routine Walls
 
 ObjSpikes_Walls:
-	move.w	x_pos(a0),-(sp)
-	bsr.w	ObjSpikes_Move
-	moveq	#0,d1
-	move.b	width_pixels(a0),d1
-	lsr.b	#1,d1
-	addi.w	#$B,d1
-	moveq	#0,d2
-	move.b	height_pixels(a0),d2
-	lsr.b	#1,d2
-	move.w	d2,d3
-	addq.w	#1,d3
-	move.w	(sp)+,d4
-	jsr	SolidObject
-	swap	d6
-	andi.w	#3,d6
-	beq.s	ObjSpikes_Done
-	move.b	d6,d0
-	andi.b	#1,d0
-	beq.s	+
-	lea	(MainCharacter).w,a1 ; a1=character
-	bsr.w	Touch_ChkHurt2
-	bclr	#5,status(a0)
-+	andi.b	#2,d6
-	beq.s	ObjSpikes_Done
-	lea	(Sidekick).w,a1 ; a1=character
-	bsr.w	Touch_ChkHurt2
-	bclr	#6,status(a0)
-	bra.w	ObjSpikes_Done
+    move.w  x_pos(a0),-(sp)
+    bsr.w   ObjSpikes_Move
+    move.w  (sp)+,d4                  ; restore original X into d4
+
+    ; --- Sonic ---
+    lea     (MainCharacter).w,a1
+    moveq   #3,d6
+    jsr     PrepSolid_Player_KeepD4   ; d4 preserved
+    jsr     Solid_Flat_CheckOne
+
+    ; --- Tails ---
+    lea     (Sidekick).w,a1
+    moveq   #4,d6
+    move.w  x_pos(a0),d4              ; if you prefer the *current* X, reload it
+    jsr     PrepSolid_Player_KeepD4
+    jsr     Solid_Flat_CheckOne
+
+    ; read side-contact bits (#5/#6) via swap → low 2 bits
+    swap    d6
+    andi.w  #3,d6
+    beq.s   ObjSpikes_Done
+
+    move.b  d6,d0
+    andi.b  #1,d0
+    beq.s   +
+    lea     (MainCharacter).w,a1
+    bsr.w   Touch_ChkHurt2
+    bclr    #5,status(a0)
++
+    andi.b  #2,d6
+    beq.s   ObjSpikes_Done
+    lea     (Sidekick).w,a1
+    bsr.w   Touch_ChkHurt2
+    bclr    #6,status(a0)
+    bra.w   ObjSpikes_Done
+
 ; ===========================================================================
 
 ObjSpikes_CeilingP:
 	move.w	#objroutine(ObjSpikes_Ceiling),(a0)	; go to routine Ceiling
 
 ObjSpikes_Ceiling:
-	bsr.w	ObjSpikes_Move
-	moveq	#0,d1
-	move.b	width_pixels(a0),d1
-	lsr.b	#1,d1	
-	addi.w	#$B,d1
-	moveq	#0,d2
-	move.b	height_pixels(a0),d2
-	lsr.b	#1,d2
-	move.w	d2,d3
-	addq.w	#1,d3
-	move.w	x_pos(a0),d4
-	jsr	SolidObject
-	swap	d6
-	andi.w	#$C,d6
-	beq.w	ObjSpikes_Done
-	move.b	d6,d0
-	andi.b	#4,d0
-	beq.s	+
-	lea	(MainCharacter).w,a1 ; a1=character
-	bsr.w	Touch_ChkHurt2
-+	andi.b	#8,d6
-	beq.w	ObjSpikes_Done
-	lea	(Sidekick).w,a1 ; a1=character
-	bsr.w	Touch_ChkHurt2
-	bra.w	ObjSpikes_Done
+    bsr.w   ObjSpikes_Move
+
+    ; --- Sonic ---
+    lea     (MainCharacter).w,a1
+    moveq   #3,d6
+    jsr     PrepSolid_Player
+    jsr     Solid_Flat_CheckOne
+
+    ; --- Tails ---
+    lea     (Sidekick).w,a1
+    moveq   #4,d6
+    jsr     PrepSolid_Player
+    jsr     Solid_Flat_CheckOne
+
+    ; read ceiling-contact bits (#? via swap: use #$0C mask)
+    swap    d6
+    andi.w  #$000C,d6
+    beq.w   ObjSpikes_Done
+
+    move.b  d6,d0
+    andi.b  #4,d0
+    beq.s   +
+    lea     (MainCharacter).w,a1
+    bsr.w   Touch_ChkHurt2
++
+    andi.b  #8,d6
+    beq.w   ObjSpikes_Done
+    lea     (Sidekick).w,a1
+    bsr.w   Touch_ChkHurt2
+    bra.w   ObjSpikes_Done
+
 
 ; ---------------------------------------------------------------------------
 ; Subroutine for checking if Sonic/Tails should be hurt and hurting them if so

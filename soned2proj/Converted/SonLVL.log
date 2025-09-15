@@ -1,0 +1,47 @@
+Mono runtime detected.
+Operating system: Microsoft Windows NT 6.2.9200.0
+Opening INI file "Z:\home\volence\sonic_hacks\sonic_hack\soned2proj\Converted\s2obj.ini"...
+Game type is S2.
+Loading Sprite1...
+System.AggregateException: One or more errors occurred. (Level must contain at least one Tiles file!) (Level must contain at least one Blocks file!) (Level must contain at least one Chunks file!) (Level must contain a Layout file!) (Level must contain at least one Palette file!) ---> System.FormatException: Level must contain at least one Tiles file!
+  at SonicRetro.SonLVL.API.LevelData.LoadLevelTiles () [0x0004d] in <0dd379414926435e9339e2f7caccaa42>:0 
+  at System.Threading.Tasks.Task.InnerInvoke () [0x0000f] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Task.Execute () [0x00000] in <11dcdf5123e74bb688970e558ca3654a>:0 
+   --- End of inner exception stack trace ---
+  at System.Threading.Tasks.Task.WaitAll (System.Threading.Tasks.Task[] tasks, System.Int32 millisecondsTimeout, System.Threading.CancellationToken cancellationToken) [0x001c8] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Task.WaitAll (System.Threading.Tasks.Task[] tasks, System.Int32 millisecondsTimeout) [0x00000] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Task.WaitAll (System.Threading.Tasks.Task[] tasks) [0x00000] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Parallel.Invoke (System.Threading.Tasks.ParallelOptions parallelOptions, System.Action[] actions) [0x0029c] in <11dcdf5123e74bb688970e558ca3654a>:0 
+--- End of stack trace from previous location where exception was thrown ---
+
+  at System.Threading.Tasks.Parallel.ThrowSingleCancellationExceptionOrOtherException (System.Collections.ICollection exceptions, System.Threading.CancellationToken cancelToken, System.Exception otherException) [0x0000b] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Parallel.Invoke (System.Threading.Tasks.ParallelOptions parallelOptions, System.Action[] actions) [0x002b9] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Parallel.Invoke (System.Action[] actions) [0x00000] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at SonicRetro.SonLVL.API.LevelData.LoadLevel (System.String levelname, System.Boolean loadGraphics) [0x001db] in <0dd379414926435e9339e2f7caccaa42>:0 
+  at SonicRetro.SonLVL.GUI.MainForm.backgroundLevelLoader_DoWork (System.Object sender, System.ComponentModel.DoWorkEventArgs e) [0x00023] in <743179368e7e433e903661a054f9f681>:0 
+---> (Inner Exception #0) System.FormatException: Level must contain at least one Tiles file!
+  at SonicRetro.SonLVL.API.LevelData.LoadLevelTiles () [0x0004d] in <0dd379414926435e9339e2f7caccaa42>:0 
+  at System.Threading.Tasks.Task.InnerInvoke () [0x0000f] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Task.Execute () [0x00000] in <11dcdf5123e74bb688970e558ca3654a>:0 <---
+
+---> (Inner Exception #1) System.FormatException: Level must contain at least one Blocks file!
+  at SonicRetro.SonLVL.API.LevelData.LoadLevelBlocks () [0x0004d] in <0dd379414926435e9339e2f7caccaa42>:0 
+  at System.Threading.Tasks.Task.InnerInvoke () [0x0000f] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Task.Execute () [0x00000] in <11dcdf5123e74bb688970e558ca3654a>:0 <---
+
+---> (Inner Exception #2) System.FormatException: Level must contain at least one Chunks file!
+  at SonicRetro.SonLVL.API.LevelData.LoadLevelChunks () [0x0004d] in <0dd379414926435e9339e2f7caccaa42>:0 
+  at System.Threading.Tasks.Task.InnerInvoke () [0x0000f] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Task.Execute () [0x00000] in <11dcdf5123e74bb688970e558ca3654a>:0 <---
+
+---> (Inner Exception #3) System.FormatException: Level must contain a Layout file!
+  at SonicRetro.SonLVL.API.LevelData.LoadLevelLayout (System.String levelname) [0x000d3] in <0dd379414926435e9339e2f7caccaa42>:0 
+  at SonicRetro.SonLVL.API.LevelData+<>c__DisplayClass71_0.<LoadLevel>b__0 () [0x00000] in <0dd379414926435e9339e2f7caccaa42>:0 
+  at System.Threading.Tasks.Task.InnerInvoke () [0x0000f] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Task.Execute () [0x00000] in <11dcdf5123e74bb688970e558ca3654a>:0 <---
+
+---> (Inner Exception #4) System.FormatException: Level must contain at least one Palette file!
+  at SonicRetro.SonLVL.API.LevelData.LoadLevelPalette () [0x00050] in <0dd379414926435e9339e2f7caccaa42>:0 
+  at System.Threading.Tasks.Task.InnerInvoke () [0x0000f] in <11dcdf5123e74bb688970e558ca3654a>:0 
+  at System.Threading.Tasks.Task.Execute () [0x00000] in <11dcdf5123e74bb688970e558ca3654a>:0 <---
+

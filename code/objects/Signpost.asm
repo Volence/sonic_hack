@@ -342,7 +342,7 @@ Egg_Prison_Solid:
 	move.w	#$18,d2
 	move.w	#$18,d3
 	move.w	x_pos(a0),d4
-	jsr	(SolidObject).l
+	jsr	(Solid_Flat).l
 	lea	(Ani_Egg_Prison).l,a1
 	jsr	(AnimateSprite).l
 	jmp	(MarkObjGone).l
@@ -353,7 +353,7 @@ Egg_Prison_Button:
 	move.w	#8,d2
 	move.w	#8,d3
 	move.w	x_pos(a0),d4
-	jsr	(SolidObject).l
+	jsr	(Solid_Flat).l
 	move.w	objoff_30(a0),y_pos(a0)
 	move.b	status(a0),d0
 	andi.b	#$18,d0
