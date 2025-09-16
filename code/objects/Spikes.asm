@@ -1,5 +1,5 @@
 ; ===========================================================================
-ObjSpikes_Data:
+ObjSpikes_WidthHeight:
 	dc.b $20, $20	; 0
 	dc.b $40, $20	; 1
 	dc.b $60, $20	; 2
@@ -21,7 +21,7 @@ Spikes:
 	move.b	subtype(a0),d0				; get subtype
 	andi.b	#$F,subtype(a0)				; remove upper nybble from stored subtype
 	andi.w	#$F0,d0					; remove lower nybble from fetched subtype
-	lea	ObjSpikes_Data(pc),a1
+	lea		ObjSpikes_WidthHeight(pc),a1
 	lsr.w	#3,d0
 	adda.w	d0,a1					; get address to spike data
 	move.b	(a1)+,width_pixels(a0)			; set width

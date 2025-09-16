@@ -1,6 +1,5 @@
 ; =========================
 ; Pitcher Plant (Object 0B)
-; All magic numbers replaced with constants
 ; =========================
 
 ; -------------------------
@@ -60,7 +59,6 @@ PitcherPlant__BulletHeight         = 3
 ; Animations (object)
 PitcherPlant__Anim_Idle            = 0
 PitcherPlant__Anim_Shoot           = 2
-PitcherPlant__InitAnim             = PitcherPlant__Anim_Idle
 PitcherPlant__InitMapFrame         = 0
 
 ; Animations (bullet)
@@ -197,7 +195,7 @@ PitcherPlant__Data:
         dc.w    PitcherPlant__Priority
         dc.b    PitcherPlant__Width
         dc.b    PitcherPlant__Height
-        dc.b    PitcherPlant__InitAnim
+        dc.b    PitcherPlant__Anim_Idle
         dc.b    PitcherPlant__InitMapFrame
 
 PitcherPlant__BulletData:
