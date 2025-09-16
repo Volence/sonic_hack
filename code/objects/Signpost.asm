@@ -137,7 +137,7 @@ GotThroughAct:
 	bne.s	+
 	moveq	#PLCID_ResultsTails,d0
 +
-	jsr	(LoadPLC2).l
+	jsr	(PLC2_Load).l
 	move.b	#1,(Update_Bonus_score).w
 	moveq	#0,d0
 	move.b	(Timer_minute).w,d0
@@ -424,7 +424,7 @@ CheckPoint:
 	move.w	#$280,priority(a0)
 	lea	(Object_Respawn_Table).w,a2
 	moveq	#0,d0
-	move.b	respawn_index(a0),d0
+	move.w	respawn_index(a0),d0
 	bclr	#7,2(a2,d0.w)
 	btst	#0,2(a2,d0.w)
 	bne.s	loc_1F120
@@ -496,7 +496,7 @@ CheckPoint_CheckActivation:
 	bsr.w	CheckPoint_SaveData
 	lea	(Object_Respawn_Table).w,a2
 	moveq	#0,d0
-	move.b	respawn_index(a0),d0
+	move.w	respawn_index(a0),d0
 	bset	#0,2(a2,d0.w)
 
 return_1F220:

@@ -7,13 +7,13 @@ Monitor:
 	lea		Monitor_Data(pc),a2
 	jsr		Load_Object2
 	moveq	#0,d0
-	move.b	respawn_index(a0),d0
+	move.w	respawn_index(a0),d0
 	beq.s	+
 	lea		(Object_Respawn_Table).w,a2
 	bclr	#7,2(a2,d0.w)
 	btst	#0,2(a2,d0.w)		; if this bit is set it means the monitor is already broken
 	beq.s	+
-	lea		Monitor_Broken_Data,a2
+	lea		Monitor_Broken_Data(pc),a2
 	jsr		Load_Object4
 	bra.w	ObjMonitor_Display
 +
@@ -146,7 +146,7 @@ Monitor_SpawnSmoke:
 	move.w	y_pos(a0),y_pos(a1)
 +	lea	(Object_Respawn_Table).w,a2
 	moveq	#0,d0
-	move.b	respawn_index(a0),d0
+	move.w	respawn_index(a0),d0
 	bset	#0,2(a2,d0.w)				; mark monitor as destroyed
 	move.b	#1,anim(a0)				; switch to broken frame
 	jmp	DisplaySprite
@@ -407,4 +407,5 @@ Monitor_Data:
 Monitor_Broken_Data:
 		dc.w	objroutine(ObjMonitor_Display)
 		dc.b	$B							; Mapping
-		dc.b	$A							; Animation
+		dc.b	1							; Animation
+		dc.b	0							; Collision Response

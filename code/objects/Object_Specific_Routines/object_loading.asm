@@ -343,4 +343,5 @@ Load_Object4:
 	move.w	(a2)+,(a0)                ; new id / routine step
 	move.b	(a2)+,mapping_frame(a0)   ; forced frame
 	move.b	(a2)+,anim(a0)            ; forced animation
+	move.b	(a2)+,collision_response(a0)
 	rts

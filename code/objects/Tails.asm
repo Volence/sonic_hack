@@ -2612,7 +2612,7 @@ Tails_Finished:
 	move.w	#MusID_GameOver,d0
 	jsr	(PlayMusic).l
 	moveq	#PLCID_GameOver,d0
-	jmp	(LoadPLC).l
+	jmp	(PLC_Load).l
 ; End of function Tails_CheckGameOver
 
 ; ===========================================================================

@@ -81,7 +81,7 @@ loc_2D5C4:
 	move.w	#$B3,($FFFFF75C).w
 	move.b	#8,angle(a0)
 	moveq	#PLCID_Capsule,d0
-	bsr.w	JmpTo4_LoadPLC
+	bsr.w	JmpTo4_PLC_Load
 	rts
 ; ===========================================================================
 
@@ -248,8 +248,8 @@ JmpTo33_DisplaySprite
 JmpTo50_DeleteObject
 	jmp	(DeleteObject).l
 
-JmpTo4_LoadPLC
-	jmp	(LoadPLC).l
+JmpTo4_PLC_Load
+	jmp	(PLC_Load).l
 
 JmpTo_AddPoints
 	jmp	(AddPoints).l

@@ -216,7 +216,7 @@ ChkLoadObj:
 	move.w	(a0)+,x_pos(a1)
 	move.w	(a0)+,d0		; there are three things stored in this word
 	bpl.s	+			; branch, if the object doesn't get a respawn table entry
-	move.b	d2,respawn_index(a1)	; this value is provided by the objects manager
+	move.w	d2,respawn_index(a1)	; this value is provided by the objects manager
 +	move.w	d0,d1			; copy for later
 	andi.w	#$FFF,d0		; filter out y-position
 	move.w	d0,y_pos(a1)

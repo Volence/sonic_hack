@@ -82,7 +82,7 @@ TouchResponse__Next:
 
 ; ---------- jump table (word offsets) ----------
 TouchResponse__Dispatch:
-    dc.w    Touch_Enemy        - TouchResponse__Dispatch   ; 0
+    dc.w    Touch_Return       - TouchResponse__Dispatch   ; 0
     dc.w    Touch_Enemy        - TouchResponse__Dispatch   ; 1
     dc.w    Touch_Boss         - TouchResponse__Dispatch   ; 2
     dc.w    Touch_ChkHurt      - TouchResponse__Dispatch   ; 3
@@ -93,6 +93,8 @@ TouchResponse__Dispatch:
 
 ; ---------------------------------------------------------------------------
 
+Touch_Return:
+    rts
 
 Touch_Enemy:
 	move.b	status2(a0),d0

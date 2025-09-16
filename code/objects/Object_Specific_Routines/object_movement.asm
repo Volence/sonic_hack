@@ -54,7 +54,6 @@ ObjectMoveAndFall:
 ;   d0
 ; ---------------------------------------------------------------------------
 
-; sub_163AC: SpeedToPos:
 ObjectMove:
 	; ---- X: pos += (signed) x_vel << 8
 	move.w  x_vel(a0), d0        ; d0 = x_vel (16-bit, signed)
@@ -70,3 +69,27 @@ ObjectMove:
 
 	rts
 ; End of function ObjectMove
+
+; ---------------------------------------------------------------------------
+; Subroutine translating object speed to update object position
+; (FOR OBJECTS WITH DIFFERENT X & Y POSITION LOCATIONS)
+;   - Positions at $08(a0) (X) and $0A(a0) (Y) are 24.8 fixed-point.
+;   - Velocities at $10(a0) (X) and $12(a0) (Y) are signed 16-bit pixels/frame.
+;   - Adds (vel << 8) to each position.
+; Clobbers: d0
+; ---------------------------------------------------------------------------
+
+ObjectMove_AltPos:
+	; X: posX += (signed) velX << 8
+	move.w  $10(a0), d0         ; d0 = velX
+	ext.l   d0                  ; sign-extend to 32-bit
+	asl.l   #8, d0              ; scale to 24.8 (<< 8)
+	add.l   d0, $08(a0)         ; posX += delta
+
+	; Y: posY += (signed) velY << 8
+	move.w  $12(a0), d0         ; d0 = velY
+	ext.l   d0
+	asl.l   #8, d0
+	add.l   d0, $0A(a0)         ; posY += delta
+
+	rts
