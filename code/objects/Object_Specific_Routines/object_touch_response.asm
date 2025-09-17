@@ -305,10 +305,9 @@ HurtCharacter:
 	move.w	(Ring_count_2P).w,d1
 
 loc_3F88C:
-	move.b	status2(a0),d0
-	andi.b	#shield_mask,d0
+	move.b	shields(a0),d0
 	beq.b	Hurt_NoShield
-	andi.b	#shield_del,status2(a0) ; remove shield
+	move.b	#0,shields(a0) ; remove shield
 	bsr.w	ChooseShield
 	bra.b	Hurt_Sidekick
 

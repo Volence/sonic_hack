@@ -32,10 +32,10 @@ ObjectsManager_Init:
 	movea.l	a0,a1			; then copy it for quicker use later.
 	adda.w	(a0,d0.w),a0		; (Point1 * 2) + $003E
 
-	move.l	a0,(Obj_load_addr_0).w
-	move.l	a0,(Obj_load_addr_1).w
-	move.l	a0,(Obj_load_addr_2).w
-	move.l	a0,(Obj_load_addr_3).w
+	move.l	a0,(Obj_respawn_index_right).w
+	move.l	a0,(Obj_respawn_index_left).w
+	move.l	a0,(Obj_load_addr_right).w
+	move.l	a0,(Obj_load_addr_left).w
 	lea	(Object_Respawn_Table).w,a2	; load respawn list
 	move.w	#$101,(a2)+	; the first two bytes are not used as respawn values
 	move.w	#$5E,d0		; set loop counter
@@ -52,7 +52,7 @@ ObjectsManager_Init:
 	moveq	#0,d6	; no negative values allowed
 +
 	andi.w	#$FF80,d6	; limit to increments of $80 (width of a chunk)
-	movea.l	(Obj_load_addr_0).w,a0	; load address of object placement list
+	movea.l	(Obj_respawn_index_right).w,a0	; load address of object placement list
 
 -	; at the beginning of a level this gives respawn table entries to any object that is one chunk
 	; behind the left edge of the screen that needs to remember its state (Monitors, Badniks, etc.)
@@ -68,9 +68,9 @@ ObjectsManager_Init:
 ; ---------------------------------------------------------------------------
 
 loc_17B3E:
-	move.l	a0,(Obj_load_addr_0).w	; remember rightmost object that has been processed, so far (we still need to look forward)
-	move.l	a0,(Obj_load_addr_2).w
-	movea.l	(Obj_load_addr_1).w,a0	; reset
+	move.l	a0,(Obj_respawn_index_right).w	; remember rightmost object that has been processed, so far (we still need to look forward)
+	move.l	a0,(Obj_load_addr_right).w
+	movea.l	(Obj_respawn_index_left).w,a0	; reset
 	subi.w	#$80,d6		; look even farther left (any object behind this is out of range)
 	bcs.s	loc_17B62	; branch, if camera position would be behind level's left boundary
 
@@ -87,8 +87,8 @@ loc_17B3E:
 ; ---------------------------------------------------------------------------
 
 loc_17B62:
-	move.l	a0,(Obj_load_addr_1).w	; remember rightmost out-of-range object
-	move.l	a0,(Obj_load_addr_3).w
+	move.l	a0,(Obj_respawn_index_left).w	; remember rightmost out-of-range object
+	move.l	a0,(Obj_load_addr_left).w
 	move.w	#-1,(Camera_X_pos_last).w	; make sure the GoingForward routine is run
 	move.w	#-1,($FFFFF78C).w
 ; ---------------------------------------------------------------------------
@@ -108,7 +108,7 @@ ObjectsManager_Main:
 	bge.s	ObjectsManager_GoingForward	; if new pos is greater than old pos, branch
 	; if the player is moving back
 	move.w	d6,(Camera_X_pos_last).w
-	movea.l	(Obj_load_addr_1).w,a0	; get rightmost out-of-range object
+	movea.l	(Obj_respawn_index_left).w,a0	; get rightmost out-of-range object
 	subi.w	#$80,d6		; pretend the camera is farther to the left
 	bcs.s	loc_17BE6	; branch, if camera position would be behind level's left boundary
 
@@ -135,8 +135,8 @@ ObjectsManager_Main:
 	addq.w	#6,a0	; go back to next object
 
 loc_17BE6:
-	move.l	a0,(Obj_load_addr_1).w	; remember rightmost out-of-range object
-	movea.l	(Obj_load_addr_0).w,a0	; get rightmost in-range object
+	move.l	a0,(Obj_respawn_index_left).w	; remember rightmost out-of-range object
+	movea.l	(Obj_respawn_index_right).w,a0	; get rightmost in-range object
 	addi.w	#$300,d6	; look two chunks beyond the right edge of the screen
 
 -	; subtract number of objects that have been moved out-of-range (from the right side)
@@ -151,13 +151,13 @@ loc_17BE6:
 ; ---------------------------------------------------------------------------
 
 loc_17C04:
-	move.l	a0,(Obj_load_addr_0).w	; remember rightmost in-range object
+	move.l	a0,(Obj_respawn_index_right).w	; remember rightmost in-range object
 	rts
 ; ---------------------------------------------------------------------------
 
 ObjectsManager_GoingForward:
 	move.w	d6,(Camera_X_pos_last).w
-	movea.l	(Obj_load_addr_0).w,a0	; get rightmost in-range object
+	movea.l	(Obj_respawn_index_right).w,a0	; get rightmost in-range object
 	addi.w	#$280,d6	; look two chunks forward
 
 -	; load all objects right of the screen, that are now in range
@@ -172,8 +172,8 @@ ObjectsManager_GoingForward:
 	beq.s	-	; continue loading objects, if the SST isn't full
 
 loc_17C2A:
-	move.l	a0,(Obj_load_addr_0).w	; remember rightmost in-range object
-	movea.l	(Obj_load_addr_1).w,a0	; get rightmost out-of-range object
+	move.l	a0,(Obj_respawn_index_right).w	; remember rightmost in-range object
+	movea.l	(Obj_respawn_index_left).w,a0	; get rightmost out-of-range object
 	subi.w	#$300,d6	; look two chunks behind the left edge of the screen
 	bcs.s	loc_17C4A	; branch, if camera position would be behind level's left boundary
 
@@ -189,7 +189,7 @@ loc_17C2A:
 ; ---------------------------------------------------------------------------
 
 loc_17C4A:
-	move.l	a0,(Obj_load_addr_1).w	; remember rightmost out-of-range object
+	move.l	a0,(Obj_respawn_index_left).w	; remember rightmost out-of-range object
 
 ObjectsManager_SameXRange:
 	rts

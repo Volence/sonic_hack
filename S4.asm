@@ -13945,8 +13945,6 @@ Ani_CheckPoint:	Include "animations/Sprite/CheckPoint.asm"
 		even
 Ani_Water_Splash_Object:	Include "animations/Sprite/Spindash Dust And Water Splash.asm"
 		even
-Ani_Plain_Shield:	Include "animations/Sprite/Shield.asm"
-		even
 PitcherPlant__Animate:	Include	"animations/Sprite/Pitcher Plant.asm"
 		even
 ; ===========================================================================
@@ -14016,8 +14014,6 @@ Water_Surface_MapUnc_20A0E:	BINCLUDE "mappings/sprite/Water_Surface_a.bin"
 Water_Surface_MapUnc_20AFE:	BINCLUDE "mappings/sprite/Water_Surface_b.bin"
 		even
 Water_Splash_Object_MapUnc_1DF5E:	BINCLUDE "mappings/sprite/Water_Splash.bin"
-		even
-Plain_Shield_MapUnc_1DBE4:	BINCLUDE "mappings/sprite/Plain_Shield.bin"
 		even
 Invincibility_Stars_MapUnc_1DCBC:	BINCLUDE "mappings/sprite/Invincibility_Stars.bin"
 		even

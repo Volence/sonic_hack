@@ -85,25 +85,6 @@ layer_plus              = $3F             ; typically layer+1 (collision helper)
 ; -----------------------------------------------------------------------------
 parent                  = $3E             ; also $3F; owner spawner object address
 
-; -----------------------------------------------------------------------------
-; Child-sprite layout (when bit6 of render_flags is set)
-; -----------------------------------------------------------------------------
-mainspr_mapframe        = $0B
-mainspr_width           = $0E
-mainspr_childsprites    = $0F
-mainspr_height          = $14
-sub2_x_pos              = $10             ; overlaps x_vel
-sub2_y_pos              = $12             ; overlaps y_vel
-sub2_mapframe           = $15
-sub3_x_pos              = $16             ; overlaps y_radius
-sub3_y_pos              = $18             ; overlaps priority
-sub3_mapframe           = $1B             ; overlaps anim_frame
-sub4_x_pos              = $1C             ; overlaps anim
-sub4_y_pos              = $1E             ; overlaps anim_frame_duration
-sub4_mapframe           = $21             ; overlaps collision_property
-sub5_x_pos              = $22             ; overlaps status
-sub5_y_pos              = $24             ; overlaps routine
-sub5_mapframe           = $27
 
 ; =============================================================================
 ; Object Status Table (OST) — Misc/overlap offsets (non-Sonic/Tails specific)
@@ -585,12 +566,6 @@ PLCID_Arz2             = id(PLCPtr_Arz2)            ; 23
 PLCID_Scz1             = id(PLCPtr_Scz1)            ; 24
 PLCID_Scz2             = id(PLCPtr_Scz2)            ; 25
 
-; Unused slots (kept for compatibility)
-PLCID_Unused1          = id(PLCPtr_Unused1)         ; A
-PLCID_Unused2          = id(PLCPtr_Unused2)         ; B
-PLCID_Unused3          = id(PLCPtr_Unused3)         ; 16
-PLCID_Unused4          = id(PLCPtr_Unused4)         ; 17
-
 ; -----------------------------------------------------------------------------
 ; Boss PLCs
 ; -----------------------------------------------------------------------------
@@ -821,7 +796,6 @@ MusID_Unpause            = $7F + $80                     ; FF
 ; `palette_line_size` is used throughout to size per-line buffers.
 ; =============================================================================
 palette_line_size   = $10   ; 16 word entries per line (32 bytes)
-
 
 ; =============================================================================
 ; RAM helpers / policy
@@ -1083,7 +1057,10 @@ Ring_consumption_table:		ds.b	$80	; contains RAM addresses of rings currently be
 ; -----------------------------------------------------------------------------
 ; Legacy S1 driver region (unused in S2)
 ; -----------------------------------------------------------------------------
-				ds.b	$600	; $FFFFF100-$FFFFF5FF ; [FREE/UNUSED — leftover from Sonic 1 sound driver]
+Object_Respawn_Table:	ds.b	$300
+Object_Respawn_Table_End:
+
+				ds.b	$300	; $FFFFF100-$FFFFF5FF ; [FREE/UNUSED — leftover from Sonic 1 sound driver]
 					; (Used by it when you port it to Sonic 2). Safe scratch if S1 driver not present.
 
 ; =============================================================================
@@ -1217,11 +1194,13 @@ Camera_X_pos_last		dc.w	1	; Camera_X_pos_coarse from the previous frame
 
 ; --- Object manager load fences (rightmost in-range/out-of-range) ---
 ;when the objects manager is fully initialized,
-Obj_load_addr_0:		ds.l	1	; address of the rightmost out-of-range object (right side)
-Obj_load_addr_1:		ds.l	1	; address of the rightmost out-of-range object (left side)
-Obj_load_addr_2:		ds.l	1
-Obj_load_addr_3:		ds.l	1
-				ds.b	$10	; [FILLER/GAP]
+Obj_respawn_index_right:		ds.l	1	; address of the rightmost out-of-range object (right side)
+Obj_respawn_index_left:		ds.l	1	; address of the rightmost out-of-range object (left side)
+Obj_load_addr_right:		ds.l	1
+Obj_load_addr_left:		ds.l	1
+Camera_Y_pos_coarse:		ds.w	1
+Camera_Y_pos_last:		ds.w	1
+				ds.b	$C	; [FILLER/GAP]
 
 ; --- Demo controller (P1) ---
 Demo_button_index:		ds.w	1	; index into button press demo data, for player 1
@@ -1275,9 +1254,9 @@ Second_palette_line4:
 Target_palette_line4:		ds.w	palette_line_size
 
 ; =============================================================================
-; Object respawn table
+; Object respawn table (old)
 ; =============================================================================
-Object_Respawn_Table:		ds.b	$180
+				ds.b	$180 ; Free
 
 ; =============================================================================
 ; System stack
