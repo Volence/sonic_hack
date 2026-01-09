@@ -12,7 +12,7 @@ Small_Bubbles:
 	rts
 +	move.w	#objroutine(Small_Bubbles_Animate),(a0)		; go to routine Animate
 	move.l	#Bubbles_Base_MapUnc_1FC18,mappings(a0)	; set mappings
-	move.w	#$8418,art_tile(a0)			; set art offset
+	move.w	#vram_art(VRAM_BigBubbles,2,0),art_tile(a0)		; palette 2
 	move.b	#$84,render_flags(a0)			; align to level and force draw
 	move.b	#$10,width_pixels(a0)			; set width
 	move.b	#$10,height_pixels(a0)	

@@ -13,7 +13,7 @@ SignPost:
 	tst.w	(Two_player_mode).w			; are we playing a two-player game?
 	beq.s	ObjSignpost_1P				; if not, branch
 	move.l	#SignPost_MapUnc_19656,mappings(a0)	; load alternate mappings
-	move.w	#$5E8,art_tile(a0)			; set alternate art offset
+	move.w	#vram_art(VRAM_Bubbles,0,0),art_tile(a0)			; bubbles art offset
 	move.b	#-1,($FFFFFFCA).w			; ???
 	moveq	#0,d1
 	move.w	#$1020,d1
@@ -24,7 +24,7 @@ SignPost:
 
 ObjSignpost_1P:
 	move.l	#SignPost_MapUnc_195BE,mappings(a0)	; load normal mappings
-	move.w	#$434,art_tile(a0)			; set normal art offset
+	move.w	#vram_art(VRAM_Signpost,0,0),art_tile(a0)			; signpost art
 
 ObjSignpost_Init2:
 	move.w	#objroutine(ObjSignpost_Main),(a0)	; go to routine ObjSignpost_Main
@@ -94,7 +94,7 @@ ObjSignpost_Spin2:
 	add.w	y_pos(a0),d0
 	move.w	d0,y_pos(a1)				; set y-position
 	move.l	#Basic_Ring_MapUnc_12382,mappings(a1)	; set mappings
-	move.w	#$26BC,art_tile(a1)			; set art offset
+	move.w	#vram_art(VRAM_Ring,0,1),art_tile(a1)			; ring art
 	move.b	#4,render_flags(a1)			; align to the level
 	move.w	#$100,priority(a1)				; set priority
 	move.b	#8,width_pixels(a1)			; set width
@@ -418,7 +418,7 @@ Egg_Prison_Animals_Wait:
 CheckPoint:
 	move.w	#objroutine(CheckPoint_Main),(a0)		; go to routine Main
 	move.l	#CheckPoint_MapUnc_1F424,mappings(a0)
-	move.w	#$490,art_tile(a0)
+	move.w	#vram_art(VRAM_Checkpoint,0,0),art_tile(a0)
 	move.b	#4,render_flags(a0)
 	move.b	#8,width_pixels(a0)
 	move.w	#$280,priority(a0)
@@ -638,7 +638,7 @@ CheckPoint_MakeSpecialStars:
 	bne.s	+	; rts
 	move.w	#objroutine(CheckPoint_Star),(a1)	; load star object
 	move.l	#CheckPoint_MapUnc_1F4A0,mappings(a1)
-	move.w	#$490,art_tile(a1)
+	move.w	#vram_art(VRAM_Checkpoint,0,0),art_tile(a1)
 	move.b	#4,render_flags(a1)
 	move.w	x_pos(a0),d0
 	move.w	d0,x_pos(a1)

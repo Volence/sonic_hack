@@ -30,7 +30,7 @@ Sonic:
 	tst.b	(Last_star_pole_hit).w
 	bne.s	Sonic_Init_Continued
 	; only happens when not starting at a checkpoint:
-	move.w	#$780,art_tile(a0)
+	move.w	#vram_art(VRAM_Sonic,0,0),art_tile(a0)
 	move.b	#$C,layer(a0)
 	move.b	#$D,layer_plus(a0)
 	move.w	x_pos(a0),(Saved_x_pos).w

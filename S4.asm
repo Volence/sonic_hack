@@ -48,6 +48,7 @@ useFullWaterTables = 1
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; Equates section - Names for variables.
 	include "S4.constants.asm"
+	include "VRAM_Layout.asm"	; VRAM memory map and art tile constants
 
 ; >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ; simplifying macros

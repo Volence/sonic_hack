@@ -5,7 +5,7 @@
 ; Sprite_18888:
 Spring:
 	move.l	#Spring_MapUnc_1901C,mappings(a0)
-	move.w	#$460,art_tile(a0)
+	move.w	#vram_art(VRAM_VrtclSprng,0,0),art_tile(a0)
 	ori.b	#4,render_flags(a0)
 	move.b	#$10,width_pixels(a0)
 	move.w	#$200,priority(a0)	
@@ -136,7 +136,7 @@ loc_18A66:
 ObjSpring_SideP:
 	move.b	#2,anim(a0)
 	move.b	#3,mapping_frame(a0)
-	move.w	#$474,art_tile(a0)
+	move.w	#vram_art(VRAM_HrzntlSprng,0,0),art_tile(a0)
 	move.b	#8,width_pixels(a0)
 	bsr.w	ObjSpring_CheckColor
 	move.w	#objroutine(ObjSpring_Side),(a0)
@@ -412,7 +412,7 @@ Spring_Change_Routine2:
 ObjSpring_DiagUpP:
 	move.b	#4,anim(a0)
 	move.b	#7,mapping_frame(a0)
-	move.w	#$440,art_tile(a0)
+	move.w	#vram_art(VRAM_DignlSprng,0,0),art_tile(a0)
 	bsr.w	ObjSpring_CheckColor
 	move.w	#objroutine(ObjSpring_DiagUp),(a0)
 
@@ -530,7 +530,7 @@ loc_18E94:
 ObjSpring_DiagDownP:
 	move.b	#4,anim(a0)
 	move.b	#$A,mapping_frame(a0)
-	move.w	#$440,art_tile(a0)
+	move.w	#vram_art(VRAM_DignlSprng,0,0),art_tile(a0)
 	bset	#1,status(a0)
 	bsr.w	ObjSpring_CheckColor
 	move.w	#objroutine(ObjSpring_DiagDown),(a0)

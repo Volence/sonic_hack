@@ -5,7 +5,7 @@
 
 Water_Surface:
 	move.l	#Water_Surface_MapUnc_20A0E,mappings(a0)
-	move.w	#$8400,art_tile(a0)
+	move.w	#vram_art(VRAM_WaterSurface,2,0),art_tile(a0)
 	move.b	#4,render_flags(a0)
 	move.b	#$80,width_pixels(a0)
 	move.w	#objroutine(Water_Surface_Action),(a0)	; go to routine Action

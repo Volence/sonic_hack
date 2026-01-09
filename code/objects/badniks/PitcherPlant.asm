@@ -1,17 +1,29 @@
-; Object Offsets
+; ===========================================================================
+; Object 0B - Pitcher Plant Badnik
+; ===========================================================================
+; A template-quality object demonstrating best practices:
+; - Data-driven loading via Load_Object2
+; - Named constants for all magic numbers
+; - VRAM constants from VRAM_Layout.asm
+; - Global constants from S4.constants.asm
+; ===========================================================================
+
+; Object-specific RAM offsets (use $23-$3F for custom data)
 PitcherPlant__Timer = $24
 
-; Value Variables
-PitcherPlant__WaitTime = $40
-PitcherPlant__DistanceFromSonicToAttack = $60
-PitcherPlant__BulletYSpeed = $300
-PitcherPlant__BulletXSpeed = $100
-PitcherPlant__Gravity = $20
+; Object-specific constants
+PitcherPlant__WaitTime = $40                ; Frames to wait before shooting again
+PitcherPlant__DistanceToAttack = $60       ; Distance from player to trigger attack
+PitcherPlant__BulletYSpeed = $300           ; Initial Y velocity of projectile
+PitcherPlant__BulletXSpeed = $100           ; Initial X velocity of projectile
+PitcherPlant__Gravity = $20                 ; Gravity applied to projectile
+
+; Animation indices
+PitcherPlant__Anim_Idle = 0
+PitcherPlant__Anim_Shoot = 2
+PitcherPlant__Anim_Bullet = 1
 
 ; ===========================================================================
-; ----------------------------------------------------------------------------
-; Object 0B - Pitcher Plant Badnik
-; ----------------------------------------------------------------------------
 PitcherPlant:
 	lea	PitcherPlant__Data(pc),a2
 	jsr	Load_Object2
@@ -28,13 +40,13 @@ PitcherPlant__WaitSonic:
 	btst	#0,render_flags(a0)
 	bne.w	+
 	bmi.w	PitcherPlant__Display
-	cmp.w	#PitcherPlant__DistanceFromSonicToAttack,d3
+	cmp.w	#PitcherPlant__DistanceToAttack,d3
 	bge.w	PitcherPlant__Display
 	move.w	#objroutine(PitcherPlant__ShootLeft),(a0)
 	move.b	#$28,PitcherPlant__Timer(a0)
 	bra.w	PitcherPlant__Display
 +	bpl.w	PitcherPlant__Display
-	cmp.w	#-PitcherPlant__DistanceFromSonicToAttack,d3
+	cmp.w	#-PitcherPlant__DistanceToAttack,d3
 	ble.w	PitcherPlant__Display
 	move.w	#objroutine(PitcherPlant__ShootLeft),(a0)
 	move.b	#$28,PitcherPlant__Timer(a0)
@@ -46,7 +58,7 @@ PitcherPlant__Display:
 	jmp	DisplaySprite
 
 PitcherPlant__ShootLeft:
-	move.b	#2,anim(a0)
+	move.b	#PitcherPlant__Anim_Shoot,anim(a0)
 	subq.b	#1,PitcherPlant__Timer(a0)
 	cmp.b	#16,PitcherPlant__Timer(a0)
 	beq.s	PitcherPlant__BulletLoad
@@ -54,7 +66,7 @@ PitcherPlant__ShootLeft:
 	bne.b	PitcherPlant__Display
 	move.b	#PitcherPlant__WaitTime,PitcherPlant__Timer(a0)
 	move.w	#objroutine(PitcherPlant__WaitSonic),(a0)
-	move.b	#0,anim(a0)
+	move.b	#PitcherPlant__Anim_Idle,anim(a0)
 	bra.b	PitcherPlant__Display
 
 PitcherPlant__BulletLoad:
@@ -68,35 +80,38 @@ PitcherPlant__BulletLoad:
 	bra.w	PitcherPlant__Display
 
 PitcherPlant__Bullet:
-	cmpi.w	#$6F0,y_pos(a0)		; if below boundary, delete
+	cmpi.w	#LEVEL_BOTTOM_BOUNDARY,y_pos(a0)	; if below level boundary
 	ble.b	+
 	jmp	DeleteObject
-+	addi.w	#PitcherPlant__Gravity,y_vel(a0)		; apply gravity (less than normal)
++	addi.w	#PitcherPlant__Gravity,y_vel(a0)	; apply gravity
 	jsr	ObjectMove
 	jmp	DisplaySprite
 
+; ===========================================================================
+; Object Data Block - Format matches Load_Object2
+; ===========================================================================
 PitcherPlant__Data:
-		dc.w	objroutine(PitcherPlant__WaitSonic)
+		dc.w	objroutine(PitcherPlant__WaitSonic)	; Routine offset
 		dc.l	map_ppbadnik				; Mappings
-		dc.w	$3A0						; Art Tile
-		dc.b	4							; Render Flags
-		dc.b	1							; Collision Response
-		dc.w	$180						; Priority
-		dc.b	$A							; Width Pixels
-		dc.b	$12							; Height Pixels
-		dc.b	0							; Animation
-		dc.b	0							; Mapping Frame
+		dc.w	VRAM_PitcherPlant			; Art tile (uses VRAM constant!)
+		dc.b	4					; Render flags
+		dc.b	1					; Collision response
+		dc.w	$180					; Priority
+		dc.b	$A					; Width pixels
+		dc.b	$12					; Height pixels
+		dc.b	PitcherPlant__Anim_Idle			; Animation
+		dc.b	0					; Mapping frame
 	
 PitcherPlant__BulletData:
 		dc.w	objroutine(PitcherPlant__Bullet)	; Routine
 		dc.l	map_ppbadnik				; Mappings
-		dc.w	$3A0						; Art Tile
-		dc.b	4							; Render Flags
-		dc.b	7							; Collision Response
-		dc.w	$100						; Priority
-		dc.b	3							; Width Pixels
-		dc.b	3							; Height Pixels
-		dc.w	-PitcherPlant__BulletXSpeed						; X Velocity
-		dc.w	-PitcherPlant__BulletYSpeed						; Y Velocity
-		dc.b	1							; Animation
-		dc.b	5							; Mapping Frame
+		dc.w	VRAM_PitcherPlant			; Art tile (shares with parent)
+		dc.b	4					; Render flags
+		dc.b	7					; Collision response (projectile)
+		dc.w	$100					; Priority
+		dc.b	3					; Width pixels
+		dc.b	3					; Height pixels
+		dc.w	-PitcherPlant__BulletXSpeed		; X velocity
+		dc.w	-PitcherPlant__BulletYSpeed		; Y velocity
+		dc.b	PitcherPlant__Anim_Bullet		; Animation
+		dc.b	5					; Mapping frame

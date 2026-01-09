@@ -15,7 +15,7 @@ ObjSpikes_Data:
 
 Spikes:
 	move.l	#Spikes_MapUnc_15B68,mappings(a0)	; set mappings
-	move.w	#$2480,art_tile(a0)			; set art offset
+	move.w	#vram_art(VRAM_Spikes,0,1),art_tile(a0)			; palette 0, high priority
 	ori.b	#4,render_flags(a0)			; align to level
 	move.w	#$200,priority(a0)				; set priority
 	move.b	subtype(a0),d0				; get subtype
@@ -68,7 +68,7 @@ ObjSpikes_Done:
 ; ===========================================================================
 
 ObjSpikes_WallsP:
-	move.w	#$2488,art_tile(a0)			; set alternate art offset
+	move.w	#vram_art(VRAM_HorizSpike,0,1),art_tile(a0)			; horizontal spikes
 	move.w	#objroutine(ObjSpikes_Walls),(a0)	; go to routine Walls
 
 ObjSpikes_Walls:

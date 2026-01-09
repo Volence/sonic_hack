@@ -9,7 +9,7 @@ Path_Swapper_off35 = $35
 
 Path_Swapper:
 	move.l	#Path_Swapper_MapUnc_1FFB8,mappings(a0)
-	move.w	#$26BC,art_tile(a0)
+	move.w	#vram_art(VRAM_Ring,0,1),art_tile(a0)	; use ring art for debug
 	ori.b	#4,render_flags(a0)
 	move.b	#$10,width_pixels(a0)
 	move.w	#$280,priority(a0)

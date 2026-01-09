@@ -41,8 +41,11 @@ respawn_index =		  	$22		; byte, handled via object manager
 
 
 ; ---------------------------------------------------------------------------
+; Level constants
+; ---------------------------------------------------------------------------
+LEVEL_BOTTOM_BOUNDARY = $6F0    ; Y position below which objects are deleted
 
-
+; ---------------------------------------------------------------------------
 ; ---------------------------------------------------------------------------
 ; seem to have been added by Malevolence
 knuckles_unk =		subtype ; will probably change when we know what it actually is

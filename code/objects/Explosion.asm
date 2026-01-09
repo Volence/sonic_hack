@@ -21,7 +21,7 @@ Explosion_FromEnemy:
 
 Explosion_Alone:
 	move.l	#Explosion_MapUnc_21120,mappings(a0)
-	move.w	#$5A4,art_tile(a0)
+	move.w	#vram_art(VRAM_Explosion,0,0),art_tile(a0)
 	move.b	#4,render_flags(a0)
 	move.w	#$80,priority(a0)
 	move.b	#0,collision_response(a0)
@@ -201,10 +201,10 @@ Animal_From_Badnik:
 Animal_From_Badnik_InitRandom:
 	addq.b	#2,animal_routine(a0)
 	jsr	RandomNumber
-	move.w	#$580,art_tile(a0)
+	move.w	#vram_art(VRAM_Animal_1,0,0),art_tile(a0)
 	andi.w	#1,d0
 	beq.s	+
-	move.w	#$594,art_tile(a0)
+	move.w	#vram_art(VRAM_Animal_2,0,0),art_tile(a0)
 +	moveq	#0,d1
 	move.b	(Current_Zone).w,d1
 	add.w	d1,d1
@@ -526,7 +526,7 @@ sub_11DB8:
 
 Points_Text:
 	move.l	#Points_Text_MapUnc_11ED0,mappings(a0)
-	move.w	#$84AC,art_tile(a0)
+	move.w	#vram_art(VRAM_Numbers,2,0),art_tile(a0)	; palette 2 for points text
 	move.b	#4,render_flags(a0)
 	move.w	#$80,priority(a0)
 	move.b	#16,width_pixels(a0)

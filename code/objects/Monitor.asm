@@ -148,7 +148,7 @@ Monitor_SpawnSmoke:
 
 ObjMonitor_Icon:
 	move.w	#objroutine(ObjMonitor_Icon_Raise),(a0)
-	move.w	#$8680,art_tile(a0)
+	move.w	#vram_art(VRAM_Powerups,2,0),art_tile(a0)	; palette 2 for icons
 	move.b	#$24,render_flags(a0)
 	move.w	#$180,priority(a0)
 	move.b	#8,width_pixels(a0)
@@ -386,7 +386,7 @@ ObjMonitor_Icon_Wait:
 Monitor_Data:
 		dc.w	objroutine(ObjMonitor_Main)
 		dc.l	Monitor_MapUnc_12D36		; Mappings
-		dc.w	$680						; Art Tile
+		dc.w	VRAM_Powerups						; Art Tile
 		dc.b	4							; Render Flags
 		dc.b	4							; Collision Response
 		dc.w	$180						; Priority
