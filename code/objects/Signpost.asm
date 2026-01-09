@@ -137,7 +137,7 @@ GotThroughAct:
 	bne.s	+
 	moveq	#PLCID_ResultsTails,d0
 +
-	jsr	(PLC2_Load).l
+	jsr	(LoadPLC2).l
 	move.b	#1,(Update_Bonus_score).w
 	moveq	#0,d0
 	move.b	(Timer_minute).w,d0
@@ -342,7 +342,7 @@ Egg_Prison_Solid:
 	move.w	#$18,d2
 	move.w	#$18,d3
 	move.w	x_pos(a0),d4
-	jsr	(Solid_Flat).l
+	jsr	(SolidObject).l
 	lea	(Ani_Egg_Prison).l,a1
 	jsr	(AnimateSprite).l
 	jmp	(MarkObjGone).l
@@ -353,7 +353,7 @@ Egg_Prison_Button:
 	move.w	#8,d2
 	move.w	#8,d3
 	move.w	x_pos(a0),d4
-	jsr	(Solid_Flat).l
+	jsr	(SolidObject).l
 	move.w	objoff_30(a0),y_pos(a0)
 	move.b	status(a0),d0
 	andi.b	#$18,d0
@@ -424,7 +424,7 @@ CheckPoint:
 	move.w	#$280,priority(a0)
 	lea	(Object_Respawn_Table).w,a2
 	moveq	#0,d0
-	move.w	respawn_index(a0),d0
+	move.b	respawn_index(a0),d0
 	bclr	#7,2(a2,d0.w)
 	btst	#0,2(a2,d0.w)
 	bne.s	loc_1F120
@@ -496,7 +496,7 @@ CheckPoint_CheckActivation:
 	bsr.w	CheckPoint_SaveData
 	lea	(Object_Respawn_Table).w,a2
 	moveq	#0,d0
-	move.w	respawn_index(a0),d0
+	move.b	respawn_index(a0),d0
 	bset	#0,2(a2,d0.w)
 
 return_1F220:

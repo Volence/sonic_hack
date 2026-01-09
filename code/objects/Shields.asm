@@ -1,5 +1,32 @@
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
+; Plain Shield
+; ----------------------------------------------------------------------------
+
+Plain_Shield:
+	lea	Plain_Shield_Data(pc),a2
+	jsr	(Load_Object3).l
+
+Plain_Shield_Shield:
+	lea	MainCharacter-Sonic_Shield(a0),a2
+	move.w	x_pos(a2),x_pos(a0)
+	move.w	y_pos(a2),y_pos(a0)
+	move.b	status(a2),status(a0)
+	andi.w	#$7FFF,art_tile(a0)
+	tst.w	art_tile(a2)
+	bpl.s	Plain_Shield_Display
+	ori.w	#$8000,art_tile(a0)
+
+Plain_Shield_Display:
+	lea	(Ani_Plain_Shield).l,a1
+	jsr	(AnimateSprite).l
+	jmp	(DisplaySprite).l
+
+JmpTo7_DeleteObject
+	jmp	(DeleteObject).l
+
+; ===========================================================================
+; ----------------------------------------------------------------------------
 ; Invincibility Stars
 ; ----------------------------------------------------------------------------
 
@@ -192,7 +219,7 @@ loc_1E189:
 	rts
 
 JmpTo8_DeleteObject
-	jmp	DeleteObject
+	jmp	(JmpTo7_DeleteObject).l
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Instashield
@@ -306,7 +333,7 @@ Fire_Shield_Explosion_Display:
 ; ----------------------------------------------------------------------------
 
 Lightning_Shield:
-	move.l	#ArtUnc_LightningShield_Sparks,d1
+	move.l	#ArtUnc_LighteningShield_Sparks,d1
 	move.w	#$9AA0,d2		; VRAM transfer location
 	move.w	#$50,d3			; Transfer length
 	jsr	(QueueDMATransfer).l
@@ -384,7 +411,7 @@ Lightning_Shield_Spark:
 	jmp	(DisplaySprite).l
 
 Lightning_Shield_Spark_Destroy:
-	jmp	(JmpTo8_DeleteObject).l
+	jmp	(JmpTo7_DeleteObject).l
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -504,6 +531,17 @@ Shield_Load
 ; ----------------------------------------------------------------------------
 ; Shield Data
 ; ----------------------------------------------------------------------------
+Plain_Shield_Data:
+		dc.w	objroutine(Plain_Shield_Shield)
+		dc.l	Plain_Shield_MapUnc_1DBE4
+		dc.w	$4BE
+		dc.b	4
+		dc.w	$80
+		dc.b	$18
+		dc.b	$18
+		dc.b	0
+		even
+
 SS_Stars_Data:
 		dc.w	objroutine(SS_Stars_Main)
 		dc.l	SS_Stars_MapUnc_1E1BE
@@ -559,15 +597,15 @@ Fire_Shield_Explosion_Data:
 		
 Lightning_Shield_Data:
 		dc.w	objroutine(Lightning_Shield_Main)
-		dc.l	Map_LightningShield
+		dc.l	Map_LighteningShield
 		dc.w	$4BE
 		dc.b	4
 		dc.w	$80
 		dc.b	$18
 		dc.b	$18
 		dc.w	1
-		dc.l	DPLC_LightningShield
-		dc.l	ArtUnc_LightningShield
+		dc.l	DPLC_LighteningShield
+		dc.l	ArtUnc_LighteningShield
 		dc.b	-1
 		even
 

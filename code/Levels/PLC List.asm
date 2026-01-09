@@ -125,6 +125,8 @@ PlrList_Std2: plrlistheader
 	plreq $9200, ArtNem_Checkpoint		; was: 8F80
 	plreq $B480, ArtNem_Explosion
 	plreq $D000, ArtNem_Powerups
+	;plreq $97C0, ArtNem_Shield
+	;plreq $9BC0, ArtNem_Invincible_stars
 PlrList_Std2_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
