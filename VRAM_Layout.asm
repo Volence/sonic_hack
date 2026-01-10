@@ -62,7 +62,6 @@ VRAM_HorizSpike       = $488   ; $9100 bytes
 VRAM_Checkpoint       = $490   ; $9200 bytes
 VRAM_Numbers          = $4AC   ; $9580 bytes
 VRAM_Shield           = $4BE   ; after Numbers
-VRAM_LightningSpark   = $4D5   ; $9AA0 bytes - lightning sparks
 VRAM_Game_Over        = $4DE   ; $9BC0 bytes
 VRAM_Perfect          = $4DE   ; shares with Game_Over
 
