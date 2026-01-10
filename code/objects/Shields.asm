@@ -29,10 +29,10 @@ Obj_InstaShield_Main:
 	bne.b	Obj_InstaShield_Delete	; if so, branch to delete
 	rts
 +	bsr.w	LoadShieldsDynPLC
-	jmp	DisplaySprite
+	jmp	(DisplaySprite).l
 
 Obj_InstaShield_Delete:
-	jmp	DeleteObject
+	jmp	(DeleteObject).l
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -52,16 +52,15 @@ Fire_Shield_Main:
 
 ; called when you have a fire shield and go underwater
 Fire_Shield_Underwater:
-	andi.b	#shield_del,status2(a2)    ; Remove shield
 	jsr	(SingleObjLoad).l
 	bne.s	Fire_Shield_Destroy
-	move.w	#objroutine(Fire_Shield_Explosion),(a1)    ; Load Object DF (fire shield explosion)
+	move.w	#objroutine(Fire_Shield_Explosion),(a1)    ; Load explosion object
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 
 Fire_Shield_Destroy:
 	andi.b	#shield_del,status2(a2)    ; Remove shield
-	jmp	DeleteObject
+	jmp	(DeleteObject).l
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -80,10 +79,10 @@ Fire_Shield_Explosion_Main:
 	addq.b	#1,mapping_frame(a0)
 	cmpi.b	#5,mapping_frame(a0)
 	bne.s	Fire_Shield_Explosion_Display
-	jmp	DeleteObject
+	jmp	(DeleteObject).l
 
 Fire_Shield_Explosion_Display:
-	jmp	DisplaySprite
+	jmp	(DisplaySprite).l
 
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
@@ -107,7 +106,7 @@ Lightning_Shield_Main:
 
 Lightning_Shield_Destroy:
        andi.b	#shield_del,status2(a2)    ; Clear all shield flags
-       jmp	DeleteObject
+       jmp	(DeleteObject).l
 ; ===========================================================================
 
 Lightning_Shield_Underwater:
@@ -132,7 +131,7 @@ Lightning_Shield_Underwater_Destroy:
 	move.w	#$1F,d0
 -	move.l	(a1)+,(a2)+
 	dbf	d0,-
-	jmp	DeleteObject
+	jmp	(DeleteObject).l
 
 Lightning_Return:
 	rts
@@ -162,17 +161,11 @@ Lightning_Shield_Spark_Destroy:
 Wind_Shield:
 	lea	Wind_Shield_Data(pc),a2
 	bsr.w	Shield_Load
-	lea	MainCharacter-Sonic_Shield(a0),a1
 	jsr	(ResumeMusic).l
 
 Wind_Shield_Main:
 	lea	MainCharacter-Sonic_Shield(a0),a2
 	bra.w	Shield_Main_Common
-; ===========================================================================
-
-Wind_Shield_Destroy:
-       andi.b	#shield_del,status2(a2)    ; Clear all shield flags
-       jmp	DeleteObject
 ; ===========================================================================
 ; ----------------------------------------------------------------------------
 ; Bubble shield
@@ -181,7 +174,6 @@ Wind_Shield_Destroy:
 Bubble_Shield:
 	lea	Bubble_Shield_Data(pc),a2
 	bsr.w	Shield_Load
-	lea	MainCharacter-Sonic_Shield(a0),a1
 	jsr	(ResumeMusic).l
 
 Bubble_Shield_Main:
