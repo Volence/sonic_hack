@@ -79,10 +79,10 @@ VRAM_Invincible_stars = $5F2   ; $BE40 bytes
 VRAM_SuperSonic_stars = $5F2   ; shares with Invincible
 
 ; ---------------------------------------------------------------------------
-; CORE UI ($600-$6CF)
+; CORE UI ($680-$6CF)
 ; ---------------------------------------------------------------------------
-VRAM_Ring             = $600   ; $C000 bytes - moved to avoid Powerups overlap
-VRAM_Powerups         = $680   ; $D000 bytes - monitors (up to ~$6BC)
+VRAM_Powerups         = $680   ; $D000 bytes - monitors
+VRAM_Ring             = $6BC   ; $D780 bytes
 VRAM_HUD              = $6CA   ; $D940 bytes
 
 ; ---------------------------------------------------------------------------

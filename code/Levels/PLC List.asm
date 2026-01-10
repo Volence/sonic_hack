@@ -110,7 +110,7 @@ PLCptr_ResultsTails:	dc.w PLC_3A - ArtLoadCues	; 66
 ;---------------------------------------------------------------------------------------
 PlrList_Std1: plrlistheader
 	plreq $D940, ArtNem_HUD
-	plreq $C000, ArtNem_Ring	; was $D780, moved to avoid Powerups overlap
+	plreq $D780, ArtNem_Ring
 	plreq $9580, ArtNem_Numbers
 PlrList_Std1_End
 ;---------------------------------------------------------------------------------------
