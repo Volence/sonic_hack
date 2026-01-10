@@ -13832,6 +13832,10 @@ ObjData:
 	even
 	include "code/objects/Shields.asm"
 	even
+	include "code/objects/InvincibilityStars.asm"
+	even
+	include "code/objects/SSStars.asm"
+	even
 	include "code/objects/Splash.asm"
 	even
 	include "code/objects/PathSwitch.asm"

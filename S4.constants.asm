@@ -52,6 +52,8 @@ knuckles_unk =		subtype ; will probably change when we know what it actually is
 shield_art =            $24
 shield_dplc =           $28
 shield_prev_frame =     $2C
+shield_anim =           $30	; Animation script pointer (4 bytes)
+shield_priority_frame = $34	; Frame threshold for priority change (1 byte)
 ; ---------------------------------------------------------------------------
 ; conventions specific to sonic/tails (Obj01, Obj02, and ObjDB):
 ; note: $1F, $20, and $21 are unused and available
