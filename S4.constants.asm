@@ -152,7 +152,7 @@ s2b_speedshoes		= 6
 s2b_nofriction		= 7
 
 ; lower 2 bits of status2(a0)
-shield_mask		= 3
+shield_mask		= 7	; Bits 0-2 for shields (must fit shield_wind=4)
 shield_del		= $FF-shield_mask
 
 shield_none		= 0

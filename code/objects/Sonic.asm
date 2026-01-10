@@ -2473,24 +2473,25 @@ Sonic_DoubleJump2:					; controls the shield attacks
 	andi.b	#$70,d0					; is A, B or C pressed?
 	beq.b	Sonic_DoubleJump2_Return		; if not, return
 	bset	#s2b_doublejump,status2(a0)	; set the double jump flag
-	bne.b	Sonic_DoubleJump2_Return		; if it was already set, return
-	bclr	#4,status(a0)				; clear uncontrolled jump flag
+	bne.b	Sonic_DoubleJump2_Return	; if it was already set, return
+	bclr	#4,status(a0)			; clear uncontrolled jump flag
 	moveq	#0,d0
 	move.b	status2(a0),d0			; get the secondary status
-	move.w	d0,d1
-	andi.b	#power_mask,d0				; does Sonic have invincibility?
-	bne.b	Sonic_Flash				; if so, check for Hyper Sonic
-	andi.b	#shield_mask,d1				; get shield type
-	add.w	d1,d1					; do corresponding action
+	andi.b	#power_mask,d0			; does Sonic have invincibility?
+	bne.b	Sonic_Flash			; if so, check for Hyper Sonic
+	moveq	#0,d1
+	move.b	shields(a0),d1			; get shield type from shields field
+	add.w	d1,d1				; do corresponding action
 	move.w	Sonic_DoubleJumpActions(pc,d1.w),d1
 	jmp	Sonic_DoubleJumpActions(pc,d1.w)
 ; ===========================================================================
 
 Sonic_DoubleJumpActions:
-	dc.w	Sonic_InstaShield-Sonic_DoubleJumpActions
-	dc.w	Sonic_BubbleBounce-Sonic_DoubleJumpActions
-	dc.w	Sonic_FireDash-Sonic_DoubleJumpActions
-	dc.w	Sonic_LightningJump-Sonic_DoubleJumpActions
+	dc.w	Sonic_InstaShield-Sonic_DoubleJumpActions	; 0 = no shield
+	dc.w	Sonic_BubbleBounce-Sonic_DoubleJumpActions	; 1 = water/bubble
+	dc.w	Sonic_FireDash-Sonic_DoubleJumpActions		; 2 = fire
+	dc.w	Sonic_LightningJump-Sonic_DoubleJumpActions	; 3 = lightning
+	dc.w	Sonic_DoubleJump2_Return-Sonic_DoubleJumpActions	; 4 = wind (no ability)
 ; ===========================================================================
 
 Sonic_Flash:
@@ -2559,7 +2560,7 @@ Sonic_LightningJump:
 	move.b	#4,render_flags(a1)
 	move.w	#$80,priority(a1)
 	move.b	#8,width_pixels(a1)
-	move.b	#1,anim(a1)
+	move.b	#2,anim(a1)			; use spark animation (frames 0-2)
 	move.w	(a2)+,x_vel(a1)
 	move.w	(a2)+,y_vel(a1)
 	dbf	d1,-
