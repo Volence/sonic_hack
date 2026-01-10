@@ -5,7 +5,7 @@
 Basic_Ring:
 	move.w	#objroutine(ObjRing_Animate),(a0)
 	move.l	#Basic_Ring_MapUnc_12382,mappings(a0)
-	move.w	#vram_art(VRAM_Ring,0,1),art_tile(a0)
+	move.w	#vram_art(VRAM_Ring,1,1),art_tile(a0)	; palette 1
 	move.b	#4,render_flags(a0)
 	move.w	#$100,priority(a0)
 	move.b	#8,width_pixels(a0)
@@ -95,7 +95,7 @@ Hurt_Rings:
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.l	#Basic_Ring_MapUnc_12382,mappings(a1)
-	move.w	#vram_art(VRAM_Ring,0,1),art_tile(a1)
+	move.w	#vram_art(VRAM_Ring,1,1),art_tile(a1)	; palette 1
 	move.b	#$84,render_flags(a1)
 	move.w	#$180,priority(a1)
 	move.b	#5,collision_response(a1)
@@ -176,7 +176,7 @@ ObjRing_BounceOutside:
 Attracted_Ring:
 	move.w	#objroutine(ObjRing_Attract),(a0)	; go to next routine
 	move.l	#Basic_Ring_MapUnc_12382,mappings(a0)	; set mappings address
-	move.w	#vram_art(VRAM_Ring,0,1),art_tile(a0)			; set art offset
+	move.w	#vram_art(VRAM_Ring,1,1),art_tile(a0)		; palette 1
 	move.b	#4,render_flags(a0)			; align to the level
 	move.w	#$100,priority(a0)				; set priority
 	move.b	#8,width_pixels(a0)			; set width

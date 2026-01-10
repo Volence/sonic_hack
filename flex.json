@@ -1,6 +1,7 @@
 {
-    "description": "Flex 2 Project File",
+    "Flex": 2,
     "name": "Sonic 4",
+    "node": "f6d18b36-2f4e-4bd0-8803-064671398afc",
     "objects": [
         {
             "name": "Monitors",
@@ -13,7 +14,8 @@
             "art": {
                 "path": "art/nemesis/Monitor and contents.bin",
                 "compression": "Nemesis",
-                "accessor": ""
+                "accessor": "",
+                "offset": 0
             },
             "mappings": {
                 "path": "mappings/sprite/monitor.bin",
@@ -27,14 +29,16 @@
                 "format": "Sonic 1",
                 "customDefinition": "",
                 "label": ""
-            }
+            },
+            "uuid": "f6d18b36-2f4e-4bd0-8803-064671398afc"
         },
         {
             "name": "Bird Boss",
             "palettes": [],
             "art": {
                 "path": "art/nemesis/birdart.bin",
-                "compression": "Nemesis"
+                "compression": "Nemesis",
+                "offset": 0
             },
             "mappings": {
                 "path": "mappings/sprite/birdmaps.asm",
@@ -48,7 +52,8 @@
                 "format": "Sonic 1",
                 "customDefinition": "",
                 "label": ""
-            }
+            },
+            "uuid": "d18b362f-4e0b-4088-8306-4671398afc5b"
         },
         {
             "name": "Pitcher Plant Badnik",
@@ -60,7 +65,8 @@
             ],
             "art": {
                 "path": "art/nemesis/plantbadnikart.bin",
-                "compression": "Nemesis"
+                "compression": "Nemesis",
+                "offset": 0
             },
             "mappings": {
                 "path": "mappings/sprite/plantbadmaps.asm",
@@ -74,14 +80,16 @@
                 "format": "Sonic 1",
                 "customDefinition": "",
                 "label": ""
-            }
+            },
+            "uuid": "8b362f4e-0bd0-4803-8646-71398afc5b69"
         },
         {
             "name": "Boss Orb",
             "palettes": [],
             "art": {
                 "path": "art/nemesis/orbsart.bin",
-                "compression": "Nemesis"
+                "compression": "Nemesis",
+                "offset": 0
             },
             "mappings": {
                 "path": "mappings/sprite/orbsmaps.asm",
@@ -95,7 +103,8 @@
                 "format": "Sonic 1",
                 "customDefinition": "",
                 "label": ""
-            }
+            },
+            "uuid": "362f4e0b-d088-4306-8671-398afc5b69d5"
         },
         {
             "name": "Wind Shield",
@@ -107,7 +116,8 @@
             ],
             "art": {
                 "path": "art/uncompressed/WindShield.bin",
-                "compression": "Uncompressed"
+                "compression": "Uncompressed",
+                "offset": 0
             },
             "mappings": {
                 "path": "mappings/sprite/S2 windshield.asm",
@@ -121,7 +131,8 @@
                 "format": "Sonic 2/3&K",
                 "customDefinition": "",
                 "label": ""
-            }
+            },
+            "uuid": "2f4e0bd0-8803-4646-b139-8afc5b69d587"
         }
     ]
 }

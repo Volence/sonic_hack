@@ -94,7 +94,7 @@ ObjSignpost_Spin2:
 	add.w	y_pos(a0),d0
 	move.w	d0,y_pos(a1)				; set y-position
 	move.l	#Basic_Ring_MapUnc_12382,mappings(a1)	; set mappings
-	move.w	#vram_art(VRAM_Ring,0,1),art_tile(a1)			; ring art
+	move.w	#vram_art(VRAM_Ring,1,1),art_tile(a1)			; ring art, palette 1
 	move.b	#4,render_flags(a1)			; align to the level
 	move.w	#$100,priority(a1)				; set priority
 	move.b	#8,width_pixels(a1)			; set width

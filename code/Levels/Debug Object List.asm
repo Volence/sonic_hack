@@ -24,7 +24,7 @@ dbglistobj macro   obj, mapaddr,  decl, frame, flags, vram
     endm
 
 DbgObjList_Def: dbglistheader
-	dbglistobj 1, Basic_Ring_MapUnc_12382,   0,   0,  2, $6BC
+	dbglistobj 1, Basic_Ring_MapUnc_12382,   0,   0,  2, VRAM_Ring
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,   3,  0, $680
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,   5,  0, $680
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,   6,  0, $680
@@ -37,7 +37,7 @@ DbgObjList_Def: dbglistheader
 DbgObjList_Def_End
 
 DbgObjList_EHZ: dbglistheader
-	dbglistobj 1, Basic_Ring_MapUnc_12382,   0,   0,  2, $6BC
+	dbglistobj 1, Basic_Ring_MapUnc_12382,   0,   0,  2, VRAM_Ring
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,   3,  0, $680
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,   5,  0, $680
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,   6,  0, $680

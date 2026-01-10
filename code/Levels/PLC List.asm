@@ -110,7 +110,7 @@ PLCptr_ResultsTails:	dc.w PLC_3A - ArtLoadCues	; 66
 ;---------------------------------------------------------------------------------------
 PlrList_Std1: plrlistheader
 	plreq $D940, ArtNem_HUD
-	plreq $D780, ArtNem_Ring
+	plreq $D800, ArtNem_Ring	; was $D780, moved to $6C0 for 64-tile monitor space
 	plreq $9580, ArtNem_Numbers
 PlrList_Std1_End
 ;---------------------------------------------------------------------------------------
