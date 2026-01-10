@@ -166,21 +166,21 @@ PlrList_Ehz2_End
 ; Sonic life icon
 ;---------------------------------------------------------------------------------------
 PLC_6: plrlistheader
-	plreq $FA80, ArtNem_Sonic_life_counter
+	plreq vram_bytes(VRAM_SonicLife), ArtNem_Sonic_life_counter
 PLC_6_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; Tails life icon
 ;---------------------------------------------------------------------------------------
 PLC_7: plrlistheader
-	plreq $FA80, ArtNem_TailsLife
+	plreq vram_bytes(VRAM_TailsLife), ArtNem_TailsLife
 PLC_7_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; Knuckles life icon
 ;---------------------------------------------------------------------------------------
 PLC_8: plrlistheader
-	plreq $FA80, knuxlifeicon
+	plreq vram_bytes(VRAM_KnuxLife), knuxlifeicon
 PLC_8_End
 ;---------------------------------------------------------------------------------------
 ; Unused PLC
@@ -316,17 +316,17 @@ PLC_1D_End
 ; Sonic end of level results screen
 ;---------------------------------------------------------------------------------------
 PLC_1E: plrlistheader
-	plreq $B000, ArtNem_TitleCard
-	plreq $B600, ArtNem_ResultsText
-	plreq $BE80, ArtNem_MiniSonic
-	plreq $A800, ArtNem_Perfect
+	plreq vram_bytes(VRAM_TitleCard), ArtNem_TitleCard
+	plreq vram_bytes(VRAM_ResultsText), ArtNem_ResultsText
+	plreq $BE80, ArtNem_MiniSonic	; uses special slot
+	plreq vram_bytes(VRAM_Perfect), ArtNem_Perfect
 PLC_1E_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; End of level signpost
 ;---------------------------------------------------------------------------------------
 PLC_1F: plrlistheader
-	plreq $8680, ArtNem_Signpost
+	plreq vram_bytes(VRAM_Signpost), ArtNem_Signpost
 PLC_1F_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -381,7 +381,7 @@ PLC_27_End
 ; Fiery Explosion
 ;---------------------------------------------------------------------------------------
 PLC_28: plrlistheader
-	plreq $B000, ArtNem_FieryExplosion
+	plreq vram_bytes(VRAM_FieryExplosion), ArtNem_FieryExplosion
 PLC_28_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -395,80 +395,80 @@ PLC_29_End
 ; EHZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_2A: plrlistheader
-	plreq $B000, ArtNem_Squirrel
-	plreq $B280, ArtNem_Bird
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Squirrel
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Bird
 PLC_2A_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; MCZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_2B: plrlistheader
-	plreq $B000, ArtNem_Mouse
-	plreq $B280, ArtNem_Chicken
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Mouse
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Chicken
 PLC_2B_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; HTZ/MTZ/WFZ animals
 ;---------------------------------------------------------------------------------------
 PLC_2C: plrlistheader
-	plreq $B000, ArtNem_Beaver
-	plreq $B280, ArtNem_Eagle
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Beaver
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Eagle
 PLC_2C_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; DEZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_2D: plrlistheader
-	plreq $B000, ArtNem_Pig
-	plreq $B280, ArtNem_Chicken
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Pig
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Chicken
 PLC_2D_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; HPZ animals
 ;---------------------------------------------------------------------------------------
 PLC_2E: plrlistheader
-	plreq $B000, ArtNem_Mouse
-	plreq $B280, ArtNem_Seal
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Mouse
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Seal
 PLC_2E_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; OOZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_2F: plrlistheader
-	plreq $B000, ArtNem_Penguin
-	plreq $B280, ArtNem_Seal
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Penguin
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Seal
 PLC_2F_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; SCZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_30: plrlistheader
-	plreq $B000, ArtNem_Turtle
-	plreq $B280, ArtNem_Chicken
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Turtle
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Chicken
 PLC_30_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; CNZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_31: plrlistheader
-	plreq $B000, ArtNem_Bear
-	plreq $B280, ArtNem_Bird
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Bear
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Bird
 PLC_31_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; CPZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_32: plrlistheader
-	plreq $B000, ArtNem_Rabbit
-	plreq $B280, ArtNem_Eagle
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Rabbit
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Eagle
 PLC_32_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; ARZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_33: plrlistheader
-	plreq $B000, ArtNem_Penguin
-	plreq $B280, ArtNem_Bird
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Penguin
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Bird
 PLC_33_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -499,24 +499,24 @@ PLC_37_End
 ; Egg Prison
 ;---------------------------------------------------------------------------------------
 PLC_38: plrlistheader
-	plreq $D000, ArtNem_Capsule
+	plreq vram_bytes(VRAM_Capsule), ArtNem_Capsule
 PLC_38_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; Normal explosion
 ;---------------------------------------------------------------------------------------
 PLC_39: plrlistheader
-	plreq $B480, ArtNem_Explosion
+	plreq vram_bytes(VRAM_Explosion), ArtNem_Explosion
 PLC_39_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; Tails end of level results screen
 ;---------------------------------------------------------------------------------------
 PLC_3A: plrlistheader
-	plreq $B000, ArtNem_TitleCard
-	plreq $B600, ArtNem_ResultsText
-	plreq $BE80, ArtNem_MiniTails
-	plreq $A800, ArtNem_Perfect
+	plreq vram_bytes(VRAM_TitleCard), ArtNem_TitleCard
+	plreq vram_bytes(VRAM_ResultsText), ArtNem_ResultsText
+	plreq $BE80, ArtNem_MiniTails	; uses special slot
+	plreq vram_bytes(VRAM_Perfect), ArtNem_Perfect
 PLC_3A_End
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
