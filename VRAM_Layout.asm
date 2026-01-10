@@ -4,115 +4,133 @@
 ; Genesis VDP has 64KB VRAM = 2048 tiles ($000-$7FF)
 ; Each tile = 32 bytes, so tile_index = byte_address / 32
 ;
-; MEMORY MAP:
+; MEMORY MAP (Current - matches existing PLCs):
 ; ---------------------------------------------------------------------------
-;   $000-$23F : Level foreground art (Kosinski) - varies by zone (max ~$240)
-;   $240-$39F : [FREE POOL A] Zone-specific objects (badniks, gimmicks)
-;   $3A0-$3FF : Zone objects (PitcherPlant=$3A0, WaterSurface=$400, etc)
-;   $400-$4FF : Springs, hazards, checkpoint, numbers, shield
-;   $500-$5FF : Effects (animals, explosion, dust, bubbles, stars)
-;   $600-$67F : [RESERVED - Scroll plane tiles]
-;   $680-$6CF : Core UI (Powerups=$680, Ring=$6BC, HUD=$6CA)
-;   $6D0-$77F : Shared pool (signpost, boss, title card, results)
-;   $780-$7FF : Character sprites (Sonic/Knux=$780, Tails=$7A0)
+;   $000-$23F : Level foreground art (Kosinski) - FIXED, varies by zone
+;   $240-$3FF : ZONE POOL A - zone-specific objects
+;   $400-$5FF : ZONE POOL B - springs, hazards, effects, animals
+;   $600-$67F : Scroll plane tiles - FIXED (VDP configured)
+;   $680-$77F : Core UI + Shared Pool (monitors, rings, HUD, signpost)
+;   $780-$7FF : Character sprites - FIXED (DMA destination)
 ; ===========================================================================
 
 ; ---------------------------------------------------------------------------
 ; HELPER MACROS
 ; ---------------------------------------------------------------------------
-; tile_to_bytes: Convert tile index to VDP byte address
-; Usage: dc.w tile_to_bytes(VRAM_Ring)
+; vram_bytes: Convert tile index to VDP byte address
+; Usage: plreq vram_bytes(VRAM_Ring), ArtNem_Ring
 vram_bytes function tile,((tile&$7FF)<<5)
 
 ; vram_art: Create art_tile word from tile index + palette + priority
 ; Usage: move.w #vram_art(VRAM_Explosion,0,0), art_tile(a0)
 vram_art function tile,pal,pri,((pri&1)<<15)|((pal&3)<<13)|(tile&$7FF)
 
-; ---------------------------------------------------------------------------
-; LEVEL FOREGROUND ART
-; ---------------------------------------------------------------------------
-VRAM_LevelArt         = $000   ; Level art starts at tile 0
-VRAM_LevelArt_MaxEHZ  = $225   ; EHZ uses $225 tiles
-VRAM_LevelArt_MaxARZ  = $23F   ; ARZ uses $23F tiles (largest)
+; ===========================================================================
+; FIXED REGIONS (Cannot be moved - VDP/DMA configured)
+; ===========================================================================
 
 ; ---------------------------------------------------------------------------
-; FREE POOL A: Zone-specific objects ($240-$39F = 352 tiles)
+; LEVEL FOREGROUND ART ($000-$23F) - FIXED
 ; ---------------------------------------------------------------------------
-; Use this space for zone-specific badniks and gimmicks.
-; Example allocations:
-VRAM_FreePool_Start   = $240
-VRAM_FreePool_End     = $39F
-; Your custom object here: VRAM_MyBadnik = $250 (then add PLC entry)
+VRAM_LevelArt         = $000
+VRAM_LevelArt_End     = $23F
 
 ; ---------------------------------------------------------------------------
-; ZONE-SPECIFIC OBJECTS ($3A0-$43F)
+; SCROLL PLANE TILES ($600-$67F) - FIXED (VDP configured)
 ; ---------------------------------------------------------------------------
-VRAM_PitcherPlant     = $3A0   ; $7400 bytes - EHZ badnik
-VRAM_WaterSurface     = $400   ; $8000 bytes
-VRAM_BigBubbles       = $418   ; $8300 bytes
-VRAM_DignlSprng       = $440   ; $8800 bytes
+VRAM_ScrollPlane      = $600
+VRAM_ScrollPlane_End  = $67F
 
 ; ---------------------------------------------------------------------------
-; SPRINGS & HAZARDS ($460-$4FF)
+; CHARACTER SPRITES ($780-$7FF) - FIXED (DMA destination)
 ; ---------------------------------------------------------------------------
-VRAM_VrtclSprng       = $460   ; $8C00 bytes
-VRAM_HrzntlSprng      = $474   ; $8E80 bytes
-VRAM_Spikes           = $480   ; $9000 bytes
-VRAM_HorizSpike       = $488   ; $9100 bytes
-VRAM_Checkpoint       = $490   ; $9200 bytes
-VRAM_Numbers          = $4AC   ; $9580 bytes
-VRAM_Shield           = $4BE   ; after Numbers
-VRAM_LightningSpark   = $4D5   ; $9AA0 bytes - lightning sparks
-VRAM_Game_Over        = $4DE   ; $9BC0 bytes
-VRAM_Perfect          = $4DE   ; shares with Game_Over
-
-; ---------------------------------------------------------------------------
-; EFFECTS & ANIMALS ($580-$5FF)
-; ---------------------------------------------------------------------------
-VRAM_Animal_1         = $580   ; $B000 bytes (squirrel slot)
-VRAM_Animal_2         = $594   ; $B280 bytes (bird slot)
-VRAM_Explosion        = $5A4   ; $B480 bytes
-VRAM_SonicDust        = $5D0   ; dust effects
-VRAM_TailsDust        = $5DA
-VRAM_Bubbles          = $5E8   ; $BD00 bytes
-VRAM_Invincible_stars = $5F2   ; $BE40 bytes
-VRAM_SuperSonic_stars = $5F2   ; shares with Invincible
-
-; ---------------------------------------------------------------------------
-; CORE UI ($680-$6CF)
-; ---------------------------------------------------------------------------
-VRAM_Powerups         = $680   ; $D000 bytes - monitors
-VRAM_Ring             = $6C0   ; $D800 bytes - moved from $6BC to give 64 tiles for monitors
-VRAM_HUD              = $6CA   ; $D940 bytes
-
-; ---------------------------------------------------------------------------
-; SHARED POOL ($6D0-$77F) - Mutually exclusive assets
-; ---------------------------------------------------------------------------
-VRAM_SharedPool       = $6D0
-VRAM_Signpost         = $6D0   ; end of act signpost
-VRAM_Capsule          = $6D0   ; egg prison
-VRAM_TitleCard        = $6D0   ; level title card
-VRAM_FieryExplosion   = $6D0   ; boss explosion
-VRAM_ResultsText      = $72E   ; end of level results
-
-; ---------------------------------------------------------------------------
-; CHARACTER SPRITES ($780-$7FF)
-; ---------------------------------------------------------------------------
-VRAM_Sonic            = $780   ; $F000 bytes - DMA loaded
+VRAM_Characters       = $780
+VRAM_Sonic            = $780   ; DMA loaded
 VRAM_Knuckles         = $780   ; shares with Sonic
-VRAM_Tails            = $7A0   ; $F400 bytes
-VRAM_TailsTails       = $7B0   ; $F600 bytes
-VRAM_SonicLife        = $7D4   ; $FA80 bytes - life icon
+VRAM_Tails            = $7A0
+VRAM_TailsTails       = $7B0
+VRAM_SonicLife        = $7D4   ; life icon
 VRAM_TailsLife        = $7D4   ; shares slot
 VRAM_KnuxLife         = $7D4   ; shares slot
+VRAM_Characters_End   = $7FF
 
-; ---------------------------------------------------------------------------
-; ADDING NEW ART - QUICK GUIDE
-; ---------------------------------------------------------------------------
-; 1. Find free space in appropriate pool above
+; ===========================================================================
+; ZONE POOL A ($240-$3FF) - Zone-specific objects
+; ===========================================================================
+VRAM_ZonePoolA_Start  = $240
+VRAM_ZonePoolA_End    = $3FF
+
+VRAM_PitcherPlant     = $3A0   ; EHZ badnik
+
+; ===========================================================================
+; ZONE POOL B ($400-$5FF) - Springs, hazards, effects, animals
+; ===========================================================================
+VRAM_ZonePoolB_Start  = $400
+VRAM_ZonePoolB_End    = $5FF
+
+; --- Water & Bubbles ---
+VRAM_WaterSurface     = $400
+VRAM_BigBubbles       = $418
+
+; --- Springs ---
+VRAM_DignlSprng       = $440
+VRAM_VrtclSprng       = $460
+VRAM_HrzntlSprng      = $474
+
+; --- Hazards ---
+VRAM_Spikes           = $480
+VRAM_HorizSpike       = $488
+
+; --- Checkpoint & Numbers ---
+VRAM_Checkpoint       = $490
+VRAM_Numbers          = $4AC
+
+; --- Shields ---
+VRAM_Shield           = $4BE
+VRAM_LightningSpark   = $4D5
+VRAM_Game_Over        = $4DE
+VRAM_Perfect          = $4DE   ; shares with Game_Over
+
+; --- Animals & Effects ---
+VRAM_Animal_1         = $580   ; squirrel slot
+VRAM_Animal_2         = $594   ; bird slot
+VRAM_Explosion        = $5A4
+VRAM_SonicDust        = $5D0
+VRAM_TailsDust        = $5DA
+VRAM_Bubbles          = $5E8
+VRAM_Invincible_stars = $5F2
+VRAM_SuperSonic_stars = $5F2   ; shares with Invincible
+
+; ===========================================================================
+; CORE UI ($680-$6CF) - Always loaded
+; ===========================================================================
+VRAM_CoreUI_Start     = $680
+VRAM_Powerups         = $680   ; Monitors (64 tiles)
+VRAM_Ring             = $6C0   ; Rings (~14 tiles)
+VRAM_HUD              = $6CA   ; HUD elements
+VRAM_CoreUI_End       = $6CF
+
+; ===========================================================================
+; SHARED POOL ($6D0-$77F) - Mutually exclusive assets
+; ===========================================================================
+VRAM_SharedPool_Start = $6D0
+VRAM_Signpost         = $6D0   ; End of act signpost
+VRAM_Capsule          = $6D0   ; Egg prison (shares)
+VRAM_TitleCard        = $6D0   ; Level title card (shares)
+VRAM_FieryExplosion   = $6D0   ; Boss explosion (shares)
+VRAM_ResultsText      = $72E   ; End of level results
+VRAM_SharedPool_End   = $77F
+
+; ===========================================================================
+; FREE SPACE SUMMARY
+; ===========================================================================
+; Zone Pool A: $240-$39F = $160 tiles (352 tiles) mostly free
+; Zone Pool B: $400-$57F = varies, some gaps between objects
+; After Effects: $5F2-$5FF = $E tiles (14 tiles) free
+;
+; To add new object art:
+; 1. Find gap in Zone Pool A or B
 ; 2. Add constant: VRAM_MyObject = $XXX
-; 3. Add PLC entry in "code/Levels/PLC List.asm":
-;    plreq vram_bytes(VRAM_MyObject), ArtNem_MyObject
-; 4. Use in object code:
-;    move.w #vram_art(VRAM_MyObject,0,0), art_tile(a0)
-; ---------------------------------------------------------------------------
+; 3. Add PLC: plreq vram_bytes(VRAM_MyObject), ArtNem_MyObject
+; 4. Use: move.w #vram_art(VRAM_MyObject,pal,pri), art_tile(a0)
+; ===========================================================================

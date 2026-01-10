@@ -109,57 +109,57 @@ PLCptr_ResultsTails:	dc.w PLC_3A - ArtLoadCues	; 66
 ; Standard 1 - loaded for every level
 ;---------------------------------------------------------------------------------------
 PlrList_Std1: plrlistheader
-	plreq $D940, ArtNem_HUD
-	plreq $D800, ArtNem_Ring	; was $D780, moved to $6C0 for 64-tile monitor space
-	plreq $9580, ArtNem_Numbers
+	plreq vram_bytes(VRAM_HUD), ArtNem_HUD
+	plreq vram_bytes(VRAM_Ring), ArtNem_Ring
+	plreq vram_bytes(VRAM_Numbers), ArtNem_Numbers
 PlrList_Std1_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
 ; Standard 2 - loaded for every level
 ;---------------------------------------------------------------------------------------
 PlrList_Std2: plrlistheader
-	plreq $8C00, ArtNem_VrtclSprng		; was: 8B80
-	plreq $8E80, ArtNem_HrzntlSprng		; was: 8E00
-	plreq $9000, ArtNem_Spikes		; was: 8680
-	plreq $9100, ArtNem_HorizSpike		; was: 8580
-	plreq $9200, ArtNem_Checkpoint		; was: 8F80
-	plreq $B480, ArtNem_Explosion
-	plreq $D000, ArtNem_Powerups
-	;plreq $97C0, ArtNem_Shield
-	;plreq $9BC0, ArtNem_Invincible_stars
+	plreq vram_bytes(VRAM_VrtclSprng), ArtNem_VrtclSprng
+	plreq vram_bytes(VRAM_HrzntlSprng), ArtNem_HrzntlSprng
+	plreq vram_bytes(VRAM_Spikes), ArtNem_Spikes
+	plreq vram_bytes(VRAM_HorizSpike), ArtNem_HorizSpike
+	plreq vram_bytes(VRAM_Checkpoint), ArtNem_Checkpoint
+	plreq vram_bytes(VRAM_Explosion), ArtNem_Explosion
+	plreq vram_bytes(VRAM_Powerups), ArtNem_Powerups
+	;plreq vram_bytes(VRAM_Shield), ArtNem_Shield
+	;plreq vram_bytes(VRAM_Invincible_stars), ArtNem_Invincible_stars
 PlrList_Std2_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
 ; Aquatic level standard
 ;---------------------------------------------------------------------------------------
 PlrList_StdWtr:	plrlistheader
-	plreq $BE40, ArtNem_SuperSonic_stars
-	plreq $BD00, ArtNem_Bubbles
+	plreq vram_bytes(VRAM_SuperSonic_stars), ArtNem_SuperSonic_stars
+	plreq vram_bytes(VRAM_Bubbles), ArtNem_Bubbles
 PlrList_StdWtr_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
 ; Game/Time over
 ;---------------------------------------------------------------------------------------
 PlrList_GameOver: plrlistheader
-	plreq $9BC0, ArtNem_Game_Over
+	plreq vram_bytes(VRAM_Game_Over), ArtNem_Game_Over
 PlrList_GameOver_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
 ; Emerald Hill Zone primary
 ;---------------------------------------------------------------------------------------
 PlrList_Ehz1: plrlistheader
-	plreq $7400, ArtNem_PitcherPlant
-	plreq $8000, ArtNem_WaterSurface
-	plreq $8300, ArtNem_BigBubbles		; was: AB60
-	plreq $8800, ArtNem_DignlSprng		; was: 8780
+	plreq vram_bytes(VRAM_PitcherPlant), ArtNem_PitcherPlant
+	plreq vram_bytes(VRAM_WaterSurface), ArtNem_WaterSurface
+	plreq vram_bytes(VRAM_BigBubbles), ArtNem_BigBubbles
+	plreq vram_bytes(VRAM_DignlSprng), ArtNem_DignlSprng
 PlrList_Ehz1_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
 ; Emerald Hill Zone secondary
 ;---------------------------------------------------------------------------------------
 PlrList_Ehz2: plrlistheader
-	plreq $B000, ArtNem_Squirrel
-	plreq $B280, ArtNem_Bird
+	plreq vram_bytes(VRAM_Animal_1), ArtNem_Squirrel
+	plreq vram_bytes(VRAM_Animal_2), ArtNem_Bird
 PlrList_Ehz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
