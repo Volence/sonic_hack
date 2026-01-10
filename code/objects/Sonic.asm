@@ -2560,7 +2560,7 @@ Sonic_LightningJump:
 	move.b	#4,render_flags(a1)
 	move.w	#$80,priority(a1)
 	move.b	#8,width_pixels(a1)
-	move.b	#2,anim(a1)			; use spark animation (frames 0-2)
+	move.b	#1,anim(a1)			; spark animation uses frames $C,$D,$16
 	move.w	(a2)+,x_vel(a1)
 	move.w	(a2)+,y_vel(a1)
 	dbf	d1,-

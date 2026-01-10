@@ -95,7 +95,7 @@ Hurt_Rings:
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.l	#Basic_Ring_MapUnc_12382,mappings(a1)
-	move.w	#$26BC,art_tile(a1)
+	move.w	#vram_art(VRAM_Ring,0,1),art_tile(a1)
 	move.b	#$84,render_flags(a1)
 	move.w	#$180,priority(a1)
 	move.b	#5,collision_response(a1)
