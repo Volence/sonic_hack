@@ -368,7 +368,7 @@ loc_171C8:
 	addq.b	#1,d5
 	move.b	d5,(a2)+
 	move.w	(a1)+,d0
-	addi.w	#$26BC,d0
+	addi.w	#vram_art(VRAM_Ring,0,1),d0
 	move.w	d0,(a2)+
 	addq.w	#2,a1
 	move.w	(a1)+,d0
@@ -437,7 +437,7 @@ loc_17260:
 	move.b	d5,(a2)+
 	addq.w	#2,a1
 	move.w	(a1)+,d0
-	addi.w	#$235E,d0
+	addi.w	#vram_art(VRAM_Ring,0,1),d0
 	move.w	d0,(a2)+
 	move.w	(a1)+,d0
 	add.w	d3,d0
