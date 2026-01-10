@@ -2556,7 +2556,7 @@ Sonic_LightningJump:
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
 	move.l	#Map_LighteningShield,mappings(a1)
-	move.w	#$4D5,art_tile(a1)
+	move.w	#vram_art(VRAM_LightningSpark,0,0),art_tile(a1)
 	move.b	#4,render_flags(a1)
 	move.w	#$80,priority(a1)
 	move.b	#8,width_pixels(a1)
