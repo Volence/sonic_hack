@@ -204,9 +204,7 @@ PlrList_Mtz2_End
 ; Wing Fortress Zone primary
 ;---------------------------------------------------------------------------------------
 PlrList_Wfz1: plrlistheader
-	plreq $9000, ArtNem_PitcherPlant	; 7A40
-	plreq $6E00, ArtNem_GiantBird
-	plreq $A000, ArtNem_FieryExplosion
+	; WFZ objects removed - zone not used
 PlrList_Wfz1_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
@@ -318,8 +316,8 @@ PLC_1D_End
 PLC_1E: plrlistheader
 	plreq vram_bytes(VRAM_TitleCard), ArtNem_TitleCard
 	plreq vram_bytes(VRAM_ResultsText), ArtNem_ResultsText
-	plreq $BE80, ArtNem_MiniSonic	; uses special slot
 	plreq vram_bytes(VRAM_Perfect), ArtNem_Perfect
+	; MiniSonic removed - not used
 PLC_1E_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
@@ -515,8 +513,8 @@ PLC_39_End
 PLC_3A: plrlistheader
 	plreq vram_bytes(VRAM_TitleCard), ArtNem_TitleCard
 	plreq vram_bytes(VRAM_ResultsText), ArtNem_ResultsText
-	plreq $BE80, ArtNem_MiniTails	; uses special slot
 	plreq vram_bytes(VRAM_Perfect), ArtNem_Perfect
+	; MiniTails removed - not used
 PLC_3A_End
 ;---------------------------------------------------------------------------------------
 ;Pattern load cue
