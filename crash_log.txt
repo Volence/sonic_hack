@@ -1,0 +1,21 @@
+width: 640, height: 480
+Window created with size: 640 x 480
+config says: 512
+Initialized audio at frequency 48000 with a 512 sample buffer, 32-bit float format
+Added 14 game controller mappings from gamecontrollerdb.txt
+Min samples buffered before audio start: 4800
+Product ID: 00001051
+SHA1: 0e227103c2b84eb2797396e525a8102553e93081
+Not found in ROM DB, examining header
+
+Min samples buffered before audio start: 4800
+IO port 1 connected to gamepad #1 with type '6-button gamepad'
+IO port 2 connected to gamepad #2 with type '6-button gamepad'
+IO port EXT connected to device 'None'
+Loaded SRAM from /home/volence/.local/share/blastem/s4/save.sram
+No SDL 2 mapping exists for input a on gamepad 0
+Joystick 0 added: Keychron Keychron Q1 System Control
+	Num Axes: 1
+	Num Buttons: 19
+	Num Hats: 1
+Saved SRAM to /home/volence/.local/share/blastem/s4/save.sram

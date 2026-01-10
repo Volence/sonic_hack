@@ -346,6 +346,8 @@ Lightning_Shield_Main:
 	bne.s	Lightning_Shield_Underwater	; if "yes", branch
 	move.w	x_pos(a2),x_pos(a0)
 	move.w	y_pos(a2),y_pos(a0)
+	tst.b	anim(a0)		; skip status copying after first frame
+	bne.s	Lightning_Shield_Display
 	move.b	status(a2),status(a0)
 	andi.b	#1,status(a0)		; Only orientation flag is kept
 	andi.w	#$7FFF,art_tile(a0)
@@ -360,8 +362,8 @@ Lightning_Shield_Display:
 	cmp.b	#$E,mapping_frame(a0)
 	bcs.s	+
 	move.w	#$200,priority(a0)
-+	jsr	LoadShieldsDynPLC
-	jmp	DisplaySprite
++	bsr.w	LoadShieldsDynPLC
+	jmp	(DisplaySprite).l
 ; ===========================================================================
 
 Lightning_Shield_Destroy:
@@ -519,10 +521,11 @@ Shield_Load
 	move.l	(a2)+,mappings(a0)
 	move.w	(a2)+,art_tile(a0)	
 	move.b	(a2)+,render_flags(a0)
+	tst.b	(a2)+			; skip explicit padding byte after dc.b
 	move.w	(a2)+,priority(a0)	
 	move.b	(a2)+,width_pixels(a0)
 	move.b	(a2)+,height_pixels(a0)	
-	move.w	(a2)+,anim(a0)	
+	move.w	(a2)+,next_anim(a0)	; Write to $1C (even) - this sets both next_anim and anim	
 	move.l	(a2)+,shield_dplc(a0)
 	move.l	(a2)+,shield_art(a0)
 	move.b	(a2)+,shield_prev_frame(a0)	
@@ -557,11 +560,12 @@ InstaShield_Data:
 		dc.w	objroutine(Obj_InstaShield_Main)
 		dc.l	Map_InstaShield
 		dc.w	$4BE
-		dc.b	4	
-		dc.w	$80		
+		dc.b	4
+		dc.b	0			; explicit padding
+		dc.w	$80
 		dc.b	$30
 		dc.b	$30
-		dc.w	1	
+		dc.w	1
 		dc.l	DPLC_InstaShield
 		dc.l	ArtUnc_InstaShield
 		dc.b	$FF
@@ -572,12 +576,13 @@ Fire_Shield_Data:
 		dc.l	Map_FireShield
 		dc.w	$4BE
 		dc.b	4
+		dc.b	0			; explicit padding
 		dc.w	$80
 		dc.b	$18
 		dc.b	$18
-		dc.w	1		
+		dc.w	0			; anim = 0 (idle rotation animation)
 		dc.l	DPLC_FireShield
-		dc.l	ArtUnc_FireShield	
+		dc.l	ArtUnc_FireShield
 		dc.b	-1
 		even		
 		
@@ -586,7 +591,7 @@ Fire_Shield_Explosion_Data:
 		dc.l	Explosion_MapUnc_21120
 		dc.w	$5A4
 		dc.b	4
-		dc.b	0
+		dc.b	0			; explicit padding
 		dc.w	$280
 		dc.b	$C
 		dc.b	$C
@@ -595,15 +600,17 @@ Fire_Shield_Explosion_Data:
 		dc.b	1		
 		even
 		
+
 Lightning_Shield_Data:
 		dc.w	objroutine(Lightning_Shield_Main)
 		dc.l	Map_LighteningShield
 		dc.w	$4BE
 		dc.b	4
+		dc.b	0			; explicit padding
 		dc.w	$80
 		dc.b	$18
 		dc.b	$18
-		dc.w	1
+		dc.w	0			; anim = 0 (full rotation animation)
 		dc.l	DPLC_LighteningShield
 		dc.l	ArtUnc_LighteningShield
 		dc.b	-1
@@ -614,10 +621,11 @@ Wind_Shield_Data:
 		dc.l	Map_WindShield
 		dc.w	$4BE
 		dc.b	4
+		dc.b	0			; explicit padding
 		dc.w	$80
 		dc.b	$18
 		dc.b	$18
-		dc.w	1
+		dc.w	0			; anim = 0 (idle animation)
 		dc.l	DPLC_WindShield
 		dc.l	ArtUnc_WindShield
 		dc.b	-1
@@ -628,10 +636,11 @@ Bubble_Shield_Data:
 		dc.l	Map_BubbleShield
 		dc.w	$4BE
 		dc.b	4
+		dc.b	0			; explicit padding
 		dc.w	$80
 		dc.b	$18
 		dc.b	$18
-		dc.w	1
+		dc.w	0			; anim = 0 (idle animation)
 		dc.l	DPLC_BubbleShield
 		dc.l	ArtUnc_BubbleShield
 		dc.b	-1

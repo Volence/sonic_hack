@@ -721,7 +721,7 @@ loc_748:
 	movem.l	d0-d3,(Scroll_flags_copy).w
 	move.l	($FFFFF61E).w,($FFFFEEEC).w
 	cmpi.b	#$5C,(Hint_counter_reserve+1).w
-	bra.s	DemoTime	; water crash
+	bhs.s	DemoTime	; branch if Hint_counter >= $5C (fixed from unconditional bra.s)
 	move.b	#1,($FFFFF64F).w
 	rts
 

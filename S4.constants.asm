@@ -1159,9 +1159,9 @@ Target_palette_line3:		ds.w	palette_line_size
 Second_palette_line4:
 Target_palette_line4:		ds.w	palette_line_size
 
-Object_Respawn_Table:		ds.b	$180
+Object_Respawn_Table:		ds.b	$100	; reduced from $180 to make room for stack
 
-				ds.b	$80	; Stack
+				ds.b	$100	; Stack (doubled from $80 to match S3K)
 System_Stack:
 
 				ds.w	1

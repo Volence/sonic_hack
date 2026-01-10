@@ -754,8 +754,7 @@ Sonic_TurnLeft:
 	jsr	(PlaySound).l
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1A744	; if he's drowning, branch to not make dust
-	move.w	#objroutine(Water_Splash_Object_CheckSkid),Sonic_Dust
-	move.b	#$15,(Sonic_Dust+mapping_frame).w
+	move.w	#objroutine(Water_Splash_Object),Sonic_Dust	; use init routine to ensure parent/mappings set
 
 return_1A744:
 	rts
@@ -804,8 +803,7 @@ Sonic_TurnRight:
 	jsr	(PlaySound).l
 	cmpi.b	#$C,air_left(a0)
 	blo.s	return_1A7C4	; if he's drowning, branch to not make dust
-	move.w	#objroutine(Water_Splash_Object_CheckSkid),Sonic_Dust
-	move.b	#$15,(Sonic_Dust+mapping_frame).w
+	move.w	#objroutine(Water_Splash_Object),Sonic_Dust	; use init routine to ensure parent/mappings set
 
 return_1A7C4:
 	rts
@@ -1459,7 +1457,7 @@ Sonic_ChargingSpindash:			; If still charging the dash...
 	move.b	(Ctrl_1_Press_Logical).w,d0
 	andi.b	#button_B_mask|button_C_mask|button_A_mask,d0
 	beq.w	Sonic_Spindash_ResetScr
-	move.w	#$900,anim(a0)
+	move.w	#$0009,next_anim(a0)	; use next_anim for even address (bytes swapped: anim=$09, next_anim=$00)
 	move.w	#SndID_SpindashRev,d0
 	jsr	(PlaySound).l
 	addi.w	#$200,spindash_counter(a0)
@@ -2694,18 +2692,21 @@ ChooseShield:
 	move.b	shields(a0),d0
 	tst.b	d0			; get the type of shield
 	beq.b	ChooseShield_None		; if no shield, branch
-	add.w	d0,d0				; load corresponding object
-	move.w	ChooseShield_Objects-2(pc,d0.w),Sonic_Shield-MainCharacter(a0)
+	add.w	d0,d0				; d0 = shield_type * 2
+	move.w	ChooseShield_Objects(pc,d0.w),Sonic_Shield-MainCharacter(a0)
 
 ChooseShield_None:
 	rts
 ; ===========================================================================
 
+; Access: d0*2 directly (no offset adjustment)
+; water=1 → d0*2=2, fire=2 → d0*2=4, lightning=3 → d0*2=6, wind=4 → d0*2=8
 ChooseShield_Objects:
-	dc.w	objroutine(Bubble_Shield)
-	dc.w	objroutine(Fire_Shield)
-	dc.w	objroutine(Lightning_Shield)
-	dc.w	objroutine(Wind_Shield)
+	dc.w	0				; index 0 (unused, shield_none=0 branches out)
+	dc.w	objroutine(Bubble_Shield)	; index 1 (water=1, d0*2=2)
+	dc.w	objroutine(Fire_Shield)		; index 2 (fire=2, d0*2=4)
+	dc.w	objroutine(Lightning_Shield)	; index 3 (lightning=3, d0*2=6)
+	dc.w	objroutine(Wind_Shield)		; index 4 (wind=4, d0*2=8)
 ; ===========================================================================
 
 ChooseShield_Super:				; load super stars
@@ -2745,7 +2746,7 @@ Player_InWater:
 	asr.w	y_vel(a0)	; memory operands can only be shifted one bit at a time
 	asr.w	y_vel(a0)
 	beq.s	return_1A18C
-	move.w	#$100,Sonic_Dust-MainCharacter+anim(a0)	; splash animation
+	move.w	#$0001,Sonic_Dust-MainCharacter+next_anim(a0)	; splash animation (bytes swapped: anim=$01)
 	move.w	#SndID_Splash,d0			; splash sound
 	jmp	(PlaySound).l
 +	rts	
@@ -2761,7 +2762,7 @@ Player_OutWater:
 	asl	y_vel(a0)
 +	tst.w	y_vel(a0)
 	beq.w	return_1A18C
-	move.w	#$100,Sonic_Dust-MainCharacter+anim(a0)	; splash animation
+	move.w	#$0001,Sonic_Dust-MainCharacter+next_anim(a0)	; splash animation (bytes swapped: anim=$01)
 	movea.l	a0,a1
 	bsr.w	ResumeMusic
 	cmpi.w	#-$1000,y_vel(a0)
