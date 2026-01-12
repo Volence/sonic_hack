@@ -35,7 +35,7 @@ Tails:
 	tst.b	(Last_star_pole_hit).w
 	bne.s	Tails_Init_Continued
 	; only happens when not starting at a checkpoint:
-	move.w	#$7A0,art_tile(a0)
+	move.w	#VRAM_Tails,art_tile(a0)
 	move.b	#$C,layer(a0)
 	move.b	#$D,layer_plus(a0)
 	move.w	x_pos(a0),(Saved_x_pos).w
@@ -46,7 +46,7 @@ Tails:
 ; ===========================================================================
 ; loc_1B952:
 Tails_Init_2Pmode:
-	move.w	#$7A0,art_tile(a0)
+	move.w	#VRAM_Tails,art_tile(a0)
 	move.w	(MainCharacter+layer).w,layer(a0)
 	tst.w	(MainCharacter+art_tile).w
 	bpl.s	Tails_Init_Continued
@@ -3045,7 +3045,7 @@ return_1D1FE:
 Tails_Tails_Init:
 	move.w	#objroutine(Tails_Tails_Main),(a0)
 	move.l	#MapUnc_Tails,mappings(a0)
-	move.w	#$7B0,art_tile(a0)
+	move.w	#VRAM_TailsTails,art_tile(a0)
 	move.w	#$100,priority(a0)
 	move.b	#$18,width_pixels(a0)
 	move.b	#4,render_flags(a0)

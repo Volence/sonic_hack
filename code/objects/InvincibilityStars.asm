@@ -19,7 +19,7 @@ Invincibility_Stars:
 	moveq	#3,d1
 -	move.w	#objroutine(Invincibility_Stars_Run2),(a1)
 	move.l	#Invincibility_Stars_MapUnc_1DCBC,mappings(a1)
-	move.w	#$4BE,art_tile(a1)
+	move.w	#VRAM_Shield,art_tile(a1)
 	move.b	#$44,render_flags(a1)
 	move.b	#$10,width_pixels(a1)
 	move.b	#2,$20(a1)

@@ -121,7 +121,7 @@ ObjDB_Sonic_Init:
 	move.w	#$9C,x_pos(a0)
 	move.w	#$19C,y_pos(a0)
 	move.l	#Mapunc_Sonic,mappings(a0)
-	move.w	#$780,art_tile(a0)
+	move.w	#VRAM_Characters,art_tile(a0)
 	move.b	#4,render_flags(a0)
 	move.w	#$100,priority(a0)
 	move.b	#$20,anim(a0)
@@ -177,7 +177,7 @@ ObjDB_Tails_Wait:
 ObjDB_Tails_StartRunning:
 	addq.b	#2,routine(a0) ; => ObjDB_Tails_Run
 	move.l	#MapUnc_Tails,mappings(a0)
-	move.w	#$7A0,art_tile(a0)
+	move.w	#VRAM_Tails,art_tile(a0)
 	move.b	#0,anim(a0)
 	clr.w	inertia(a0)
 	move.b	#$E0,d0 ; super peel-out sound

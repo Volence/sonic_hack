@@ -27,7 +27,7 @@ Knuckles:
 		bne.s	loc_9537C
 		cmpi.w	#$6,($FFFFFF72).w
 		beq.w	KnucklesArtSwitch
-		move.w	#$780,art_tile(a0)
+		move.w	#VRAM_Characters,art_tile(a0)
 		bra.w	Knuckles_ArtEnd
 KnucklesArtSwitch:
 		move.w	#$2560,art_tile(a0)

@@ -14393,7 +14393,7 @@ loc_41C56:
 	moveq	#0,d0
 	move.w	d0,(Debug_placement_mode).w
 	lea	(MainCharacter).w,a1 ; a1=character
-	move.w	#$780,art_tile(a1)	
+	move.w	#VRAM_Characters,art_tile(a1)
 	move.w	(Player_mode).w,d0
 	add.w	d0,d0
 	add.w	d0,d0
