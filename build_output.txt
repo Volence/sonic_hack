@@ -1,0 +1,512 @@
+[H[2J[3J
+rings.exe: Beginning conversion
+
+
+rings.exe: Conversion complete. 34 successful, 0 unsuccessful
+
+macro assembler 1.42 Beta [Bld 55]
+(i386-unknown-win32)
+(C) 1992,2007 Alfred Arnold
+68RS08-Generator (C) 2006 Andreas Bolsch
+Mitsubishi M16C-Generator also (C) 1999 RMS
+XILINX KCPSM(Picoblaze)-Generator (C) 2003 Andreas Wassatsch
+TMS320C2x-Generator (C) 1994/96 Thomas Sailer
+TMS320C5x-Generator (C) 1995/96 Thomas Sailer
+
+assembling S4.asm
+PASS 1
+
+S4.macrosetup.asm(201)
+
+S4.constants.asm(1532)
+
+VRAM_Layout.asm(137)
+
+Warning: Table PalCycle has 1 entries, but it should have 17 entries
+
+code/Levels/Primary and Secondary Collision List.asm(66)
+
+code/Levels/Level Size List.asm(42)
+
+code/Levels/Sonic Start Locations List.asm(44)
+
+code/Levels/Tails Start Locations List.asm(44)
+
+code/Levels/Knuckles Start Locations List.asm(43)
+
+Warning: Table JmpTbl_SwScrlMgr has 2 entries, but it should have 17 entries
+
+code/Levels/Deformation List.asm(18)
+
+Warning: Table DynamicArtLoadingIndex has 1 entries, but it should have 17 entries
+
+code/Levels/Title Card List.asm(59)
+
+code/engines/rings_manager.asm(577)
+
+code/objects/Object_Specific_Routines/object_index.asm(22)
+
+code/objects/Object_Specific_Routines/object_loading.asm(147)
+
+code/objects/Object_Specific_Routines/object_touch_response.asm(1107)
+
+code/objects/Object_Specific_Routines/object_delete.asm(19)
+
+code/objects/Sonic.asm(2825)
+
+code/objects/Tails.asm(3140)
+
+code/objects/Knuckles.asm(3621)
+
+code/objects/Bubbles.asm(592)
+
+code/objects/Shields.asm(372)
+
+code/objects/InvincibilityStars.asm(144)
+
+code/objects/SSStars.asm(64)
+
+code/objects/Splash.asm(215)
+
+code/objects/PathSwitch.asm(223)
+
+code/objects/badniks/PitcherPlant.asm(117)
+
+code/objects/WaterSurface.asm(38)
+
+code/objects/Explosion.asm(542)
+
+code/objects/Ring.asm(235)
+
+code/objects/Monitor.asm(392)
+
+code/objects/Spikes.asm(280)
+
+code/objects/Spring.asm(638)
+
+code/objects/Signpost.asm(748)
+
+code/objects/HUD.asm(771)
+
+animations/Sprite/Object CD.asm(2)
+
+animations/Sprite/Object CF.asm(6)
+
+animations/Sprite/Continue screen tails.asm(2)
+
+animations/Sprite/Sonic.asm(80)
+
+animations/Sprite/Super Sonic.asm(40)
+
+animations/Sprite/Tails.asm(91)
+
+animations/Sprite/Knuckles.asm(109)
+
+animations/Sprite/Signpost.asm(10)
+
+animations/Sprite/Ring.asm(2)
+
+animations/Sprite/Monitor.asm(31)
+
+animations/Sprite/Spring.asm(57)
+
+animations/Sprite/Egg Prison.asm(7)
+
+animations/Sprite/Bubbles.asm(30)
+
+animations/Sprite/Bubbles Base.asm(13)
+
+animations/Sprite/CheckPoint.asm(9)
+
+animations/Sprite/Spindash Dust And Water Splash.asm(8)
+
+animations/Sprite/Shield.asm(2)
+
+animations/Sprite/Pitcher Plant.asm(6)
+
+mappings/sprite/orbsmaps.asm(19)
+
+mappings/sprite/Spring 1.asm(83)
+
+mappings/sprite/Spring 2.asm(11)
+
+mappings/sprite/Bubbles Base Bubbles 2.asm(55)
+
+mappings/sprite/plantbadmaps.asm(37)
+
+mappings/sprite/birdmaps.asm(71)
+
+Warning: Table JmpTbl_DbgObjLists has 2 entries, but it should have 17 entries
+
+code/Levels/Debug Object List.asm(53)
+
+code/Levels/Level Art Pointers.asm(4)
+
+Warning: Table LevelArtPointers has 2 entries, but it should have 17 entries
+
+code/Levels/PLC List.asm(530)
+
+code/Levels/Layout List.asm(59)
+
+code/Levels/Ring Layout List.asm(76)
+
+code/Levels/Object Layout List.asm(80)
+
+code/Levels/Tile List.asm(12)
+
+code/Levels/Block List.asm(11)
+
+code/Levels/Chunk List.asm(13)
+
+mappings/sprite/KnuxMap.asm(1081)
+
+plcs/KnuxPLC.asm(383)
+
+mappings/sprite/Instashield.asm(32)
+
+mappings/spriteDPLC/Instashield.asm(14)
+
+animations/Sprite/Instashield.asm(5)
+
+animations/Sprite/Fireshield.asm(5)
+
+animations/Sprite/Lightningshield.asm(11)
+
+animations/Sprite/Bubbleshield.asm(10)
+
+mappings/sprite/S2 Lightningshield.asm(99)
+
+mappings/sprite/S2 Windshield.asm(112)
+
+S4.asm(18571)
+
+PASS 2
+
+S4.macrosetup.asm(201)
+
+S4.constants.asm(1532)
+
+VRAM_Layout.asm(137)
+
+code/Levels/Primary and Secondary Collision List.asm(66)
+
+code/Levels/Level Size List.asm(42)
+
+code/Levels/Sonic Start Locations List.asm(44)
+
+code/Levels/Tails Start Locations List.asm(44)
+
+code/Levels/Knuckles Start Locations List.asm(43)
+
+code/Levels/Deformation List.asm(18)
+
+code/Levels/Title Card List.asm(59)
+
+code/engines/rings_manager.asm(577)
+
+code/objects/Object_Specific_Routines/object_index.asm(22)
+
+code/objects/Object_Specific_Routines/object_loading.asm(147)
+
+code/objects/Object_Specific_Routines/object_touch_response.asm(1107)
+
+code/objects/Object_Specific_Routines/object_delete.asm(19)
+
+code/objects/Sonic.asm(2825)
+
+code/objects/Tails.asm(3140)
+
+code/objects/Knuckles.asm(3621)
+
+code/objects/Bubbles.asm(592)
+
+code/objects/Shields.asm(372)
+
+code/objects/InvincibilityStars.asm(144)
+
+code/objects/SSStars.asm(64)
+
+code/objects/Splash.asm(215)
+
+code/objects/PathSwitch.asm(223)
+
+code/objects/badniks/PitcherPlant.asm(117)
+
+code/objects/WaterSurface.asm(38)
+
+code/objects/Explosion.asm(542)
+
+code/objects/Ring.asm(235)
+
+code/objects/Monitor.asm(392)
+
+code/objects/Spikes.asm(280)
+
+code/objects/Spring.asm(638)
+
+code/objects/Signpost.asm(748)
+
+code/objects/HUD.asm(771)
+
+animations/Sprite/Object CD.asm(2)
+
+animations/Sprite/Object CF.asm(6)
+
+animations/Sprite/Continue screen tails.asm(2)
+
+animations/Sprite/Sonic.asm(80)
+
+animations/Sprite/Super Sonic.asm(40)
+
+animations/Sprite/Tails.asm(91)
+
+animations/Sprite/Knuckles.asm(109)
+
+animations/Sprite/Signpost.asm(10)
+
+animations/Sprite/Ring.asm(2)
+
+animations/Sprite/Monitor.asm(31)
+
+animations/Sprite/Spring.asm(57)
+
+animations/Sprite/Egg Prison.asm(7)
+
+animations/Sprite/Bubbles.asm(30)
+
+animations/Sprite/Bubbles Base.asm(13)
+
+animations/Sprite/CheckPoint.asm(9)
+
+animations/Sprite/Spindash Dust And Water Splash.asm(8)
+
+animations/Sprite/Shield.asm(2)
+
+animations/Sprite/Pitcher Plant.asm(6)
+
+mappings/sprite/orbsmaps.asm(19)
+
+mappings/sprite/Spring 1.asm(83)
+
+mappings/sprite/Spring 2.asm(11)
+
+mappings/sprite/Bubbles Base Bubbles 2.asm(55)
+
+mappings/sprite/plantbadmaps.asm(37)
+
+mappings/sprite/birdmaps.asm(71)
+
+code/Levels/Debug Object List.asm(53)
+
+code/Levels/Level Art Pointers.asm(4)
+
+code/Levels/PLC List.asm(530)
+
+code/Levels/Layout List.asm(59)
+
+code/Levels/Ring Layout List.asm(76)
+
+code/Levels/Object Layout List.asm(80)
+
+code/Levels/Tile List.asm(12)
+
+code/Levels/Block List.asm(11)
+
+code/Levels/Chunk List.asm(13)
+
+mappings/sprite/KnuxMap.asm(1081)
+
+plcs/KnuxPLC.asm(383)
+
+mappings/sprite/Instashield.asm(32)
+
+mappings/spriteDPLC/Instashield.asm(14)
+
+animations/Sprite/Instashield.asm(5)
+
+animations/Sprite/Fireshield.asm(5)
+
+animations/Sprite/Lightningshield.asm(11)
+
+animations/Sprite/Bubbleshield.asm(10)
+
+mappings/sprite/S2 Lightningshield.asm(99)
+
+mappings/sprite/S2 Windshield.asm(112)
+
+rom size is $E18E8 bytes (902.2265625 kb). About $ED42 bytes are padding. 
+
+S4.asm(18571)
+
+PASS 3
+
+S4.macrosetup.asm(201)
+
+S4.constants.asm(1532)
+
+VRAM_Layout.asm(137)
+
+code/Levels/Primary and Secondary Collision List.asm(66)
+
+code/Levels/Level Size List.asm(42)
+
+code/Levels/Sonic Start Locations List.asm(44)
+
+code/Levels/Tails Start Locations List.asm(44)
+
+code/Levels/Knuckles Start Locations List.asm(43)
+
+code/Levels/Deformation List.asm(18)
+
+code/Levels/Title Card List.asm(59)
+
+code/engines/rings_manager.asm(577)
+
+code/objects/Object_Specific_Routines/object_index.asm(22)
+
+code/objects/Object_Specific_Routines/object_loading.asm(147)
+
+code/objects/Object_Specific_Routines/object_touch_response.asm(1107)
+
+code/objects/Object_Specific_Routines/object_delete.asm(19)
+
+code/objects/Sonic.asm(2825)
+
+code/objects/Tails.asm(3140)
+
+code/objects/Knuckles.asm(3621)
+
+code/objects/Bubbles.asm(592)
+
+code/objects/Shields.asm(372)
+
+code/objects/InvincibilityStars.asm(144)
+
+code/objects/SSStars.asm(64)
+
+code/objects/Splash.asm(215)
+
+code/objects/PathSwitch.asm(223)
+
+code/objects/badniks/PitcherPlant.asm(117)
+
+code/objects/WaterSurface.asm(38)
+
+code/objects/Explosion.asm(542)
+
+code/objects/Ring.asm(235)
+
+code/objects/Monitor.asm(392)
+
+code/objects/Spikes.asm(280)
+
+code/objects/Spring.asm(638)
+
+code/objects/Signpost.asm(748)
+
+code/objects/HUD.asm(771)
+
+animations/Sprite/Object CD.asm(2)
+
+animations/Sprite/Object CF.asm(6)
+
+animations/Sprite/Continue screen tails.asm(2)
+
+animations/Sprite/Sonic.asm(80)
+
+animations/Sprite/Super Sonic.asm(40)
+
+animations/Sprite/Tails.asm(91)
+
+animations/Sprite/Knuckles.asm(109)
+
+animations/Sprite/Signpost.asm(10)
+
+animations/Sprite/Ring.asm(2)
+
+animations/Sprite/Monitor.asm(31)
+
+animations/Sprite/Spring.asm(57)
+
+animations/Sprite/Egg Prison.asm(7)
+
+animations/Sprite/Bubbles.asm(30)
+
+animations/Sprite/Bubbles Base.asm(13)
+
+animations/Sprite/CheckPoint.asm(9)
+
+animations/Sprite/Spindash Dust And Water Splash.asm(8)
+
+animations/Sprite/Shield.asm(2)
+
+animations/Sprite/Pitcher Plant.asm(6)
+
+mappings/sprite/orbsmaps.asm(19)
+
+mappings/sprite/Spring 1.asm(83)
+
+mappings/sprite/Spring 2.asm(11)
+
+mappings/sprite/Bubbles Base Bubbles 2.asm(55)
+
+mappings/sprite/plantbadmaps.asm(37)
+
+mappings/sprite/birdmaps.asm(71)
+
+code/Levels/Debug Object List.asm(53)
+
+code/Levels/Level Art Pointers.asm(4)
+
+code/Levels/PLC List.asm(530)
+
+code/Levels/Layout List.asm(59)
+
+code/Levels/Ring Layout List.asm(76)
+
+code/Levels/Object Layout List.asm(80)
+
+code/Levels/Tile List.asm(12)
+
+code/Levels/Block List.asm(11)
+
+code/Levels/Chunk List.asm(13)
+
+mappings/sprite/KnuxMap.asm(1081)
+
+plcs/KnuxPLC.asm(383)
+
+mappings/sprite/Instashield.asm(32)
+
+mappings/spriteDPLC/Instashield.asm(14)
+
+animations/Sprite/Instashield.asm(5)
+
+animations/Sprite/Fireshield.asm(5)
+
+animations/Sprite/Lightningshield.asm(11)
+
+animations/Sprite/Bubbleshield.asm(10)
+
+mappings/sprite/S2 Lightningshield.asm(99)
+
+mappings/sprite/S2 Windshield.asm(112)
+
+S4.asm(18571)
+
+
+0.45 seconds assembly time
+
+
+  40957 lines source file
+
+  92517 lines incl. macro expansions
+
+      3 passes
+
+      1 error
+
+      0 warnings
+
+Expected assembler outputs not found (looking for s4.p/S4.P and s4.h/S4.H).
+Found: p='<none>' h='<none>'

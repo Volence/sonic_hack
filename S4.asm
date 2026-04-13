@@ -1079,36 +1079,8 @@ loc_EFE:
 H_Int:
 	tst.w	(Hint_flag).w
 	beq.w	+
-	tst.w	(Two_player_mode).w
-	beq.w	PalToCRAM
-	;move.w	#0,(Hint_flag).w
-	;move.l	a5,-(sp)
-	;move.l	d0,-(sp)
-
-;-	move.w	(VDP_control_port).l,d0	; loop start: Make sure V_BLANK is over
-;	andi.w	#4,d0
-;	beq.s	-	; loop end
-
-;	move.w	(VDP_Reg1_val).w,d0
-;	andi.b	#$BF,d0
-;	move.w	d0,(VDP_control_port).l
-;	move.w	#$8228,(VDP_control_port).l
-;	move.l	#vdpComm($0000,VSRAM,WRITE),(VDP_control_port).l
-;	move.l	($FFFFEEEC).w,(VDP_data_port).l
-
-;	stopZ80
-;	dma68kToVDP Sprite_Table_2,$F800,$280,VRAM
-;	startZ80
-
-;-	move.w	(VDP_control_port).l,d0
-;	andi.w	#4,d0
-;	beq.s	-
-
-;	move.w	(VDP_Reg1_val).w,d0
-;	ori.b	#$40,d0
-;	move.w	d0,(VDP_control_port).l
-;	move.l	(sp)+,d0
-;	movea.l	(sp)+,a5
+	; 2P split-screen check removed — always use 1P PalToCRAM
+	bra.w	PalToCRAM
 +
 	rte
 
@@ -1437,10 +1409,7 @@ ClearScreen:
 	dmaFillVRAM 0,$C000,$1000	; Clear Plane A pattern name table
 	dmaFillVRAM 0,$E000,$1000	; Clear Plane B pattern name table
 
-	tst.w	(Two_player_mode).w
-	beq.s	+
-
-	dmaFillVRAM 0,$A000,$1000
+	; 2P nametable clear removed
 +
 	clr.l	(Vscroll_Factor).w
 	clr.l	($FFFFF61A).w
@@ -2702,11 +2671,11 @@ PalCycle_Load:
 ; ===========================================================================
 ; off_19F4:
 PalCycle: zoneOffsetTable 2,1
-	zoneTableEntry.w PalCycle_EHZ - PalCycle	; 0
+	zoneTableEntry.w PalCycle_OJZ - PalCycle	; 0
     zoneTableEnd
 
 ; ===========================================================================
-PalCycle_EHZ:
+PalCycle_OJZ:
 	rts
 
 ; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
@@ -2878,16 +2847,7 @@ PalCycle_SuperSonic_revert:	; runs the fade in transition backwards
 	lea	(Normal_palette+4).w,a1
 	move.l	(a0,d0.w),(a1)+
 	move.l	4(a0,d0.w),(a1)
-	; underwater palettes (*)
-	lea	(CyclingPal_CPZUWTransformation).l,a0
-	cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	beq.s	+
-	cmpi.b	#aquatic_ruin_zone,(Current_Zone).w
-	bne.w	-	; rts
-	lea	(CyclingPal_ARZUWTransformation).l,a0
-+	lea	(Underwater_palette+4).w,a1
-	move.l	(a0,d0.w),(a1)+
-	move.l	4(a0,d0.w),(a1)
+	; underwater palettes — CPZ/ARZ checks removed (dead zones)
 	rts
 ; ===========================================================================
 ; loc_21E6:
@@ -2908,16 +2868,7 @@ PalCycle_SuperSonic_normal:
 	lea	(Normal_palette+4).w,a1
 	move.l	(a0,d0.w),(a1)+
 	move.l	4(a0,d0.w),(a1)
-	; underwater palettes
-	lea	(CyclingPal_CPZUWTransformation).l,a0
-	cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	beq.s	+
-	cmpi.b	#aquatic_ruin_zone,(Current_Zone).w
-	bne.w	-	; rts
-	lea	(CyclingPal_ARZUWTransformation).l,a0
-+	lea	(Underwater_palette+4).w,a1
-	move.l	(a0,d0.w),(a1)+
-	move.l	4(a0,d0.w),(a1)
+	; underwater palettes — CPZ/ARZ checks removed (dead zones)
 	rts
 ; End of function PalCycle_SuperSonic
 
@@ -3399,7 +3350,7 @@ PalPointers:
 PalPtr_SEGA:	palptr Pal_SEGA,  0
 PalPtr_Title:	palptr Pal_Title, 1
 PalPtr_BGND:	palptr Pal_BGND,  0
-PalPtr_EHZ:	palptr Pal_EHZ,   1
+PalPtr_OJZ:	palptr Pal_OJZ,   1
 PalPtr_WFZ:	palptr Pal_WFZ,	 1
 PalPtr_L1:	palptr Pal_L1,   1
 PalPtr_Menu:	palptr Pal_Menu,  0
@@ -3416,8 +3367,8 @@ PalPtr_SaveMenu:
 	dc.l SaveMenu_Pal	; Save Menu pallets
 	dc.w $FB00
 	dc.w $1F
-PalPtr_EHZ_Top:	palptr Pal_EHZ_Top,  0
-PalPtr_EHZ_U:	palptr Pal_EHZ_U,  0
+PalPtr_OJZ_Top:	palptr Pal_OJZ_Top,  0
+PalPtr_OJZ_U:	palptr Pal_OJZ_U,  0
 
 ; ----------------------------------------------------------------------------
 ; This macro defines Pal_ABC and Pal_ABC_End, so palptr can compute the size of
@@ -3431,14 +3382,14 @@ __LABEL___End label *
 Pal_SEGA:  palette "art/palettes/Pal_SEGA.pal" ; SEGA screen palette (Sonic and initial background)
 Pal_Title: palette "art/palettes/Title screen.bin" ; Title screen Palette
 Pal_BGND:  palette "art/palettes/SonicAndTails.bin" ; "Sonic and Miles" background palette (also usually the primary palette line)
-Pal_EHZ:   palette "art/palettes/EHZ.bin" ; Emerald Hill Zone palette
+Pal_OJZ:   palette "art/palettes/OJZ.bin" ; Oracle Jungle Zone palette
 Pal_WFZ:   palette "art/palettes/WFZ.bin" ; Wing Fortress Zone palette
-Pal_L1:    palette "art/palettes/EHZ.bin" ; Emerald Hill Zone palette
+Pal_L1:    palette "art/palettes/OJZ.bin" ; Oracle Jungle Zone palette
 Pal_Menu:  palette "art/palettes/Menu.bin" ; Menu palette
 Pal_Knux:  palette "art/palettes/KnuxPal.bin"
 Pal_ARZ_U: palette "art/palettes/ARZ underwater.bin" ; Aquatic Ruin Zone underwater palette
-Pal_EHZ_Top:	palette "art/palettes/EHZ top.bin" ; EHZ top part palette
-Pal_EHZ_U:	palette "art/palettes/EHZ underwater.bin" ; EHZ underwater palette
+Pal_OJZ_Top:	palette "art/palettes/OJZ top.bin" ; OJZ top part palette
+Pal_OJZ_U:	palette "art/palettes/OJZ underwater.bin" ; OJZ underwater palette
 ;----------------------------------------------------------------------------
 ;Null for title card
 ;----------------------------------------------------------------------------
@@ -3712,10 +3663,10 @@ ContinueStartGameFunctions:
 	moveq	#0,d0
 	move.w	d0,(Two_player_mode_copy).w
 	move.w	d0,(Two_player_mode).w
-;    if emerald_hill_zone_act_1=0
-	move.w	d3,(Current_ZoneAndAct).w ; emerald_hill_zone_act_1
+;    if oracle_jungle_zone_act_1=0
+	move.w	d3,(Current_ZoneAndAct).w ; oracle_jungle_zone_act_1
  ;   else
-;	move.w #emerald_hill_zone_act_1,(Current_ZoneAndAct).w
+;	move.w #oracle_jungle_zone_act_1,(Current_ZoneAndAct).w
   ;  endif
 	;tst.b	(Level_select_flag).w	; has level select cheat been entered?
 	;beq.s	+			; if not, branch
@@ -3758,7 +3709,7 @@ TitleScreen_Demo:
 +
 	move.w	#1,(Demo_mode_flag).w
 	move.b	#GameModeID_Demo,(Game_Mode).w ; => Level (Demo mode)
-	cmpi.w	#emerald_hill_zone_act_1,(Current_ZoneAndAct).w
+	cmpi.w	#oracle_jungle_zone_act_1,(Current_ZoneAndAct).w
 	bne.s	+
 	move.w	#1,(Two_player_mode).w
 +
@@ -3772,10 +3723,10 @@ TitleScreen_Demo:
 ; ===========================================================================
 ; word_3DAC:
 DemoLevels:
-	dc.w	wing_fortress_zone_act_1	; WFZ
-	dc.w	chemical_plant_zone_act_1	; CPZ
-	dc.w	aquatic_ruin_zone_act_1		; ARZ
-	dc.w	casino_night_zone_act_1		; CNZ
+	dc.w	oracle_jungle_zone_act_1	; OJZ
+	dc.w	oracle_jungle_zone_act_1	; OJZ (was CPZ)
+	dc.w	oracle_jungle_zone_act_1	; OJZ (was ARZ)
+	dc.w	oracle_jungle_zone_act_1	; OJZ (was CNZ)
 DemoLevels_End:
 
 ; ===========================================================================
@@ -3784,7 +3735,7 @@ DemoLevels_End:
 ;----------------------------------------------------------------------------
 ; byte_3EA0:
 MusicList:
-	dc.b   2+$80	; 0 ; EHZ
+	dc.b   2+$80	; 0 ; OJZ
 	dc.b   $A+$80	; 1
 	dc.b   5+$80	; 2
 	dc.b   4+$80	; 3
@@ -3861,15 +3812,10 @@ Level_ClrRam:
 	clearRAM $FFFFF628,$58
 	clearRAM Misc_Variables,(Misc_Variables_End-Misc_Variables)
 	clearRAM $FFFFFE60,$50
-	clearRAM CNZ_saucer_data,$100
-	cmpi.b	#emerald_Hill_zone,(Current_Zone).w ; EHZ
-	beq.s	Level_InitWater
-	cmpi.w	#chemical_plant_zone_act_2,(Current_ZoneAndAct).w ; CPZ 2
-	beq.s	Level_InitWater
-	cmpi.b	#aquatic_ruin_zone,(Current_Zone).w ; ARZ
-	beq.s	Level_InitWater
-	cmpi.b	#hidden_palace_zone,(Current_Zone).w ; HPZ
+	clearRAM Engine_Extension_RAM_A,$100	; clear extension RAM (was: CNZ_saucer_data)
+	cmpi.b	#oracle_jungle_zone,(Current_Zone).w ; OJZ
 	bne.s	+
+	; dead zone water checks removed (CPZ 2, ARZ, HPZ)
 
 Level_InitWater:
 	move.b	#1,(Water_flag).w
@@ -3895,12 +3841,7 @@ Level_InitWater:
 	move.b	#1,(Debug_mode_flag).w
 +
 	move.w	#$8ADF,(Hint_counter_reserve).w	; H-INT every 223rd scanline
-	tst.w	(Two_player_mode).w
-	beq.s	+
-	move.w	#$8A6B,(Hint_counter_reserve).w	; H-INT every 108th scanline
-	move.w	#$8014,(a6)
-	move.w	#$8C87,(a6)
-+
+	; 2P split-screen H-INT frequency removed
 	move.w	(Hint_counter_reserve).w,(a6)
 	clr.w	(VDP_Command_Buffer).w
 	move.l	#VDP_Command_Buffer,(VDP_Command_Buffer_Slot).w
@@ -3910,7 +3851,7 @@ Level_InitWater:
 	moveq	#0,d0
 	move.w	(Current_ZoneAndAct).w,d0
     if ~~useFullWaterTables
-	subi.w	#hidden_palace_zone_act_1,d0
+	subi.w	#oracle_jungle_zone_act_1,d0	; was: hidden_palace_zone_act_1
     endif
 	ror.b	#1,d0
 	lsr.w	#6,d0
@@ -3925,8 +3866,7 @@ Level_InitWater:
 	move.b	#1,(Water_on).w	; enable water
 ; loc_407C:
 Level_LoadPal:
-        tst.w    (Two_player_mode).w
-        bne.s    SonicPal
+	; 2P mode check removed — always allow Knux palette
         cmpi.w    #$3,(Player_mode).w
         beq.w    LoadKnuxPal
 
@@ -3935,12 +3875,7 @@ SonicPal:
 	bsr.w	PalLoad1	; load Sonic's palette line
 	tst.b	(Water_flag).w	; does level have water?
 	beq.s	Level_GetBgm	; if not, branch
-	;moveq	#PalID_HPZ_U,d0	; palette number $15
-	;cmpi.b	#hidden_palace_zone,(Current_Zone).w
-	;beq.s	Level_WaterPal ; branch if level is HPZ
-	;moveq	#PalID_CPZ_U,d0	; palette number $16
-	;cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	;beq.s	Level_WaterPal ; branch if level is CPZ
+	; dead zone palette checks removed (HPZ, CPZ)
 	moveq	#PalID_ARZ_U,d0	; palette number $17
         bra.s    Level_WaterPal
 
@@ -3949,12 +3884,7 @@ LoadKnuxPal:
         bsr.w    PalLoad1
 	tst.b	(Water_flag).w	; does level have water?
 	beq.s	Level_GetBgm	; if not, branch
-	;moveq	#PalID_HPZ_U,d0	; palette number $15
-	;cmpi.b	#hidden_palace_zone,(Current_Zone).w
-	;beq.s	Level_WaterPal ; branch if level is HPZ
-	;moveq	#PalID_CPZ_U,d0	; palette number $16
-	;cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	;beq.s	Level_WaterPal ; branch if level is CPZ
+	; dead zone palette checks removed (HPZ, CPZ)
 	moveq	#PalID_ARZ_U,d0	; palette number $17
 ; loc_409E:
 Level_WaterPal:
@@ -4014,13 +3944,7 @@ Level_PlayBgm:
 	move.w	#objroutine(Water_Surface),(WaterSurface2+id).w ; load Water_Surface (water surface) at $FFFFB3C0
 	move.w	#$120,(WaterSurface2+x_pos).w ; set different horizontal offset
 +
-	cmpi.b	#chemical_plant_zone,(Current_Zone).w	; check if zone == CPZ
-;	bne.s	+			; branch if not
-;	move.b	#objroutine(Obj7C),(CPZPylon+id).w ; load Obj7C (CPZ pylon) at $FFFFB340
-+
-	cmpi.b	#oil_ocean_zone,(Current_Zone).w	; check if zone == OOZ
-;	bne.s	Level_ClrHUD		; branch if not
-;	move.b	#objroutine(Water_Surface),(Oil+id).w ; load Obj07 (OOZ oil) at $FFFFB380
+	; dead zone checks removed: CPZ pylon, OOZ oil surface
 
 Level_ClrHUD:
 	moveq	#0,d0
@@ -4067,9 +3991,9 @@ Level_FromCheckpoint:
 	movea.l	(a1,d0.w),a1
 +
 	move.b	1(a1),(Demo_press_counter).w
-	tst.b	(Current_Zone).w	; emerald_hill_zone
+	tst.b	(Current_Zone).w	; oracle_jungle_zone
 	bne.s	+
-	lea	(Demo_EHZ_Tails).l,a1
+	lea	(Demo_OJZ_Tails).l,a1
 	move.b	1(a1),(Demo_press_counter_2P).w
 +
 	move.w	#$668,(Demo_Time_left).w
@@ -4136,10 +4060,7 @@ Level_MainLoop:
 	bsr.w	UpdateWaterSurface
 	jsr		(RingsManager).l
 	jsr		AnimatedTiles
-	cmpi.b	#casino_night_zone,(Current_Zone).w	; is it CNZ?
-	bne.s	+			; if not, branch past jsr
-	jsr	(SpecialCNZBumpers).l
-+
+	; dead zone check removed: CNZ bumper
 	bsr.w	JmpTo_loc_3FCC4
 	bsr.w	PalCycle_Load
 	bsr.w	RunPLC_RAM
@@ -4218,13 +4139,8 @@ InitPlayers:
 	move.w	#objroutine(Sonic),(MainCharacter+id).w ; load Sonic Sonic object at $FFFFB000
 	move.w	#objroutine(Water_Splash_Object),(Sonic_Dust+id).w ; load Water_Splash_Object Sonic's spindash dust/splash object at $FFFFD100
 	cmpi.b	#1,(Current_Zone).w
-	beq.s	+ ; skip loading Tails if this is WFZ
-	cmpi.b	#wing_fortress_zone,(Current_Zone).w
-	beq.s	+ ; skip loading Tails if this is WFZ
-	cmpi.b	#death_egg_zone,(Current_Zone).w
-	beq.s	+ ; skip loading Tails if this is DEZ
-	cmpi.b	#sky_chase_zone,(Current_Zone).w
-	beq.s	+ ; skip loading Tails if this is SCZ
+	beq.s	+ ; skip loading Tails if this is zone 1
+	; dead zone checks removed: WFZ, DEZ, SCZ Tails-skip
 
 	move.w	#objroutine(Tails),(Sidekick+id).w ; load Tails Tails object at $FFFFB040
 	move.w	(MainCharacter+x_pos).w,(Sidekick+x_pos).w
@@ -4297,7 +4213,7 @@ UpdateWaterSurface:
 ; ---------------------------------------------------------------------------
 ; sub_450E: ; LZWaterEffects:
 WaterEffects:
-	tst.b	(Current_Zone).w	; is the level EHZ?
+	tst.b	(Current_Zone).w	; is the level OJZ?
 	bne.s	NoHIntEffects
 	move.w	#$130,d2		; position at which the palette changes
 	sub.w	(Camera_Y_pos).w,d2
@@ -4307,7 +4223,7 @@ WaterEffects:
 	move.b	#$DF,(Hint_counter_reserve+1).w
 	tst.b	(Water_fullscreen_flag).w
 	beq.s	HIntEffect_NoPal
-	moveq	#PalID_EHZ_U,d0	; normal underwater palette
+	moveq	#PalID_OJZ_U,d0	; normal underwater palette
 	bsr.w	PalLoad3_Water
 HIntEffect_NoPal:
 	;clr.b	(Water_fullscreen_flag).w	; already done
@@ -4317,7 +4233,7 @@ HIntEffect_NoPal:
 HIntEffect_Above:
 	tst.b	(Water_fullscreen_flag).w
 	bne.s	+
-	moveq	#PalID_EHZ_Top,d0	; top level palette
+	moveq	#PalID_OJZ_Top,d0	; top level palette
 	bsr.w	PalLoad3_Water
 +
 	move.b	#1,(Water_fullscreen_flag).w
@@ -4350,8 +4266,7 @@ NoHIntEffects:
 ; loc_4526: ; LZMoveWater:
 MoveWater:
 	moveq	#0,d0
-;	cmpi.b	#aquatic_ruin_zone,(Current_Zone).w	; is level ARZ?
-;	beq.s	+		; if yes, branch
+	; dead zone check removed: ARZ water movement
 	move.b	($FFFFFE60).w,d0
 	lsr.w	#1,d0
 +
@@ -4372,14 +4287,7 @@ MoveWater:
 	move.b	d0,(Hint_counter_reserve+1).w
 ; loc_456A:
 NonWaterEffects:
-	cmpi.b	#oil_ocean_zone,(Current_Zone).w	; is the level OOZ?
-	bne.s	+			; if not, branch
-	bsr.w	OilSlides		; call oil slide routine
-+
-	cmpi.b	#wing_fortress_zone,(Current_Zone).w	; is the level WFZ?
-	bne.s	+			; if not, branch
-	bsr.w	WindTunnel		; call wind and block break routine
-+
+	; dead zone checks removed: OOZ oil slides, WFZ wind tunnel
 	rts
 ; End of function WaterEffects
 NoHIntEffects_Check:
@@ -4402,7 +4310,7 @@ NoHIntEffects_Check3:
 ; ===========================================================================
     if useFullWaterTables
 WaterHeight: zoneOffsetTable 2,2
-	zoneTableEntry.w  $600, $600	; EHZ
+	zoneTableEntry.w  $600, $600	; OJZ
 	zoneTableEntry.w  $600, $600	; Zone 1
 	zoneTableEntry.w  $600, $600	; WZ
 	zoneTableEntry.w  $600, $600	; Zone 3
@@ -4709,13 +4617,13 @@ MoveDemo_On_P1:
 	addq.w	#2,(Demo_button_index).w ; advance to next button press
 ; loc_4908:
 MoveDemo_On_P2:
-    if emerald_hill_zone_act_1<$100 ; will it fit within a byte?
-	cmpi.b	#emerald_hill_zone_act_1,(Current_Zone).w
+    if oracle_jungle_zone_act_1<$100 ; will it fit within a byte?
+	cmpi.b	#oracle_jungle_zone_act_1,(Current_Zone).w
     else
-	cmpi.w #emerald_hill_zone_act_1,(Current_ZoneAndAct).w ; avoid a range overflow error
+	cmpi.w #oracle_jungle_zone_act_1,(Current_ZoneAndAct).w ; avoid a range overflow error
     endif
-	bne.s	MoveDemo_On_SkipP2 ; if it's not the EHZ demo, branch to skip player 2
-	lea	(Demo_EHZ_Tails).l,a1
+	bne.s	MoveDemo_On_SkipP2 ; if it's not the OJZ demo, branch to skip player 2
+	lea	(Demo_OJZ_Tails).l,a1
 
 	; same as the corresponding remainder of MoveDemo_On_P1, but for player 2
 	move.w	(Demo_button_index_2P).w,d0
@@ -4750,23 +4658,23 @@ MoveDemo_On_SkipP2:
 ; ---------------------------------------------------------------------------
 ; off_4948:
 DemoScriptPointers: zoneOffsetTable 4,1
-	zoneTableEntry.l Demo_EHZ	; $00
-	zoneTableEntry.l Demo_EHZ	; $01
-	zoneTableEntry.l Demo_EHZ	; $02
-	zoneTableEntry.l Demo_EHZ	; $03
-	zoneTableEntry.l Demo_EHZ	; $04
-	zoneTableEntry.l Demo_EHZ	; $05
-	zoneTableEntry.l Demo_EHZ	; $06
-	zoneTableEntry.l Demo_EHZ	; $07
-	zoneTableEntry.l Demo_EHZ	; $08
-	zoneTableEntry.l Demo_EHZ	; $09
-	zoneTableEntry.l Demo_EHZ	; $0A
-	zoneTableEntry.l Demo_EHZ	; $0B
+	zoneTableEntry.l Demo_OJZ	; $00
+	zoneTableEntry.l Demo_OJZ	; $01
+	zoneTableEntry.l Demo_OJZ	; $02
+	zoneTableEntry.l Demo_OJZ	; $03
+	zoneTableEntry.l Demo_OJZ	; $04
+	zoneTableEntry.l Demo_OJZ	; $05
+	zoneTableEntry.l Demo_OJZ	; $06
+	zoneTableEntry.l Demo_OJZ	; $07
+	zoneTableEntry.l Demo_OJZ	; $08
+	zoneTableEntry.l Demo_OJZ	; $09
+	zoneTableEntry.l Demo_OJZ	; $0A
+	zoneTableEntry.l Demo_OJZ	; $0B
 	zoneTableEntry.l Demo_CNZ	; $0C
 	zoneTableEntry.l Demo_CPZ	; $0D
-	zoneTableEntry.l Demo_EHZ	; $0E
+	zoneTableEntry.l Demo_OJZ	; $0E
 	zoneTableEntry.l Demo_ARZ	; $0F
-	zoneTableEntry.l Demo_EHZ	; $10
+	zoneTableEntry.l Demo_OJZ	; $10
     zoneTableEnd
 ; ---------------------------------------------------------------------------
 ; dword_498C:
@@ -4856,8 +4764,7 @@ Osc_Data_End:
 
 ; sub_4AC6:
 OscillateNumDo:
-	tst.w	(Two_player_mode).w
-	bne.s	+
+	; 2P mode check removed
 	move.w	(MainCharacter).w,d2	
 	move.w	(Player_mode).w,d0
 	add.w	d0,d0	
@@ -5002,19 +4909,9 @@ nosignpost macro actid
 ; sub_4BD2:
 SetLevelEndType:
 	move.w	#0,(Level_Has_Signpost).w	; set level type to non-signpost
-	tst.w	(Two_player_mode).w	; is it two-player competitive mode?
-	bne.s	LevelEnd_SetSignpost	; if yes, branch
-	nosignpost.w emerald_hill_zone_act_2
-	nosignpost.w metropolis_zone_act_3
-	nosignpost.w wing_fortress_zone_act_1
-	nosignpost.w hill_top_zone_act_2
-	nosignpost.w oil_ocean_zone_act_2
-	nosignpost.s mystic_cave_zone_act_2
-	nosignpost.s casino_night_zone_act_2
-	nosignpost.s chemical_plant_zone_act_2
-	nosignpost.s death_egg_zone_act_1
-	nosignpost.s aquatic_ruin_zone_act_2
-	nosignpost.s sky_chase_zone_act_1
+	; 2P mode check removed
+	nosignpost.w oracle_jungle_zone_act_2
+	; dead zone nosignpost entries removed (MTZ, WFZ, HTZ, OOZ, MCZ, CNZ, CPZ, DEZ, ARZ, SCZ)
 
 ; loc_4C40:
 LevelEnd_SetSignpost:
@@ -5072,10 +4969,10 @@ idx := idx+1
 	dc.b	btns_mask,duration-1
  endm
 ; ---------------------------------------------------------------------------
-; EHZ Demo Script (Sonic)
+; OJZ Demo Script (Sonic)
 ; ---------------------------------------------------------------------------
 ; byte_4CA8: Demo_Def:
-Demo_EHZ:
+Demo_OJZ:
 	demoinput ,	$4C
 	demoinput R,	$43
 	demoinput RC,	9
@@ -5125,10 +5022,10 @@ Demo_EHZ:
 	demoinput A,	1
 	demoinput ,	1
 ; ---------------------------------------------------------------------------
-; EHZ Demo Script (Tails)
+; OJZ Demo Script (Tails)
 ; ---------------------------------------------------------------------------
 ; byte_4D08:
-Demo_EHZ_Tails:
+Demo_OJZ_Tails:
 	demoinput ,	$3C
 	demoinput R,	$10
 	demoinput UR,	$44
@@ -5787,7 +5684,7 @@ OptionScreen_Select:
 	moveq	#0,d0
 	move.w	d0,(Two_player_mode).w
 	move.w	d0,(Two_player_mode_copy).w
-	move.w	d0,(Current_ZoneAndAct).w	; emerald_hill_zone_act_1
+	move.w	d0,(Current_ZoneAndAct).w	; oracle_jungle_zone_act_1
 	move.b	#GameModeID_Level,(Game_Mode).w ; => Level (Zone play mode)
 	rts
 ; ===========================================================================
@@ -6125,28 +6022,11 @@ LevelSelect_Return:
 ; -----------------------------------------------------------------------------
 ;Misc_9454:
 LevelSelect_Order:
-	dc.w	emerald_hill_zone_act_1
-	dc.w	emerald_hill_zone_act_2	; 1
-	dc.w	chemical_plant_zone_act_1	; 2
-	dc.w	chemical_plant_zone_act_2	; 3
-	dc.w	aquatic_ruin_zone_act_1	; 4
-	dc.w	aquatic_ruin_zone_act_2	; 5
-	dc.w	casino_night_zone_act_1	; 6
-	dc.w	casino_night_zone_act_2	; 7
-	dc.w	hill_top_zone_act_1	; 8
-	dc.w	hill_top_zone_act_2	; 9
-	dc.w	mystic_cave_zone_act_1	; 10
-	dc.w	mystic_cave_zone_act_2	; 11
-	dc.w	oil_ocean_zone_act_1	; 12
-	dc.w	oil_ocean_zone_act_2	; 13
-	dc.w	metropolis_zone_act_1	; 14
-	dc.w	metropolis_zone_act_2	; 15
-	dc.w	metropolis_zone_act_3	; 16
-	dc.w	sky_chase_zone_act_1	; 17
-	dc.w	wing_fortress_zone_act_1	; 18
-	dc.w	death_egg_zone_act_1	; 19
-	dc.w	$100	; 20 - special stage
-	dc.w	$FFFF	; 21 - sound test
+	dc.w	oracle_jungle_zone_act_1	; 0
+	dc.w	oracle_jungle_zone_act_2	; 1
+	; dead zone level select entries removed (CPZ, ARZ, CNZ, HTZ, MCZ, OOZ, MTZ, SCZ, WFZ, DEZ)
+	dc.w	$100	; 2 - special stage
+	dc.w	$FFFF	; 3 - sound test
 ; ===========================================================================
 
 ;loc_9480:
@@ -6397,7 +6277,7 @@ LevelSelect_DrawIcon:
 ; ===========================================================================
 ;byte_96D8
 LevSel_IconTable:
-	dc.b   0,0	;0	EHZ
+	dc.b   0,0	;0	OJZ
 	dc.b   7,7	;2	CPZ
 	dc.b   8,8	;4	ARZ
 	dc.b   6,6	;6	CNZ
@@ -7400,11 +7280,7 @@ DeformBgLayer:
 	clr.w	(Camera_Y_pos_diff).w
 	clr.w	(Camera_X_pos_diff_P2).w
 	clr.w	(Camera_Y_pos_diff_P2).w
-	cmpi.b	#sky_chase_zone,(Current_Zone).w
-	bne.w	+
-	tst.w	(Debug_placement_mode).w
-	beq.w	loc_C4D0	; skip normal scrolling for SCZ
-+
+	; dead zone check removed: SCZ autoscroll bypass
 	tst.b	(Scroll_lock).w
 	bne.s	+++
 	lea	(MainCharacter).w,a0 ; a0=character
@@ -7434,10 +7310,8 @@ DeformBgLayer:
 	lea	(Verti_block_crossed_flag).w,a2
 	bsr.w	SetVertiScrollFlags
 +
-	tst.w	(Two_player_mode).w
-	beq.s	loc_C4D0
-	tst.b	(Scroll_lock_P2).w
-	bne.s	loc_C4D0
+	; 2P scroll/camera removed — always skip to loc_C4D0
+	bra.s	loc_C4D0
 	lea	(Sidekick).w,a0 ; a0=character
 	lea	(Camera_X_pos_P2).w,a1
 	lea	(Tails_Min_X_pos).w,a2
@@ -7514,44 +7388,44 @@ SwScrl_Title:
 
 	rts
 ; ===========================================================================
-SwScrl_EHZ:
+SwScrl_OJZ:
 		move.w	#8,(Camera_Bg_Y_pos).w
 		move.w	(Camera_Bg_Y_pos).w,($FFFFF618).w
 		lea	($FFFFE000).w,a1			; load buffer location to a1
 
-DeformEHZ_FG:
+DeformOJZ_FG:
 		lea	(a1),a2					; load X buffer location to a2
 		move.w	(Camera_X_pos).w,d5			; load camera's current X position
 		neg.w	d5					; reverse it
 		move.W	#$DF,d1					; set repeat times
 
-DeformEHZ_FG_X:
+DeformOJZ_FG_X:
 		move.w	d5,(a2)+				; deform it to buffer
 		lea	$02(a2),a2				; skip BG deform
-		dbf	d1,DeformEHZ_FG_X			; repeat til full deformation is met on X axis
+		dbf	d1,DeformOJZ_FG_X			; repeat til full deformation is met on X axis
 
 		lea	$380(a1),a2				; load Y buffer location to a2
 		move.w	(Camera_Y_pos).w,d5			; load camera's current Y position
 		move.W	#$14,d1					; set repeat times
 
-DeformEHZ_FG_Y:
+DeformOJZ_FG_Y:
 		move.w	d5,(a2)+				; deform it to buffer
 		lea	$02(a2),a2				; skip BG deform
-		dbf	d1,DeformEHZ_FG_Y			; repeat til full deformation is met on Y axis
+		dbf	d1,DeformOJZ_FG_Y			; repeat til full deformation is met on Y axis
 
 ; Top Clouds
 
-DeformEHZ_BG:
+DeformOJZ_BG:
 		lea	(a1),a2					; load X buffer location to a2
 		move.w	(Camera_X_pos).w,d5			; load camera's current X position
 		lsr.w	#$01,d5					; divide by 2 (reduces speed)
 		neg.w	d5					; reverse it
 		move.W	#$47,d1					; set repeat times
 
-DeformEHZ_BG_X1:
+DeformOJZ_BG_X1:
 		lea	$02(a2),a2				; skip FG deform
 		move.w	d5,(a2)+				; deform it to buffer
-		dbf	d1,DeformEHZ_BG_X1			; repeat til full deformation is met on Y axis
+		dbf	d1,DeformOJZ_BG_X1			; repeat til full deformation is met on Y axis
 
 ; Bottom Clouds
 		move.w	(Camera_X_pos).w,d5			; load camera's current X position
@@ -7559,10 +7433,10 @@ DeformEHZ_BG_X1:
 		neg.w	d5					; reverse it
 		move.W	#$27,d1					; set repeat times
 
-DeformEHZ_BG_X2:
+DeformOJZ_BG_X2:
 		lea	$02(a2),a2				; skip FG deform
 		move.w	d5,(a2)+				; deform it to buffer
-		dbf	d1,DeformEHZ_BG_X2			; repeat til full deformation is met on Y axis
+		dbf	d1,DeformOJZ_BG_X2			; repeat til full deformation is met on Y axis
 
 ; Sky and top Mountains
 		move.w	(Camera_X_pos).w,d5			; load camera's current X position
@@ -7570,66 +7444,66 @@ DeformEHZ_BG_X2:
 		neg.w	d5					; reverse it
 		move.W	#$47,d1					; set repeat times
 
-DeformEHZ_BG_X3:
+DeformOJZ_BG_X3:
 		lea	$02(a2),a2				; skip FG deform
 		move.w	d5,(a2)+				; deform it to buffer
-		dbf	d1,DeformEHZ_BG_X3			; repeat til full deformation is met on Y axis
+		dbf	d1,DeformOJZ_BG_X3			; repeat til full deformation is met on Y axis
 
 		move.w	(Camera_X_pos).w,d5			; load camera's current X position
 		lsr.w	#$05,d5					; divide by 20 (reduces speed)
 		neg.w	d5					; reverse it
 		move.W	#$07,d1					; set repeat times
 
-DeformEHZ_BG_X4:
+DeformOJZ_BG_X4:
 		lea	$02(a2),a2				; skip FG deform
 		move.w	d5,(a2)+				; deform it to buffer
-		dbf	d1,DeformEHZ_BG_X4			; repeat til full deformation is met on Y axis
+		dbf	d1,DeformOJZ_BG_X4			; repeat til full deformation is met on Y axis
 
 		move.w	(Camera_X_pos).w,d5			; load camera's current X position
 		lsr.w	#$04,d5					; divide by 10 (reduces speed)
 		neg.w	d5					; reverse it
 		move.W	#$07,d1					; set repeat times
 
-DeformEHZ_BG_X5:
+DeformOJZ_BG_X5:
 		lea	$02(a2),a2				; skip FG deform
 		move.w	d5,(a2)+				; deform it to buffer
-		dbf	d1,DeformEHZ_BG_X5			; repeat til full deformation is met on Y axis
+		dbf	d1,DeformOJZ_BG_X5			; repeat til full deformation is met on Y axis
 
 		move.w	(Camera_X_pos).w,d5			; load camera's current X position
 		lsr.w	#$03,d5					; divide by 08 (reduces speed)
 		neg.w	d5					; reverse it
 		move.W	#$07,d1					; set repeat times
 
-DeformEHZ_BG_X6:
+DeformOJZ_BG_X6:
 		lea	$02(a2),a2				; skip FG deform
 		move.w	d5,(a2)+				; deform it to buffer
-		dbf	d1,DeformEHZ_BG_X6			; repeat til full deformation is met on Y axis
+		dbf	d1,DeformOJZ_BG_X6			; repeat til full deformation is met on Y axis
 
 		move.w	(Camera_X_pos).w,d5			; load camera's current X position
 		lsr.w	#$02,d5					; divide by 04 (reduces speed)
 		neg.w	d5					; reverse it
 		move.W	#$07,d1					; set repeat times
 
-DeformEHZ_BG_X7:
+DeformOJZ_BG_X7:
 		lea	$02(a2),a2				; skip FG deform
 		move.w	d5,(a2)+				; deform it to buffer
-		dbf	d1,DeformEHZ_BG_X7			; repeat til full deformation is met on Y axis
+		dbf	d1,DeformOJZ_BG_X7			; repeat til full deformation is met on Y axis
 
 		move.w	(Camera_X_pos).w,d5			; load camera's current X position
 		lsr.w	#$01,d5					; divide by 02 (reduces speed)
 		neg.w	d5					; reverse it
 		move.W	#$07,d1					; set repeat times
 
-DeformEHZ_BG_X8:
+DeformOJZ_BG_X8:
 		lea	$02(a2),a2				; skip FG deform
 		move.w	d5,(a2)+				; deform it to buffer
-		dbf	d1,DeformEHZ_BG_X8			; repeat til full deformation is met on Y axis
+		dbf	d1,DeformOJZ_BG_X8			; repeat til full deformation is met on Y axis
 
 		move.w	#$110,d0
 		sub.w	(Camera_Y_pos).w,d0
 		bpl.b	+
 		moveq	#0,d0
-		bra.b	DeformEHZ_End
+		bra.b	DeformOJZ_End
 +		cmpi.w	#$E0,d0
 		ble.b	+
 		move.w	#$E0,d0
@@ -7640,7 +7514,7 @@ DeformEHZ_BG_X8:
 		neg.w	d0
 		subi.w	#$40,d0
 
-DeformEHZ_End:
+DeformOJZ_End:
 		move.w	d0,(Camera_BG_Y_pos).w
 		move.w	d0,(Vscroll_Factor+2).w
 		rts						; return
@@ -8179,13 +8053,7 @@ LoadTilesAsYouMove:
 	;lea	(Scroll_flags_BG3_copy).w,a2	; used in CPZ deformation routine
 	;lea	(Camera_BG3_copy).w,a3
 	;bsr.w	Draw_BG3
-	tst.w	(Two_player_mode).w
-	beq.s	+
-	lea	(Scroll_flags_copy_P2).w,a2
-	lea	(Camera_P2_copy).w,a3	; second player camera
-	move.l	(LevelUncLayout).l,a4
-	move.w	#$6000,d2
-	bsr.w	Draw_FG_P2
+	; 2P Draw_FG_P2 removed
 
 +
 	lea	(Scroll_flags_copy).w,a2
@@ -8518,8 +8386,7 @@ byte_DCD6:	; unused array
 Draw_BG3:
 	tst.b	(a2)
 	beq.w	++	; rts
-	cmpi.b	#chemical_plant_zone,(Current_Zone).w
-	beq.w	Draw_BG3_CPZ
+	; dead zone check removed: CPZ-specific BG3 drawing
 	bclr	#0,(a2)
 	beq.s	+
 	move.w	#$40,d4
@@ -8661,8 +8528,7 @@ word_DE7E:
 ; ===========================================================================
 
 loc_DE86:
-	tst.w	(Two_player_mode).w
-	bne.s	++
+	; 2P block count removed
 	moveq	#$F,d6
 	move.l	#$800000,d7
 
@@ -8722,9 +8588,7 @@ DrawBlockCol2:
 	move.l	#$800000,d7	; store VDP command for line increment
 	move.l	d0,d1		; copy byte-swapped VDP command for later access
 	bsr.w	GetBlockAddr
-	tst.w	(Two_player_mode).w
-	bne.s	++
-
+	; 2P block rendering check removed
 -	move.w	(a0),d3		; get ID of the 16x16 block
 	andi.w	#$3FF,d3
 	lsl.w	#3,d3		; multiply by 8, the size in bytes of a 16x16
@@ -9158,14 +9022,7 @@ loc_E300:
 ; 	adda.l	#$80,a4
 	adda.l	#$02,a4
 	move.w	#$6000,d2
-	moveq	#0,d4
-	cmpi.b	#casino_night_zone,(Current_Zone).w
-	beq.w	++
-	tst.w	(Two_player_mode).w
-	beq.w	+
-	cmpi.b	#mystic_cave_zone,(Current_Zone).w
-	beq.w	loc_E396
-+
+	; dead zone checks removed: CNZ/MCZ BG rendering
 	moveq	#-$10,d4
 +
 	moveq	#$F,d6
@@ -9258,8 +9115,7 @@ loadZoneBlockMaps:
 	lea	(Block_Table).w,a1
 	bsr.w	JmpTo_KosDec	; load block maps
 +
-	tst.w	(Two_player_mode).w
-	beq.s	+
+	; 2P block table halving removed
 	; In 2P mode, adjust the block table to halve the pattern index on each block
 	lea	(Block_Table).w,a1
 
@@ -9901,10 +9757,10 @@ RunDynamicArtLoading:
 	jmp		DynamicArtLoadingIndex(pc,d0.w)
 ; ===========================================================================
 DynamicArtLoadingIndex: zoneOffsetTable 2,1
-	zoneTableEntry.w DynamicArt_EHZ  - DynamicArtLoadingIndex	;   0 ; EHZ
+	zoneTableEntry.w DynamicArt_OJZ  - DynamicArtLoadingIndex	;   0 ; OJZ
     zoneTableEnd	
 ; ---------------------------------------------------------------------------
-DynamicArt_EHZ:
+DynamicArt_OJZ:
 	rts
 ; ---------------------------------------------------------------------------	
 ; loc_F626:
@@ -9948,10 +9804,7 @@ loc_15584:
 	bne.w	loc_15670
 	moveq	#$3F,d5
 	move.l	#$85DA85DA,d6
-	tst.w	(Two_player_mode).w
-	beq.s	loc_155A8
-	moveq	#$1F,d5
-	move.l	#$82ED82ED,d6
+	; 2P special stage VRAM check removed
 
 loc_155A8:
 	lea	(SpecialStageShadow_Sonic+$36).w,a0
@@ -9977,10 +9830,7 @@ loc_155C6:
 	subq.w	#1,d1
 	moveq	#7,d5
 	move.l	#$A5DCA5DC,d6
-	tst.w	(Two_player_mode).w
-	beq.s	loc_155EA
-	moveq	#3,d5
-	move.l	#$A2EEA2EE,d6
+	; 2P special stage check removed
 
 loc_155EA:
 	lea	(SpecialStageShadow_Tails+$36).w,a0
@@ -10009,10 +9859,7 @@ loc_15614:
 	subq.w	#1,d1
 	moveq	#$D,d5
 	move.l	#$85D885D8,d6
-	tst.w	(Two_player_mode).w
-	beq.s	loc_15634
-	moveq	#6,d5
-	move.l	#$82EC82EC,d6
+	; 2P special stage check removed
 
 loc_15634:
 	lea	(SpecialStageTails_Tails+$36).w,a0
@@ -10045,12 +9892,7 @@ loc_15670:
 	moveq	#3,d4
 	move.l	#$85DA85DA,d5
 	move.l	#$A5DCA5DC,d6
-	tst.w	(Two_player_mode).w
-	beq.s	+
-	moveq	#4,d3
-	moveq	#1,d4
-	move.l	#$82ED82ED,d5
-	move.l	#$A2EEA2EE,d6
+	; 2P special stage mapping removed
 +
 	lea	(SpecialStageTails_Tails+$36).w,a0
 	moveq	#1,d7
@@ -10082,10 +9924,7 @@ loc_156CE:
 	move.w	#$8F02,4(a6)		; VRAM pointer increment: $0002
 	moveq	#7,d5
 	move.l	#$85DA85DA,d6
-	tst.w	(Two_player_mode).w
-	beq.s	+
-	moveq	#3,d5
-	move.l	#$82ED82ED,d6
+	; 2P special stage check removed
 +
 	lea	(SpecialStageShadow_Tails+$36).w,a0
 	moveq	#1,d7
@@ -10108,8 +9947,8 @@ loc_15714:
 	move.w	(SpecialStageShadow_Sonic+$36).w,d4
 	beq.s	loc_1578C
 	lea	4(a6),a5
-	tst.w	(Two_player_mode).w
-	beq.s	loc_15758
+	; 2P P2 camera rendering removed
+	bra.s	loc_15758
 	lea	(Camera_X_pos_P2).w,a3
 	move.l	(LevelUncLayout).l,a4
 	move.w	#$6000,d2
@@ -10301,8 +10140,7 @@ RunObjects:
 	bne.s	RunObject ; if not in a level, branch to RunObject
 +
 	move.w	#(LevelOnly_Object_RAM_End-Object_RAM)/object_size-1,d7	; run the first $90 objects in levels
-	tst.w	(Two_player_mode).w
-	bne.s	RunObject ; if in 2 player competition mode, branch to RunObject
+	; 2P RunObject shortcut removed
 
 	move.w	(MainCharacter).w,d2	
 	move.w	(Player_mode).w,d0
@@ -10435,10 +10273,7 @@ ObjectMove:
 ; input: a0 = the object
 ; loc_163D2:
 MarkObjGone:
-	tst.w	(Two_player_mode).w
-	beq.s	+
-	bra.w	DisplaySprite
-+
+	; 2P DisplaySprite shortcut removed
 	move.w	x_pos(a0),d0
 	andi.w	#$FF80,d0
 	sub.w	(Camera_X_pos_coarse).w,d0
@@ -10457,10 +10292,7 @@ MarkObjGone:
 ; input: d0 = the object's x position
 ; loc_1640A:
 MarkObjGone2:
-	tst.w	(Two_player_mode).w
-	beq.s	+
-	bra.w	DisplaySprite
-+
+	; 2P DisplaySprite shortcut removed
 	andi.w	#$FF80,d0
 	sub.w	(Camera_X_pos_coarse).w,d0
 	cmpi.w	#$280,d0
@@ -10479,10 +10311,7 @@ MarkObjGone2:
 ; does nothing instead of calling DisplaySprite in the case of no deletion
 ; loc_1643E:
 MarkObjGone3:
-	tst.w	(Two_player_mode).w
-	beq.s	+
-	rts
-+
+	; 2P rts shortcut removed
 	move.w	x_pos(a0),d0
 	andi.w	#$FF80,d0
 	sub.w	(Camera_X_pos_coarse).w,d0
@@ -10501,8 +10330,7 @@ MarkObjGone3:
 ; input: a0 = the object
 ; loc_16472:
 MarkObjGone_P1:
-	tst.w	(Two_player_mode).w
-	bne.s	MarkObjGone_P2
+	; 2P mode check removed — always use P1 path
 	move.w	x_pos(a0),d0
 	andi.w	#$FF80,d0
 	sub.w	(Camera_X_pos_coarse).w,d0
@@ -11151,8 +10979,7 @@ loc_17462:
 	cmp.w	-4(a2),d4
 	bls.s	loc_17460
 	move.l	a2,($FFFFF720).w
-	tst.w	(Two_player_mode).w
-	bne.s	loc_1747C
+	; 2P ring manager check removed
 	move.l	a1,($FFFFF724).w
 	move.l	a2,($FFFFF728).w
 	rts
@@ -14221,10 +14048,7 @@ Debug_Main:
 	addq.b	#2,(Debug_placement_mode).w
 	move.w	(Camera_Min_Y_pos).w,($FFFFFFCC).w
 	move.w	(Camera_Max_Y_pos).w,($FFFFFFCE).w
-	cmpi.b	#sky_chase_zone,(Current_Zone).w
-	bne.s	loc_41AAE
-	move.w	#0,(Camera_Min_X_pos).w
-	move.w	#$3FFF,(Camera_Max_X_pos).w
+	; dead zone check removed: SCZ camera bounds override
 
 loc_41AAE:
 	andi.w	#$7FF,(MainCharacter+y_pos).w
@@ -14376,13 +14200,20 @@ loc_41C12:
 	bne.s	loc_41C56
 	move.w	x_pos(a0),x_pos(a1)
 	move.w	y_pos(a0),y_pos(a1)
-	move.w	mappings(a0),id(a1) ; load obj
-	move.b	render_flags(a0),render_flags(a1)
-	move.b	render_flags(a0),status(a1)
-	andi.b	#$7F,status(a1)
+	; Get object ID from debug list entry and look up via Obj_Index
 	moveq	#0,d0
 	move.b	(Debug_object).w,d0
 	lsl.w	#3,d0
+	; Extract object ID from high byte of debug list longword
+	move.b	(a2,d0.w),d1		; d1 = object ID (1-based)
+	ext.w	d1
+	subq.w	#1,d1			; convert to 0-based index
+	add.w	d1,d1			; word index
+	lea	(Obj_Index).l,a3
+	move.w	(a3,d1.w),(a1)		; set routine pointer from Obj_Index
+	move.b	render_flags(a0),render_flags(a1)
+	move.b	render_flags(a0),status(a1)
+	andi.b	#$7F,status(a1)
 	move.b	4(a2,d0.w),subtype(a1)
 	rts
 ; ===========================================================================
@@ -14986,7 +14817,7 @@ byte_71A94:	dc.b 7,	$72, $73, $26, $15, 8, $FF, 5
 ; ---------------------------------------------------------------------------
 MusicIndex:
 MusPtr_2PResult:		dc.l Music81
-MusPtr_EHZ:	dc.l Music82
+MusPtr_OJZ:	dc.l Music82
 MusPtr_MCZ_2P:		dc.l Music83
 MusPtr_OOZ:		dc.l Music84
 MusPtr_MTZ:		dc.l Music85
@@ -14996,7 +14827,7 @@ MusPtr_CNZ_2P:		dc.l Music88
 MusPtr_CNZ:		dc.l Music89
 MusPtr_DEZ:		dc.l Music8A
 MusPtr_MCZ:		dc.l Music8B
-MusPtr_EHZ_2P:		dc.l Music8C
+MusPtr_OJZ_2P:		dc.l Music8C
 MusPtr_SCZ:		dc.l Music8D
 MusPtr_CPZ:		dc.l Music8E
 MusPtr_WFZ:		dc.l Music8F
@@ -18453,13 +18284,13 @@ SvMnSL00:	dc.b	$00,$01
 ; ---------------------------------------------------------------------------
 
 AnimatedTiles:
-		cmpi.b	#emerald_Hill_zone,(Current_Zone).w	; is the level EHZ?
-		beq.s	AnimateEHZ				; if so, branch
+		cmpi.b	#oracle_jungle_zone,(Current_Zone).w	; is the level OJZ?
+		beq.s	AnimateOJZ				; if so, branch
 		rts						; return
 
 ; ---------------------------------------------------------------------------
 
-AnimateEHZ:
+AnimateOJZ:
 		lea	(BGScrollGrass).l,a1		; load stars art location to a1
 		clr.l	d0				; clear d0
 		move.w	(Camera_Y_pos).w,d0		; load screen's X position to d0

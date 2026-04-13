@@ -60,7 +60,7 @@ VRAM_Characters_End   = $7FF
 VRAM_ZonePoolA_Start  = $240
 VRAM_ZonePoolA_End    = $3FF
 
-VRAM_PitcherPlant     = $3A0   ; EHZ badnik
+VRAM_PitcherPlant     = $3A0   ; OJZ badnik
 
 ; ===========================================================================
 ; ZONE POOL B ($400-$5FF) - Springs, hazards, effects, animals

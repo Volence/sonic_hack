@@ -35,77 +35,16 @@ ObjMonitor_Main:
 	bclr	#6,mappings(a0)		; stop monitor from falling
 
 ObjMonitor_Solid:
+	; Check if monitor should break (Sonic is spinning and touched it)
 	ckhit.w	ObjMonitor_Break
-	move.w	#$1A,d1			; monitor's width
-	move.w	#$F,d2			; height/2
-	move.w	d2,d3
-	addq.w	#1,d3
-	move.w	x_pos(a0),d4
-	lea	(MainCharacter).w,a1	; a1=character
-	moveq	#3,d6
-	movem.l	d1-d4,-(sp)
-	bsr.w	ObjMonitor_Solid_Sonic
-	movem.l	(sp)+,d1-d4
-	lea	(Sidekick).w,a1		; a1=character
-	moveq	#4,d6
-	bsr.w	ObjMonitor_Solid_Tails
+	; Touch_Solid (collision_response = 8) handles all solid behavior:
+	; side push, top landing, Y repositioning, and edge fall-off.
+	; No per-object edge check needed.
 
 ObjMonitor_Display:
 	lea	(Ani_Monitor).l,a1
 	jsr	AnimateSprite
 	jmp	MarkObjGone
-
-ObjMonitor_Solid_Sonic:
-	btst	d6,status(a0)		; is Sonic standing on the monitor?
-	bne.s	ObjMonitor_ChkOverEdge	; if yes, branch
-	cmpi.b	#2,anim(a1)		; is Sonic spinning?
-	beq.b	locret_12756		; if so, rMonitors_Brokenturn
-	jmp	SolidObject2		; if not, branch
-
-ObjMonitor_Solid_Tails:
-	btst	d6,status(a0)		; is Tails standing on the monitor?
-	bne.s	ObjMonitor_ChkOverEdge	; if yes, branch
-	tst.w	(Two_player_mode).w	; is it two player mode?
-	beq.b	+			; if not, branch
-	; in one player mode monitors always behave as solid for Tails
-	cmpi.b	#2,anim(a1)		; is Tails spinning?
-	beq.b	locret_12756		; if so, return
-+	jmp	SolidObject2		; if not, branch
-
-locret_12756:
-	rts
-
-; ---------------------------------------------------------------------------
-; Checks if the player has walked over the edge of the monitor.
-; ---------------------------------------------------------------------------
-
-ObjMonitor_ChkOverEdge:
-	move.w	d1,d2
-	add.w	d2,d2
-	btst	#1,status(a1)	; is the character in the air?
-	bne.s	+		; if yes, branch
-	; check, if character is standing on
-	move.w	x_pos(a1),d0
-	sub.w	x_pos(a0),d0
-	add.w	d1,d0
-	bmi.s	+	; branch, if character is behind the left edge of the monitor
-	cmp.w	d2,d0
-	blo.s	ObjMonitor_CharStandOn	; branch, if character is not beyond the right edge of the monitor
-+
-	; if the character isn't standing on the monitor
-	bclr	#3,status(a1)	; clear 'on object' bit
-	bset	#1,status(a1)	; set 'in air' bit
-	bclr	d6,status(a0)	; clear 'standing on' bit for the current character
-	moveq	#0,d4
-	rts
-; ---------------------------------------------------------------------------
-
-ObjMonitor_CharStandOn:
-	move.w	d4,d2
-	jsr	MvSonicOnPtfm
-	moveq	#0,d4
-	rts
-; ===========================================================================
 
 ObjMonitor_Break:
 	move.b	status(a0),d0
@@ -388,7 +327,7 @@ Monitor_Data:
 		dc.l	Monitor_MapUnc_12D36		; Mappings
 		dc.w	VRAM_Powerups						; Art Tile
 		dc.b	4							; Render Flags
-		dc.b	4							; Collision Response
+		dc.b	9					; Collision Response (Touch_SolidBreakable)
 		dc.w	$180						; Priority
 		dc.b	$1A							; Width Pixels
 		dc.b	$1E							; Height Pixels

@@ -1,12 +1,25 @@
 ; ---------------------------------------------------------------------------
 ; OBJECT DEBUG LISTS
-
-; The jump table goes by level ID, so Metropolis Zone's list is repeated to
-; account for its third act. Hidden Palace Zone uses Oil Ocean Zone's list.
+; Reserved zone slots use the default debug object list.
 ; ---------------------------------------------------------------------------
 JmpTbl_DbgObjLists: zoneOffsetTable 2,1
-	zoneTableEntry.w DbgObjList_EHZ - JmpTbl_DbgObjLists ; 0
-	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 1
+	zoneTableEntry.w DbgObjList_OJZ - JmpTbl_DbgObjLists ; 0 - OJZ
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 1 - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 2 - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 3 - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 4 - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 5 - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 6 - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 7 - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 8 - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 9 - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; A - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; B - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; C - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; D - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; E - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; F - reserved
+	zoneTableEntry.w DbgObjList_Def - JmpTbl_DbgObjLists ; 10 - reserved
     zoneTableEnd
 
 ; macro for a debug object list header
@@ -34,9 +47,13 @@ DbgObjList_Def: dbglistheader
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $B,  0, $680
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $C,  0, $680
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $D,  0, $680
+	dbglistobj 6, Spring_MapUnc_1901C,   $10,   0,  0, VRAM_VrtclSprng		; Up spring (red)
+	dbglistobj 6, Spring_MapUnc_1901C,   $10,   0,  0, VRAM_VrtclSprng		; Up spring (yellow) - subtype $02
+	dbglistobj 6, Spring_MapUnc_19032,   $10,   3,  0, VRAM_HrzntlSprng	; Side spring (red)
+	dbglistobj 7, Spikes_MapUnc_15B68,   0,   0,  0, VRAM_Spikes				; Spikes
 DbgObjList_Def_End
 
-DbgObjList_EHZ: dbglistheader
+DbgObjList_OJZ: dbglistheader
 	dbglistobj 1, Basic_Ring_MapUnc_12382,   0,   0,  2, VRAM_Ring
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,   3,  0, $680
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,   5,  0, $680
@@ -47,6 +64,10 @@ DbgObjList_EHZ: dbglistheader
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $B,  0, $680
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $C,  0, $680
 	dbglistobj 2, Monitor_MapUnc_12D36,   8,  $D,  0, $680
+	dbglistobj 6, Spring_MapUnc_1901C,   $10,   0,  0, VRAM_VrtclSprng		; Up spring (red)
+	dbglistobj 6, Spring_MapUnc_1901C,   $10,   0,  0, VRAM_VrtclSprng		; Up spring (yellow) - subtype $02
+	dbglistobj 6, Spring_MapUnc_19032,   $10,   3,  0, VRAM_HrzntlSprng	; Side spring (red)
+	dbglistobj 7, Spikes_MapUnc_15B68,   0,   0,  0, VRAM_Spikes				; Spikes
 
-DbgObjList_EHZ_End
+DbgObjList_OJZ_End
 

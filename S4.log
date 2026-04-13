@@ -1,0 +1,4 @@
+> > >code/objects/Object_Specific_Routines/object_touch_response.asm(1419): warning: distance of 0 not allowed for short jump (NOP created instead)                    
+> > > 	bra.s	.calc_y_dist                    
+> > >code/objects/Object_Specific_Routines/object_touch_response.asm(1433): warning: distance of 0 not allowed for short jump (NOP created instead)                    
+> > > 	bra.s	.compare_distances                    

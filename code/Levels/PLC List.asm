@@ -35,8 +35,8 @@ PLCptr_Std1:		dc.w PlrList_Std1 - ArtLoadCues	; 0
 PLCptr_Std2:		dc.w PlrList_Std2 - ArtLoadCues	; 1
 PLCptr_StdWtr:		dc.w PlrList_StdWtr - ArtLoadCues	; 2
 PLCptr_GameOver:	dc.w PlrList_GameOver - ArtLoadCues	; 3
-PLCptr_Ehz1:		dc.w PlrList_Ehz1 - ArtLoadCues	; 4
-PLCptr_Ehz2:		dc.w PlrList_Ehz2 - ArtLoadCues	; 5
+PLCptr_Ojz1:		dc.w PlrList_Ojz1 - ArtLoadCues	; 4
+PLCptr_Ojz2:		dc.w PlrList_Ojz2 - ArtLoadCues	; 5
 PLCptr_Miles1up:	dc.w PLC_6 - ArtLoadCues	; 6
 PLCptr_MilesLife:	dc.w PLC_7 - ArtLoadCues	; 7
 PLCptr_Tails1up:	dc.w PLC_8 - ArtLoadCues	; 8
@@ -72,7 +72,7 @@ PLCptr_Scz2:		dc.w PLC_1D - ArtLoadCues	; 37
 PLCptr_Results:		dc.w PLC_1E - ArtLoadCues	; 38
 PLCptr_Signpost:	dc.w PLC_1F - ArtLoadCues	; 39
 PLCptr_CpzBoss:		dc.w PLC_20 - ArtLoadCues	; 40
-PLCptr_EhzBoss:		dc.w PLC_21 - ArtLoadCues	; 41
+PLCptr_OjzBoss:		dc.w PLC_21 - ArtLoadCues	; 41
 PLCptr_HtzBoss:		dc.w PLC_22 - ArtLoadCues	; 42
 PLCptr_ArzBoss:		dc.w PLC_23 - ArtLoadCues	; 43
 PLCptr_MczBoss:		dc.w PLC_24 - ArtLoadCues	; 44
@@ -81,7 +81,7 @@ PLCptr_MtzBoss:		dc.w PLC_26 - ArtLoadCues	; 46
 PLCptr_OozBoss:		dc.w PLC_27 - ArtLoadCues	; 47
 PLCptr_FieryExplosion:	dc.w PLC_28 - ArtLoadCues	; 48
 PLCptr_DezBoss:		dc.w PLC_29 - ArtLoadCues	; 49
-PLCptr_EhzAnimals:	dc.w PLC_2A - ArtLoadCues	; 50
+PLCptr_OjzAnimals:	dc.w PLC_2A - ArtLoadCues	; 50
 PLCptr_MczAnimals:	dc.w PLC_2B - ArtLoadCues	; 51
 PLCptr_HtzAnimals:
 PLCptr_MtzAnimals:
@@ -147,20 +147,20 @@ PlrList_GameOver_End
 ; PATTERN LOAD REQUEST LIST
 ; Emerald Hill Zone primary
 ;---------------------------------------------------------------------------------------
-PlrList_Ehz1: plrlistheader
+PlrList_Ojz1: plrlistheader
 	plreq vram_bytes(VRAM_PitcherPlant), ArtNem_PitcherPlant
 	plreq vram_bytes(VRAM_WaterSurface), ArtNem_WaterSurface
 	plreq vram_bytes(VRAM_BigBubbles), ArtNem_BigBubbles
 	plreq vram_bytes(VRAM_DignlSprng), ArtNem_DignlSprng
-PlrList_Ehz1_End
+PlrList_Ojz1_End
 ;---------------------------------------------------------------------------------------
 ; PATTERN LOAD REQUEST LIST
 ; Emerald Hill Zone secondary
 ;---------------------------------------------------------------------------------------
-PlrList_Ehz2: plrlistheader
+PlrList_Ojz2: plrlistheader
 	plreq vram_bytes(VRAM_Animal_1), ArtNem_Squirrel
 	plreq vram_bytes(VRAM_Animal_2), ArtNem_Bird
-PlrList_Ehz2_End
+PlrList_Ojz2_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
 ; Sonic life icon
@@ -334,7 +334,7 @@ PLC_20: plrlistheader
 PLC_20_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
-; EHZ Boss
+; OJZ Boss
 ;---------------------------------------------------------------------------------------
 PLC_21: plrlistheader
 PLC_21_End
@@ -390,7 +390,7 @@ PLC_29: plrlistheader
 PLC_29_End
 ;---------------------------------------------------------------------------------------
 ; Pattern load queue
-; EHZ Animals
+; OJZ Animals
 ;---------------------------------------------------------------------------------------
 PLC_2A: plrlistheader
 	plreq vram_bytes(VRAM_Animal_1), ArtNem_Squirrel

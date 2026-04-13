@@ -67,7 +67,7 @@ animal_routine = objoff_3A
 
 ; ===========================================================================
 byte_118CE: zoneOffsetTable 1,2
-	zoneTableEntry.b (word_118F0_6 - word_118F0) / 8 ; EHZ
+	zoneTableEntry.b (word_118F0_6 - word_118F0) / 8 ; OJZ
 	zoneTableEntry.b (word_118F0_5 - word_118F0) / 8
 	zoneTableEntry.b (word_118F0_9 - word_118F0) / 8 ; WFZ
 	zoneTableEntry.b (word_118F0_7 - word_118F0) / 8

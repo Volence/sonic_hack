@@ -38,376 +38,62 @@ ObjSpring_CheckColor:	; checks color of spring
 +	rts
 ; ===========================================================================
 
+; ---------------------------------------------------------------------------
+; UP SPRING - uses Touch_Spring (collision_response = 10)
+; ---------------------------------------------------------------------------
 ObjSpring_UpP:
 	bsr.w	ObjSpring_CheckColor
+	move.b	#$10,height_pixels(a0)
+	move.b	#10,collision_response(a0)
 	move.w	#objroutine(ObjSpring_Up),(a0)
 
 ObjSpring_Up:
-	move.w	#$1B,d1
-	move.w	#8,d2
-	move.w	#$10,d3
-	move.w	x_pos(a0),d4
-	lea	(MainCharacter).w,a1 ; a1=character
-	moveq	#3,d6
-	movem.l	d1-d4,-(sp)
-	jsr	loc_1978E
-	btst	#3,status(a0)
-	beq.s	loc_189A8
-	bsr.s	loc_189CA
-
-loc_189A8:
-	movem.l	(sp)+,d1-d4
-	lea		(Sidekick).w,a1 ; a1=character
-	moveq	#4,d6
-	jsr	loc_1978E
-	btst	#4,status(a0)
-	beq.s	loc_189C0
-	bsr.s	loc_189CA
-
-loc_189C0:
-	lea		(Ani_Spring).l,a1
+	lea	(Ani_Spring).l,a1
 	jsr	AnimateSprite
 	jmp	MarkObjGone
-; ===========================================================================
-
-loc_189CA:
-	move.w	#$100,anim(a0)
-	addq.w	#8,y_pos(a1)
-	move.w	objoff_30(a0),y_vel(a1)
-        clr.b   Flying_Flag
-        clr.b   Flying_Frame_Counter
-	clr.b	Flying_carrying_sonic_flag
-	bset	#1,status(a1)
-	bclr	#3,status(a1)
-	move.b	#$10,anim(a1)
-	move.w	(Player_mode).w,d0
-	add.w	d0,d0	
-	move.w	Spring_Change_Routine(pc,d0.w),(a1)
-	bra.s	+
-	
-Spring_Change_Routine:
-		dc.w	objroutine(Sonic_Control)
-		dc.w	objroutine(Sonic_Control)
-		dc.w	objroutine(Tails_Control)
-		dc.w	objroutine(Knuckles_Control)	
-	
-+	move.b	subtype(a0),d0
-	bpl.s	loc_189FE
-	move.w	#0,x_vel(a1)
-
-loc_189FE:
-	btst	#0,d0
-	beq.s	loc_18A3E
-	move.w	#1,inertia(a1)
-	move.b	#1,flip_angle(a1)
-	move.b	#0,anim(a1)
-	move.b	#0,flips_remaining(a1)
-	move.b	#4,flip_speed(a1)
-	btst	#1,d0
-	bne.s	loc_18A2E
-	move.b	#1,flips_remaining(a1)
-
-loc_18A2E:
-	btst	#0,status(a1)
-	beq.s	loc_18A3E
-	neg.b	flip_angle(a1)
-	neg.w	inertia(a1)
-
-loc_18A3E:
-	andi.b	#$C,d0
-	cmpi.b	#4,d0
-	bne.s	loc_18A54
-	move.b	#$C,layer(a1)
-	move.b	#$D,layer_plus(a1)
-
-loc_18A54:
-	cmpi.b	#8,d0
-	bne.s	loc_18A66
-	move.b	#$E,layer(a1)
-	move.b	#$F,layer_plus(a1)
-
-loc_18A66:
-	move.w	#SndID_Spring,d0
-	jmp	PlaySound
-	
 
 ; ===========================================================================
 
+; ---------------------------------------------------------------------------
+; SIDE SPRING - uses Touch_Spring (collision_response = 10)
+; ---------------------------------------------------------------------------
 ObjSpring_SideP:
 	move.b	#2,anim(a0)
 	move.b	#3,mapping_frame(a0)
 	move.w	#vram_art(VRAM_HrzntlSprng,0,0),art_tile(a0)
 	move.b	#8,width_pixels(a0)
 	bsr.w	ObjSpring_CheckColor
+	move.b	#$E,height_pixels(a0)
+	move.b	#10,collision_response(a0)
 	move.w	#objroutine(ObjSpring_Side),(a0)
 
 ObjSpring_Side:
-	move.w	#$13,d1
-	move.w	#$E,d2
-	move.w	#$F,d3
-	move.w	x_pos(a0),d4
-	lea	(MainCharacter).w,a1 ; a1=character
-	moveq	#3,d6
-	movem.l	d1-d4,-(sp)
-	jsr	loc_1978E
-	btst	#5,status(a0)
-	beq.s	loc_18AB0
-	move.b	status(a0),d1
-	move.w	x_pos(a0),d0
-	sub.w	x_pos(a1),d0
-	bcs.s	loc_18AA8
-	eori.b	#1,d1
-
-loc_18AA8:
-	andi.b	#1,d1
-	bne.s	loc_18AB0
-	bsr.s	loc_18AEE
-
-loc_18AB0:
-	movem.l	(sp)+,d1-d4
-	lea	(Sidekick).w,a1 ; a1=character
-	moveq	#4,d6
-	jsr	loc_1978E
-	btst	#6,status(a0)
-	beq.s	loc_18AE0
-	move.b	status(a0),d1
-	move.w	x_pos(a0),d0
-	sub.w	x_pos(a1),d0
-	bcs.s	loc_18AD8
-	eori.b	#1,d1
-
-loc_18AD8:
-	andi.b	#1,d1
-	bne.s	loc_18AE0
-	bsr.s	loc_18AEE
-
-loc_18AE0:
-	bsr.w	loc_18BC6
 	lea	(Ani_Spring).l,a1
 	jsr	AnimateSprite
 	jmp	MarkObjGone
+
 ; ===========================================================================
 
-loc_18AEE:
-	move.w	#$300,anim(a0)
-	move.w	objoff_30(a0),x_vel(a1)
-	addq.w	#8,x_pos(a1)
-	bset	#0,status(a1)
-	btst	#0,status(a0)
-	bne.s	loc_18B1C
-	bclr	#0,status(a1)
-	subi.w	#$10,x_pos(a1)
-	neg.w	x_vel(a1)
-
-loc_18B1C:
-	move.w	#$F,move_lock(a1)
-	move.w	x_vel(a1),inertia(a1)
-	btst	#2,status(a1)
-	bne.s	loc_18B36
-	move.b	#0,anim(a1)
-
-loc_18B36:
-	move.b	subtype(a0),d0
-	bpl.s	loc_18B42
-	move.w	#0,y_vel(a1)
-
-loc_18B42:
-	btst	#0,d0
-	beq.s	loc_18B82
-	move.w	#1,inertia(a1)
-	move.b	#1,flip_angle(a1)
-	move.b	#0,anim(a1)
-	move.b	#1,flips_remaining(a1)
-	move.b	#8,flip_speed(a1)
-	btst	#1,d0
-	bne.s	loc_18B72
-	move.b	#3,flips_remaining(a1)
-
-loc_18B72:
-	btst	#0,status(a1)
-	beq.s	loc_18B82
-	neg.b	flip_angle(a1)
-	neg.w	inertia(a1)
-
-loc_18B82:
-	andi.b	#$C,d0
-	cmpi.b	#4,d0
-	bne.s	loc_18B98
-	move.b	#$C,layer(a1)
-	move.b	#$D,layer_plus(a1)
-
-loc_18B98:
-	cmpi.b	#8,d0
-	bne.s	loc_18BAA
-	move.b	#$E,layer(a1)
-	move.b	#$F,layer_plus(a1)
-
-loc_18BAA:
-	bclr	#5,status(a0)
-	bclr	#6,status(a0)
-	bclr	#5,status(a1)
-	move.w	#SndID_Spring,d0
-	jmp	PlaySound
-; ===========================================================================
-
-loc_18BC6:
-	cmpi.b	#3,anim(a0)
-	beq.w	return_18C7E
-	move.w	x_pos(a0),d0
-	move.w	d0,d1
-	addi.w	#$28,d1
-	btst	#0,status(a0)
-	beq.s	loc_18BE8
-	move.w	d0,d1
-	subi.w	#$28,d0
-
-loc_18BE8:
-	move.w	y_pos(a0),d2
-	move.w	d2,d3
-	subi.w	#$18,d2
-	addi.w	#$18,d3
-	lea	(MainCharacter).w,a1 ; a1=character
-	btst	#1,status(a1)
-	bne.s	loc_18C3C
-	move.w	inertia(a1),d4
-	btst	#0,status(a0)
-	beq.s	loc_18C10
-	neg.w	d4
-
-loc_18C10:
-	tst.w	d4
-	bmi.s	loc_18C3C
-	move.w	x_pos(a1),d4
-	cmp.w	d0,d4
-	blo.w	loc_18C3C
-	cmp.w	d1,d4
-	bhs.w	loc_18C3C
-	move.w	y_pos(a1),d4
-	cmp.w	d2,d4
-	blo.w	loc_18C3C
-	cmp.w	d3,d4
-	bhs.w	loc_18C3C
-	move.w	d0,-(sp)
-	bsr.w	loc_18AEE
-	move.w	(sp)+,d0
-
-loc_18C3C:
-	lea	(Sidekick).w,a1 ; a1=character
-	btst	#1,status(a1)
-	bne.s	return_18C7E
-	move.w	inertia(a1),d4
-	btst	#0,status(a0)
-	beq.s	loc_18C56
-	neg.w	d4
-
-loc_18C56:
-	tst.w	d4
-	bmi.s	return_18C7E
-	move.w	x_pos(a1),d4
-	cmp.w	d0,d4
-	blo.w	return_18C7E
-	cmp.w	d1,d4
-	bhs.w	return_18C7E
-	move.w	y_pos(a1),d4
-	cmp.w	d2,d4
-	blo.w	return_18C7E
-	cmp.w	d3,d4
-	bhs.w	return_18C7E
-	bsr.w	loc_18AEE
-
-return_18C7E:
-	rts
-; ===========================================================================
-
+; ---------------------------------------------------------------------------
+; DOWN SPRING - uses Touch_Spring (collision_response = 10)
+; ---------------------------------------------------------------------------
 ObjSpring_DownP:
 	move.b	#6,mapping_frame(a0)
 	bset	#1,status(a0)
 	bsr.w	ObjSpring_CheckColor
+	move.b	#$10,height_pixels(a0)
+	move.b	#10,collision_response(a0)
 	move.w	#objroutine(ObjSpring_Down),(a0)
 
 ObjSpring_Down:
-	move.w	#$1B,d1
-	move.w	#8,d2
-	move.w	#$10,d3
-	move.w	x_pos(a0),d4
-	lea	(MainCharacter).w,a1 ; a1=character
-	moveq	#3,d6
-	movem.l	d1-d4,-(sp)
-	jsr	loc_1978E
-	cmpi.w	#-2,d4
-	bne.s	loc_18CA6
-	bsr.s	loc_18CC6
-
-loc_18CA6:
-	movem.l	(sp)+,d1-d4
-	lea	(Sidekick).w,a1 ; a1=character
-	moveq	#4,d6
-	jsr	loc_1978E
-	cmpi.w	#-2,d4
-	bne.s	loc_18CBC
-	bsr.s	loc_18CC6
-
-loc_18CBC:
 	lea	(Ani_Spring).l,a1
 	jsr	AnimateSprite
 	jmp	MarkObjGone
+
 ; ===========================================================================
-
-loc_18CC6:
-	move.w	#$100,anim(a0)
-	subq.w	#8,y_pos(a1)
-	move.w	objoff_30(a0),y_vel(a1)
-	neg.w	y_vel(a1)
-	move.b	subtype(a0),d0
-	bpl.s	loc_18CE6
-	move.w	#0,x_vel(a1)
-
-loc_18CE6:
-	btst	#0,d0
-	beq.s	loc_18D26
-	move.w	#1,inertia(a1)
-	move.b	#1,flip_angle(a1)
-	move.b	#0,anim(a1)
-	move.b	#0,flips_remaining(a1)
-	move.b	#4,flip_speed(a1)
-	btst	#1,d0
-	bne.s	loc_18D16
-	move.b	#1,flips_remaining(a1)
-
-loc_18D16:
-	btst	#0,status(a1)
-	beq.s	loc_18D26
-	neg.b	flip_angle(a1)
-	neg.w	inertia(a1)
-
-loc_18D26:
-	andi.b	#$C,d0
-	cmpi.b	#4,d0
-	bne.s	loc_18D3C
-	move.b	#$C,layer(a1)
-	move.b	#$D,layer_plus(a1)
-
-loc_18D3C:
-	cmpi.b	#8,d0
-	bne.s	loc_18D4E
-	move.b	#$E,layer(a1)
-	move.b	#$F,layer_plus(a1)
-
-loc_18D4E:
-	bset	#1,status(a1)
-	bclr	#3,status(a1)
-	move.w	(Player_mode).w,d0
-	add.w	d0,d0	
-	move.w	Spring_Change_Routine2(pc,d0.w),(a1)
-	move.w	#SndID_Spring,d0
-	jmp	(PlaySound).l
-	
-Spring_Change_Routine2:
-		dc.w	objroutine(Sonic_Control)
-		dc.w	objroutine(Sonic_Control)
-		dc.w	objroutine(Tails_Control)
-		dc.w	objroutine(Knuckles_Control)	
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; DIAGONAL UP SPRING - uses SolidObject_Simple (unchanged)
+; ---------------------------------------------------------------------------
 
 ObjSpring_DiagUpP:
 	move.b	#4,anim(a0)
@@ -526,6 +212,9 @@ loc_18E94:
 	jmp	(PlaySound).l
 	
 ; ===========================================================================
+; ---------------------------------------------------------------------------
+; DIAGONAL DOWN SPRING - uses SolidObject_Simple (unchanged)
+; ---------------------------------------------------------------------------
 
 ObjSpring_DiagDownP:
 	move.b	#4,anim(a0)

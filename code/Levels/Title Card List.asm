@@ -1,20 +1,20 @@
-	dc.b TitleCardLetters_EHZ - TitleCardLetters	; 0
-	dc.b TitleCardLetters_WFZ - TitleCardLetters	; 1
-	dc.b TitleCardLetters_EHZ - TitleCardLetters	; 2
-	dc.b TitleCardLetters_EHZ - TitleCardLetters	; 3
-	dc.b TitleCardLetters_MTZ - TitleCardLetters	; 4
-	dc.b TitleCardLetters_MTZ - TitleCardLetters	; 5
-	dc.b TitleCardLetters_WFZ - TitleCardLetters	; 6
-	dc.b TitleCardLetters_HTZ - TitleCardLetters	; 7
-	dc.b TitleCardLetters_HPZ - TitleCardLetters	; 8
-	dc.b TitleCardLetters_EHZ - TitleCardLetters	; 9
-	dc.b TitleCardLetters_OOZ - TitleCardLetters	; A
-	dc.b TitleCardLetters_MCZ - TitleCardLetters	; B
-	dc.b TitleCardLetters_CNZ - TitleCardLetters	; C
-	dc.b TitleCardLetters_CPZ - TitleCardLetters	; D
-	dc.b TitleCardLetters_DEZ - TitleCardLetters	; E
-	dc.b TitleCardLetters_ARZ - TitleCardLetters	; F
-	dc.b TitleCardLetters_SCZ - TitleCardLetters	; 10
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 0 - OJZ
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 1 - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 2 - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 3 - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 4 - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 5 - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 6 - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 7 - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 8 - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 9 - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; A - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; B - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; C - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; D - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; E - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; F - reserved
+	dc.b TitleCardLetters_OJZ - TitleCardLetters	; 10 - reserved
 	
 	
  ; temporarily remap characters to title card letter format
@@ -31,29 +31,8 @@
 ; word_15832:
 TitleCardLetters:
 
-TitleCardLetters_EHZ:
-	titleLetters	"Test"
-TitleCardLetters_MTZ:
-	titleLetters	"METROPOLIS"
-TitleCardLetters_HTZ:
-	titleLetters	"HILL TOP"
-TitleCardLetters_HPZ:
-	titleLetters	"HIDDEN PALACE"
-TitleCardLetters_OOZ:
-	titleLetters	"OIL OCEAN"
-TitleCardLetters_MCZ:
-	titleLetters	"MYSTIC CAVE"
-TitleCardLetters_CNZ:
-	titleLetters	"CASINO NIGHT"
-TitleCardLetters_CPZ:
-	titleLetters	"CHEMICAL PLANT"
-TitleCardLetters_ARZ:
-	titleLetters	"AQUATIC RUIN"
-TitleCardLetters_SCZ:
-	titleLetters	"SKY CHASE"
-TitleCardLetters_WFZ:
-	titleLetters	"WING FORTRESS"
-TitleCardLetters_DEZ:
-	titleLetters	"DEATH EGG"
+TitleCardLetters_OJZ:
+	titleLetters	"ORACLE JUNGLE"
+; Dead zone title card letters removed (MTZ, HTZ, HPZ, OOZ, MCZ, CNZ, CPZ, ARZ, SCZ, WFZ, DEZ)
 
  charset ; revert character set	

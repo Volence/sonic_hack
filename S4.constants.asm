@@ -221,24 +221,25 @@ cur_zone_id := cur_zone_id+1
 cur_zone_str := "\{cur_zone_id}"
     endm
 
-; Zone IDs. These MUST be declared in the order in which their IDs are in stock Sonic 2, otherwise zone offset tables will screw up
-emerald_hill_zone zoneID	$00
-zone_1 zoneID			$01
-wood_zone zoneID		$02
-zone_3 zoneID			$03
-metropolis_zone zoneID		$04
-metropolis_zone_2 zoneID	$05
-wing_fortress_zone zoneID	$06
-hill_top_zone zoneID		$07
-hidden_palace_zone zoneID	$08
-zone_9 zoneID			$09
-oil_ocean_zone zoneID		$0A
-mystic_cave_zone zoneID		$0B
-casino_night_zone zoneID	$0C
-chemical_plant_zone zoneID	$0D
-death_egg_zone zoneID		$0E
-aquatic_ruin_zone zoneID	$0F
-sky_chase_zone zoneID		$10
+; Zone IDs. The zoneID macro auto-generates zone_id_N constants used by zone offset tables.
+; Slots $01-$10 are reserved placeholders — their zone table entries point to OJZ fallback data.
+oracle_jungle_zone zoneID	$00
+zone_reserved_01 zoneID		$01	; was: zone_1 (unused)
+zone_reserved_02 zoneID		$02	; was: wood_zone
+zone_reserved_03 zoneID		$03	; was: zone_3 (unused)
+zone_reserved_04 zoneID		$04	; was: metropolis_zone
+zone_reserved_05 zoneID		$05	; was: metropolis_zone_2
+zone_reserved_06 zoneID		$06	; was: wing_fortress_zone
+zone_reserved_07 zoneID		$07	; was: hill_top_zone
+zone_reserved_08 zoneID		$08	; was: hidden_palace_zone
+zone_reserved_09 zoneID		$09	; was: zone_9 (unused)
+zone_reserved_0A zoneID		$0A	; was: oil_ocean_zone
+zone_reserved_0B zoneID		$0B	; was: mystic_cave_zone
+zone_reserved_0C zoneID		$0C	; was: casino_night_zone
+zone_reserved_0D zoneID		$0D	; was: chemical_plant_zone
+zone_reserved_0E zoneID		$0E	; was: death_egg_zone
+zone_reserved_0F zoneID		$0F	; was: aquatic_ruin_zone
+zone_reserved_10 zoneID		$10	; was: sky_chase_zone
 
 ; NOTE: If you want to shift IDs around, set useFullWaterTables to 1 in the assembly options
 
@@ -287,31 +288,9 @@ zoneTableEnd macro
     endm
 
 ; Zone and act IDs
-emerald_hill_zone_act_1 =	(emerald_hill_zone<<8)|$00
-emerald_hill_zone_act_2 =	(emerald_hill_zone<<8)|$01
-chemical_plant_zone_act_1 =	(chemical_plant_zone<<8)|$00
-chemical_plant_zone_act_2 =	(chemical_plant_zone<<8)|$01
-aquatic_ruin_zone_act_1 =	(aquatic_ruin_zone<<8)|$00
-aquatic_ruin_zone_act_2 =	(aquatic_ruin_zone<<8)|$01
-casino_night_zone_act_1 =	(casino_night_zone<<8)|$00
-casino_night_zone_act_2 =	(casino_night_zone<<8)|$01
-hill_top_zone_act_1 =		(hill_top_zone<<8)|$00
-hill_top_zone_act_2 =		(hill_top_zone<<8)|$01
-mystic_cave_zone_act_1 =	(mystic_cave_zone<<8)|$00
-mystic_cave_zone_act_2 =	(mystic_cave_zone<<8)|$01
-oil_ocean_zone_act_1 =		(oil_ocean_zone<<8)|$00
-oil_ocean_zone_act_2 =		(oil_ocean_zone<<8)|$01
-metropolis_zone_act_1 =		(metropolis_zone<<8)|$00
-metropolis_zone_act_2 =		(metropolis_zone<<8)|$01
-metropolis_zone_act_3 =		(metropolis_zone_2<<8)|$00
-sky_chase_zone_act_1 =		(sky_chase_zone<<8)|$00
-wing_fortress_zone_act_1 =	(wing_fortress_zone<<8)|$00
-death_egg_zone_act_1 =		(death_egg_zone<<8)|$00
-; Prototype zone and act IDs
-wood_zone_act_1 =		(wood_zone<<8)|$00
-wood_zone_act_2 =		(wood_zone<<8)|$01
-hidden_palace_zone_act_1 =	(hidden_palace_zone<<8)|$00
-hidden_palace_zone_act_2 =	(hidden_palace_zone<<8)|$01
+oracle_jungle_zone_act_1 =	(oracle_jungle_zone<<8)|$00
+oracle_jungle_zone_act_2 =	(oracle_jungle_zone<<8)|$01
+; Legacy zone aliases removed — all dead zone code and data references have been cleaned up.
 
 ; Game modes
 
@@ -343,13 +322,13 @@ PalID_SEGA =	id(PalPtr_SEGA) ; 0
 PalID_Title =	id(PalPtr_Title) ; 1
 PalID_L1 =	id(PalPtr_L1) ; 2
 PalID_BGND =	id(PalPtr_BGND) ; 3
-PalID_EHZ =	id(PalPtr_EHZ) ; 4
+PalID_OJZ =	id(PalPtr_OJZ) ; 4
 PalID_WFZ =	id(PalPtr_WFZ) ; 4
 PalID_Menu =	id(PalPtr_Menu) ; 26
 PalID_ARZ_U =	id(PalPtr_ARZ_U) ; 17
 PalID_Knux =	id(PalPtr_Knux)
-PalID_EHZ_Top =	id(PalPtr_EHZ_Top)
-PalID_EHZ_U =	id(PalPtr_EHZ_U)
+PalID_OJZ_Top =	id(PalPtr_OJZ_Top)
+PalID_OJZ_U =	id(PalPtr_OJZ_U)
 
 ; PLC IDs
 offset :=	ArtLoadCues
@@ -360,8 +339,8 @@ PLCID_Std1 =		id(PLCPtr_Std1) ; 0
 PLCID_Std2 =		id(PLCPtr_Std2) ; 1
 PLCID_StdWtr =		id(PLCPtr_StdWtr) ; 2
 PLCID_GameOver =	id(PLCPtr_GameOver) ; 3
-PLCID_Ehz1 =		id(PLCPtr_Ehz1) ; 4
-PLCID_Ehz2 =		id(PLCPtr_Ehz2) ; 5
+PLCID_Ojz1 =		id(PLCPtr_Ojz1) ; 4
+PLCID_Ojz2 =		id(PLCPtr_Ojz2) ; 5
 PLCID_Miles1up =	id(PLCPtr_Miles1up) ; 6
 PLCID_MilesLife =	id(PLCPtr_MilesLife) ; 7
 PLCID_Tails1up =	id(PLCPtr_Tails1up) ; 8
@@ -395,7 +374,7 @@ PLCID_Scz2 =		id(PLCPtr_Scz2) ; 25
 PLCID_Results =		id(PLCPtr_Results) ; 26
 PLCID_Signpost =	id(PLCPtr_Signpost) ; 27
 PLCID_CpzBoss =		id(PLCPtr_CpzBoss) ; 28
-PLCID_EhzBoss =		id(PLCPtr_EhzBoss) ; 29
+PLCID_OjzBoss =		id(PLCPtr_OjzBoss) ; 29
 PLCID_HtzBoss =		id(PLCPtr_HtzBoss) ; 2A
 PLCID_ArzBoss =		id(PLCPtr_ArzBoss) ; 2B
 PLCID_MczBoss =		id(PLCPtr_MczBoss) ; 2C
@@ -404,7 +383,7 @@ PLCID_MtzBoss =		id(PLCPtr_MtzBoss) ; 2E
 PLCID_OozBoss =		id(PLCPtr_OozBoss) ; 2F
 PLCID_FieryExplosion =	id(PLCPtr_FieryExplosion) ; 30
 PLCID_DezBoss =		id(PLCPtr_DezBoss) ; 31
-PLCID_EhzAnimals =	id(PLCPtr_EhzAnimals) ; 32
+PLCID_OjzAnimals =	id(PLCPtr_OjzAnimals) ; 32
 PLCID_MczAnimals =	id(PLCPtr_MczAnimals) ; 33
 PLCID_HtzAnimals =	id(PLCPtr_HtzAnimals) ; 34
 PLCID_MtzAnimals =	id(PLCPtr_MtzAnimals) ; 34
@@ -452,7 +431,7 @@ idstart :=	1
 ;ObjID_SwingingPlatform =	id(ObjPtr_SwingingPlatform)	; 15
 ;ObjID_HTZLift =			id(ObjPtr_HTZLift)		; 16
 ;ObjID_ARZPlatform =		id(ObjPtr_ARZPlatform)		; 18
-;ObjID_EHZPlatform =		id(ObjPtr_EHZPlatform)		; 18
+;ObjID_OJZPlatform =		id(ObjPtr_OJZPlatform)		; 18
 ;ObjID_CPZPlatform =		id(ObjPtr_CPZPlatform)		; 19
 ;ObjID_OOZMovingPform =		id(ObjPtr_OOZMovingPform)	; 19
 ;ObjID_WFZPlatform =		id(ObjPtr_WFZPlatform)		; 19
@@ -506,7 +485,7 @@ idstart :=	1
 ;ObjID_OOZBall =			id(ObjPtr_OOZBall)		; 46
 ;ObjID_Button =			id(ObjPtr_Button)		; 47
 ;ObjID_LauncherBall =		id(ObjPtr_LauncherBall)		; 48
-;ObjID_EHZWaterfall =		id(ObjPtr_EHZWaterfall)		; 49
+;ObjID_OJZWaterfall =		id(ObjPtr_OJZWaterfall)		; 49
 ;ObjID_Octus =			id(ObjPtr_Octus)		; 4A
 ;ObjID_Buzzer =			id(ObjPtr_Buzzer)		; 4B
 ;ObjID_Aquis =			id(ObjPtr_Aquis)		; 50
@@ -515,7 +494,7 @@ idstart :=	1
 ;ObjID_MTZBossOrb =		id(ObjPtr_MTZBossOrb)		; 53
 ;ObjID_MTZBoss =			id(ObjPtr_MTZBoss)		; 54
 ;ObjID_OOZBoss =			id(ObjPtr_OOZBoss)		; 55
-;ObjID_EHZBoss =			id(ObjPtr_EHZBoss)		; 56
+;ObjID_OJZBoss =			id(ObjPtr_OJZBoss)		; 56
 ;ObjID_MCZBoss =			id(ObjPtr_MCZBoss)		; 57
 ;ObjID_BossExplosion =		id(ObjPtr_BossExplosion)	; 58
 ;ObjID_SSEmerald =		id(ObjPtr_SSEmerald)		; 59
@@ -659,7 +638,7 @@ ptrsize :=	4
 idstart :=	$81
 
 MusID_2PResult =	id(MusPtr_2PResult)	; 81
-MusID_EHZ =		id(MusPtr_EHZ)	; 82
+MusID_OJZ =		id(MusPtr_OJZ)	; 82
 MusID_MCZ_2P =		id(MusPtr_MCZ_2P)	; 83
 MusID_OOZ =		id(MusPtr_OOZ)	; 84
 MusID_MTZ =		id(MusPtr_MTZ)	; 85
@@ -669,7 +648,7 @@ MusID_CNZ_2P =		id(MusPtr_CNZ_2P)	; 88
 MusID_CNZ =		id(MusPtr_CNZ)	; 89
 MusID_DEZ =		id(MusPtr_DEZ)	; 8A
 MusID_MCZ =		id(MusPtr_MCZ)	; 8B
-MusID_EHZ_2P =		id(MusPtr_EHZ_2P)	; 8C
+MusID_OJZ_2P =		id(MusPtr_OJZ_2P)	; 8C
 MusID_SCZ =		id(MusPtr_SCZ)	; 8D
 MusID_CPZ =		id(MusPtr_CPZ)	; 8E
 MusID_WFZ =		id(MusPtr_WFZ)	; 8F
@@ -911,13 +890,20 @@ Secondary_Collision:		ds.b	$300
 VDP_Command_Buffer:		ds.w	6*$15	; stores 21 ($15) VDP commands to issue the next time ProcessDMAQueue is called
 VDP_Command_Buffer_Slot:	ds.l	1	; stores the address of the next open slot for a queued VDP command
 
-Sprite_Table_2:			ds.b	$300	; Sprite attribute table buffer for the bottom split screen in 2-player mode
+; ---------------------------------------------------------------------------
+; Section Streaming Cache — $300 bytes free (was: Sprite_Table_2, 2P mode)
+; Used for: section metadata cache, ring collection bitfields, preload state
+; ---------------------------------------------------------------------------
+Section_Cache:			ds.b	$300
 Horiz_Scroll_Buf:		ds.b	$400
 Sonic_Stat_Record_Buf:		ds.b	$100
 Sonic_Pos_Record_Buf:		ds.b	$100
 Tails_Pos_Record_Buf:		ds.b	$100
-CNZ_saucer_data:		ds.b	$40	; the number of saucer bumpers in a group which have been destroyed. Used to decide when to give 500 points instead of 10
-				ds.b	$C0	; $FFFFE740-$FFFFE7FF ; unused as far as I can tell
+; ---------------------------------------------------------------------------
+; Engine Extension RAM A — $100 bytes free (was: CNZ_saucer_data + unused gap)
+; Used for: spatial hash buckets, collision cache, future engine features
+; ---------------------------------------------------------------------------
+Engine_Extension_RAM_A:		ds.b	$100
 Ring_Positions:			ds.b	$600
 Ring_start_addr_ROM =        ramaddr( Ring_Positions+Rings_Space )
 Ring_end_addr_ROM =        ramaddr( Ring_Positions+Rings_Space+4 )
@@ -1000,7 +986,11 @@ Block_cache:			ds.b	$80
 Ring_consumption_table:		ds.b	$80	; contains RAM addresses of rings currently being consumed
 
 
-				ds.b	$600	; $FFFFF100-$FFFFF5FF ; unused, leftover from the Sonic 1 sound driver (and used by it when you port it to Sonic 2)
+; ---------------------------------------------------------------------------
+; Engine Extension RAM B — $600 bytes free (was: S1 sound driver gap)
+; Used for: section streaming state, DMA budget, decompression progress
+; ---------------------------------------------------------------------------
+Engine_Extension_RAM_B:		ds.b	$600
 
 Game_Mode:			ds.w	1	; 1 byte ; see GameModesArray (master level trigger, Mstr_Lvl_Trigger)
 Ctrl_1_Logical:					; 2 bytes
@@ -1287,7 +1277,7 @@ Results_Screen_2P:		ds.w	1	; 0 = act, 1 = zone, 2 = game, 3 = SS, 4 = SS all
 				ds.b	$E	; $FFFFFF12-$FFFFFF1F
 
 Results_Data_2P:				; $18 (24) bytes
-EHZ_Results_2P:			ds.b	6	; 6 bytes
+OJZ_Results_2P:			ds.b	6	; 6 bytes
 MCZ_Results_2P:			ds.b	6	; 6 bytes
 CNZ_Results_2P:			ds.b	6	; 6 bytes
 SS_Results_2P:			ds.b	6	; 6 bytes
@@ -1434,10 +1424,13 @@ SS_Dynamic_Object_RAM_End:
 				ds.b	object_size
 SS_Object_RAM_End:
 
-				; The special stage mode also uses the rest of the RAM for
-				; different purposes.
-PNT_Buffer:			ds.b	$700	; ???
-Horiz_Scroll_Buf_2:		ds.b	$900	; ???
+			; The special stage mode also uses the rest of the RAM for
+			; different purposes. These buffers overlap the end of Object_RAM
+			; and are only valid during special stage rendering.
+			; During level gameplay, this is $1000 bytes of available RAM
+			; at the tail of Object_RAM (potential Section_Streaming_Buffer).
+PNT_Buffer:			ds.b	$700	; Special stage pattern name table DMA buffer
+Horiz_Scroll_Buf_2:		ds.b	$900	; Special stage H-scroll DMA buffer
 
 
 ; RAM variables - Continue screen

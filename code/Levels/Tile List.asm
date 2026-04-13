@@ -1,11 +1,6 @@
 ;-----------------------------------------------------------------------------------
-; EHZ/HTZ main level patterns (Kosinski compression)
+; OJZ (formerly EHZ/HTZ) main level patterns (Kosinski compression)
 ; ArtKoz_95C24:
-Tiles_EHZ:	BINCLUDE	"art/kosinski/EHZ.bin"
+Tiles_OJZ:	BINCLUDE	"art/kosinski/OJZ.bin"
 ;-----------------------------------------------------------------------------------
-
-Tiles_L1:	BINCLUDE	"art/kosinski/EHZ.bin"
-;-----------------------------------------------------------------------------------
-
-Tiles_WFZ:	BINCLUDE	"art/kosinski/WFZ.bin"
-;-----------------------------------------------------------------------------------
+; Dead zone tiles removed (WFZ, L1 duplicate)

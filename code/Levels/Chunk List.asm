@@ -1,12 +1,5 @@
 ;-----------------------------------------------------------------------------------
-; EHZ/HTZ 128x128 block mappings (Kosinski compression)
-Chunks_EHZ:	BINCLUDE	"mappings/128x128/EHZ.bin"
+; OJZ (formerly EHZ/HTZ) 128x128 block mappings (Kosinski compression)
+Chunks_OJZ:	BINCLUDE	"mappings/128x128/OJZ.bin"
 ;-----------------------------------------------------------------------------------
-
-
-Chunks_L1:	BINCLUDE	"mappings/128x128/EHZ.bin"
-
-;-----------------------------------------------------------------------------------
-
-Chunks_WFZ:	BINCLUDE	"mappings/128x128/WFZ.bin"
-;-----------------------------------------------------------------------------------
+; Dead zone chunks removed (WFZ, L1 duplicate)

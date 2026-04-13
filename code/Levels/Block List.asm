@@ -1,10 +1,5 @@
 ;----------------------------------------------------------------------------------
-; EHZ 16x16 block mappings (Kosinski compression) ; was: (Kozinski compression)
-Blocks_EHZ:	BINCLUDE	"mappings/16x16/EHZ.bin"
+; OJZ 16x16 block mappings (Kosinski compression)
+Blocks_OJZ:	BINCLUDE	"mappings/16x16/OJZ.bin"
 ;----------------------------------------------------------------------------------
-
-Blocks_L1:	BINCLUDE	"mappings/16x16/EHZ.bin"
-;----------------------------------------------------------------------------------
-
-Blocks_WFZ:	BINCLUDE	"mappings/16x16/WFZ.bin"
-;-----------------------------------------------------------------------------------
+; Dead zone blocks removed (WFZ, L1 duplicate)

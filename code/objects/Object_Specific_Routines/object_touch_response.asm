@@ -40,16 +40,17 @@ TouchResponse__WidthCheck:
 	move.w	x_pos(a1),d3
 
 TouchResponse__WidthCheckRight:	
-	sub.w	d0,d3	; subtract character's/main item's x position from the x position of the current object
-	bhs.s	TouchResponse__WidthCheckLeft ; if the main item's x position is less than or same as the object's x position, branch to check if it's within the width
-	lsl.w	#1,d2	; Doubling the width
-	add.w	d2,d3 ; if the width of the object is within the distance of main object, check height
+	sub.w	d0,d3	; d3 = obj_x - char_x
+	bhs.s	TouchResponse__WidthCheckLeft ; if char_x <= obj_x, branch
+	lsl.w	#1,d2
+	add.w	d2,d3
 	bcs.s	TouchResponse__HeightCheck
-	bra.s	TouchResponse__ObjectLoop ; else skip this object
+	bra.s	TouchResponse__ObjectLoop
 
 TouchResponse__WidthCheckLeft:
-	cmp.w	d4,d3 ; if main object is as wide as the distance between the two, continue to hight check
-	bhi.w	TouchResponse__ObjectLoop ; else skip this object
+	add.w	d4,d2			; d2 = obj_width + char_width (expanded left zone)
+	cmp.w	d2,d3			; d2 is safe to modify, reloaded at HeightCheck
+	bhi.w	TouchResponse__ObjectLoop
 
 TouchResponse__HeightCheck:
 	move.b	height_pixels(a1),d2
@@ -57,8 +58,8 @@ TouchResponse__HeightCheck:
 	move.w	y_pos(a1),d3
 
 TouchResponse__HeightCheckAbove:
-	sub.w	d1,d3	; subtract main object's y position from current object's y
-	bcc.s	TouchResponse__HeightCheckBelow ; if it's higher, branch (lower on the map)
+	sub.w	d1,d3	; d3 = obj_y - char_y
+	bcc.s	TouchResponse__HeightCheckBelow ; if char_y <= obj_y, branch
 	lsl.w	#1,d2
 	add.w	d2,d3
 	bcs.s	TouchResponse__InitTouchedObject
@@ -86,6 +87,590 @@ TouchResponse__ResponseTypeTable:
 	bra.w		Touch_Ring		; 5
 	bra.w		Touch_Bubble	; 6
 	bra.w		Touch_Projectile	; 7
+	bra.w		Touch_Solid		; 8 - Solid object
+	bra.w		Touch_SolidBreakable	; 9 - Solid, but breakable when spinning/jumping
+	bra.w		Touch_Spring		; 10 - Spring (solid + directional bounce)
+; ===========================================================================
+
+; ---------------------------------------------------------------------------
+; Touch_Spring - Spring collision response (type 10)
+; ---------------------------------------------------------------------------
+; Solid object that bounces the character from its active face.
+; Reads orientation from subtype(a1) bits 3-5:
+;   0=up, 2=side, 4=down, 6/8=diagonal (falls through to Touch_Solid)
+; Spring force is in objoff_30(a1).
+; Facing direction for side springs is status(a1) bit 0.
+;
+; Input (from TouchResponse dispatcher):
+;   a0 = character (Sonic/Tails/Knuckles)
+;   a1 = spring object
+;   d6 = loop counter (MUST BE PRESERVED)
+; ---------------------------------------------------------------------------
+; --- Data table for spring routine changes (placed before handler) ---
+	bra.w	Touch_Spring_Start
+Touch_Spring_CtrlTable:
+	dc.w	objroutine(Sonic_Control)
+	dc.w	objroutine(Sonic_Control)
+	dc.w	objroutine(Tails_Control)
+	dc.w	objroutine(Knuckles_Control)
+
+Touch_Spring_Start:
+Touch_Spring:
+	bclr	#7,mappings(a1)
+	; Get spring orientation from subtype bits 3-5
+	move.b	subtype(a1),d0
+	lsr.w	#3,d0
+	andi.w	#$E,d0
+	
+	tst.w	d0
+	beq.s	.spring_up_check
+	cmpi.w	#2,d0
+	beq.w	.spring_side_check
+	cmpi.w	#4,d0
+	beq.w	.spring_down_check
+	bra.w	Touch_Solid
+
+; --- UP ---
+.spring_up_check:
+	move.w	y_pos(a0),d1
+	cmp.w	y_pos(a1),d1
+	bge.w	Touch_Solid
+	tst.w	y_vel(a0)
+	bmi.w	Touch_Solid
+	move.w	#$100,anim(a1)		; spring bounce animation
+	addq.w	#8,y_pos(a0)		; nudge down
+	move.w	objoff_30(a1),y_vel(a0)
+	bset	#1,status(a0)
+	bclr	#3,status(a0)
+	move.b	#$10,anim(a0)		; spring bounce char animation
+	; Reset character control routine
+	move.w	(Player_mode).w,d0
+	add.w	d0,d0
+	lea	Touch_Spring_CtrlTable(pc),a2
+	move.w	(a2,d0.w),(a0)
+	move.w	#SndID_Spring,d0
+	jmp	(PlaySound).l
+
+; --- SIDE ---
+.spring_side_check:
+	move.w	x_pos(a0),d1
+	sub.w	x_pos(a1),d1
+	btst	#0,status(a1)
+	bne.s	.side_face_left
+	tst.w	d1
+	ble.w	Touch_Solid
+	bra.s	.do_side_bounce
+.side_face_left:
+	tst.w	d1
+	bge.w	Touch_Solid
+.do_side_bounce:
+	move.w	objoff_30(a1),x_vel(a0)	; starts negative
+	btst	#0,status(a1)
+	bne.s	.side_skip_neg		; bit 0=1 (left-facing) - keep negative
+	neg.w	x_vel(a0)		; bit 0=0 (right-facing) - negate to positive
+.side_skip_neg:
+	move.w	x_vel(a0),inertia(a0)
+	move.w	#SndID_Spring,d0
+	jmp	(PlaySound).l
+
+; --- DOWN ---
+.spring_down_check:
+	move.w	y_pos(a0),d1
+	cmp.w	y_pos(a1),d1
+	ble.w	Touch_Solid
+	tst.w	y_vel(a0)
+	bpl.w	Touch_Solid
+	move.w	objoff_30(a1),y_vel(a0)
+	neg.w	y_vel(a0)
+	bset	#1,status(a0)
+	bclr	#3,status(a0)
+	move.w	#SndID_Spring,d0
+	jmp	(PlaySound).l
+
+; ---------------------------------------------------------------------------
+; Touch_SolidBreakable - Solid object that breaks when character is in ball form
+; ---------------------------------------------------------------------------
+; If character is spinning (anim == 2), trigger break via ckhit mechanism.
+; Otherwise, fall through to Touch_Solid for normal solid behavior.
+; ---------------------------------------------------------------------------
+Touch_SolidBreakable:
+	cmpi.b	#2,anim(a0)		; is character in ball form?
+	bne.w	Touch_Solid		; if not, handle as normal solid
+	; Character is spinning - trigger break
+	; Reverse character's Y velocity (bounce off)
+	neg.w	y_vel(a0)
+	; Set the object's break flag (bit 7 of mappings) 
+	; so the object's ckhit macro will trigger on the next frame
+	bset	#7,mappings(a1)
+	; Store which character broke it
+	move.w	a0,parent(a1)
+	rts
+
+; ---------------------------------------------------------------------------
+; Touch_Solid - Handle collision with solid object
+; ---------------------------------------------------------------------------
+; Input (from TouchResponse dispatcher):
+;   a0 = character (Sonic/Tails/Knuckles)
+;   a1 = object being collided with
+;   d6 = loop counter (MUST BE PRESERVED)
+; 
+; This routine determines which side of the object was hit and responds:
+;   - Left/Right: Stop momentum, set pushing flags if grounded
+;   - Top: Land on object, exit ball form if needed
+;   - Bottom: Bump head, reverse upward velocity
+; ---------------------------------------------------------------------------
+; ---------------------------------------------------------------------------
+; Touch_Solid - Solid object collision handler (collision_response = 8)
+; ---------------------------------------------------------------------------
+; This routine handles collision between characters and solid objects.
+; It is called by TouchResponse when the character's AABB overlaps the object.
+;
+; ARCHITECTURE:
+; Touch_Solid handles collision detection and response WHILE the character
+; is within the object's TouchResponse AABB. However, edge detection (for
+; walking/rolling off platforms) must be handled by the OBJECT ITSELF in
+; its main loop, because when a character leaves the AABB, TouchResponse
+; no longer calls Touch_Solid.
+;
+; For proper edge detection, objects should implement the PlatformObject
+; pattern in their main loop (see Monitor's ObjMonitor_EdgeCheck):
+;   1. Check if character's in-air bit is SET -> fall off
+;   2. Check if character is within X bounds -> stay on or fall off
+;
+; COLLISION TYPES:
+; - Top: Character lands on object (y_vel > 0, feet overlap top)
+; - Bottom: Character hits head on object (y_vel < 0, head overlaps bottom)
+; - Side: Character pushed left or right based on position
+;
+; REGISTERS:
+;   a0 = Character (Sonic/Tails)
+;   a1 = Object being collided with
+;   d6 = Loop counter from TouchResponse (preserved)
+; ---------------------------------------------------------------------------
+
+Touch_Solid:
+	; Preserve all registers we'll use (critical for dispatcher loop)
+	movem.l	d0-d5,-(sp)
+	
+	; Clear the "touched" bit that TouchResponse sets - this prevents
+	; the rendering engine from hiding the object and prevents ckhit from
+	; triggering object-specific break logic on side collisions
+	bclr	#7,mappings(a1)
+	
+	; =================================================================
+	; Step 1: Calculate edges and overlaps
+	; =================================================================
+	; Calculate object edges (full dimensions stored in SST)
+	moveq	#0,d4
+	move.b	width_pixels(a1),d4	; obj half-width
+	lsr.w	#1,d4
+	moveq	#0,d5
+	move.b	height_pixels(a1),d5	; obj half-height
+	lsr.w	#1,d5
+	
+	; Object edges
+	move.w	x_pos(a1),d0
+	move.w	d0,d2
+	sub.w	d4,d0			; d0 = obj left edge
+	add.w	d4,d2			; d2 = obj right edge
+	
+	move.w	y_pos(a1),d1
+	move.w	d1,d3
+	sub.w	d5,d1			; d1 = obj top edge
+	add.w	d5,d3			; d3 = obj bottom edge
+	
+	; Get character edges
+	moveq	#0,d4
+	move.b	width_pixels(a0),d4	; char half-width
+	lsr.w	#1,d4
+	moveq	#0,d5
+	move.b	height_pixels(a0),d5	; char half-height
+	lsr.w	#1,d5
+	
+	; Character edges
+	move.w	x_pos(a0),a2		; use a2 temporarily for char_x
+	move.w	a2,d4
+	; char left = x_pos - half_width, char right = x_pos + half_width
+	; We need: push amounts for each side
+	
+	; =================================================================
+	; Step 2: Determine collision side using velocity priority
+	; =================================================================
+	; Key insight: Use velocity to prioritize collision type
+	; - If moving horizontally and grounded: side collision
+	; - If falling: top collision possible
+	; - If rising: bottom collision possible
+	
+	; Check if character is in the air
+	btst	#1,status(a0)
+	beq.w	.ts_grounded
+	
+	; --- CHARACTER IN AIR ---
+	; Prioritize vertical collisions based on y_vel
+	tst.w	y_vel(a0)
+	bmi.w	.ts_air_rising		; Rising - check bottom collision
+	beq.w	.ts_air_stationary	; y_vel = 0 - might be rolling on object
+	
+	; Falling (y_vel > 0) - check for top collision
+	; Don't interrupt active insta-shield/double jump
+	btst	#s2b_doublejump,status2(a0)
+	bne.w	.ts_exit		; Double jump/insta-shield active - don't land
+	
+	; Is character above the object's top?
+	move.w	y_pos(a0),d4
+	moveq	#0,d5
+	move.b	height_pixels(a0),d5
+	lsr.w	#1,d5
+	add.w	d5,d4			; d4 = char bottom edge
+	cmp.w	d1,d4			; compare to obj top
+	blt.w	.ts_exit		; char is above, no collision yet
+	
+	; Character overlaps Y - check if also within X bounds before landing
+	; (Prevent landing when to the side of the object)
+	; Use relative position: char_x - obj_x, compare to half-width
+	move.w	x_pos(a0),d4
+	sub.w	x_pos(a1),d4		; d4 = char_x - obj_x (relative)
+	moveq	#0,d5
+	move.b	width_pixels(a1),d5
+	lsr.w	#1,d5			; d5 = obj half-width
+	
+	; Check if character is within [-half_width, +half_width] of obj center
+	move.w	d5,d3
+	neg.w	d3			; d3 = -half_width
+	cmp.w	d3,d4
+	blt.w	.ts_exit		; char left of object - no collision
+	cmp.w	d5,d4
+	bgt.w	.ts_exit		; char right of object - no collision
+	
+	; Within X bounds - do top landing
+	bra.w	.ts_do_top
+
+.ts_air_stationary:
+	; y_vel = 0 but in "air" - this can happen when rolling on an object
+	; Use position-based detection instead of relying on bit 3
+	; (bit 3 might be cleared when entering ball form)
+	
+	; Get object top edge
+	move.w	y_pos(a1),d4
+	moveq	#0,d5
+	move.b	height_pixels(a1),d5
+	lsr.w	#1,d5
+	sub.w	d5,d4			; d4 = obj top edge
+	
+	; Get character feet position
+	move.w	y_pos(a0),d5
+	moveq	#0,d3
+	move.b	height_pixels(a0),d3
+	lsr.w	#1,d3
+	add.w	d3,d5			; d5 = char feet position
+	
+	; Check if feet are at the top surface (within 15 pixels to be safe)
+	sub.w	d4,d5			; d5 = feet - obj_top
+	cmpi.w	#15,d5
+	bgt.w	.ts_exit		; Feet too far below - not on object
+	cmpi.w	#-5,d5
+	blt.w	.ts_exit		; Feet too far above - not on object
+	
+	; Character feet are on top - go directly to X bounds check
+	bra.w	.ts_check_x_bounds
+
+.ts_air_rising:
+	; Rising - check for bottom collision (head bump)
+	move.w	y_pos(a0),d4
+	moveq	#0,d5
+	move.b	height_pixels(a0),d5
+	lsr.w	#1,d5
+	sub.w	d5,d4			; d4 = char top edge
+	cmp.w	d3,d4			; compare to obj bottom
+	bgt.w	.ts_exit		; char is below, no collision
+	
+	; Character overlaps Y - check X bounds before head bump
+	move.w	x_pos(a0),d4
+	sub.w	x_pos(a1),d4		; d4 = char_x - obj_x (relative)
+	moveq	#0,d5
+	move.b	width_pixels(a1),d5
+	lsr.w	#1,d5			; d5 = obj half-width
+	
+	; Check if within [-half_width, +half_width] of obj center
+	move.w	d5,d3
+	neg.w	d3			; d3 = -half_width
+	cmp.w	d3,d4
+	blt.w	.ts_exit		; char left of object - no collision
+	cmp.w	d5,d4
+	bgt.w	.ts_exit		; char right of object - no collision
+	
+	; Within X bounds - head bump
+	bra.w	.ts_do_bottom
+
+.ts_grounded:
+	; --- CHARACTER ON GROUND ---
+	; Use position-based detection for all cases (walking, rolling, etc.)
+	; First check if character is positioned ON TOP of the object
+	
+	; Get object top edge
+	move.w	y_pos(a1),d4
+	moveq	#0,d5
+	move.b	height_pixels(a1),d5
+	lsr.w	#1,d5
+	sub.w	d5,d4			; d4 = obj top edge
+	
+	; Get character feet position (y_pos + half-height)
+	move.w	y_pos(a0),d5
+	moveq	#0,d3
+	move.b	height_pixels(a0),d3
+	lsr.w	#1,d3
+	add.w	d3,d5			; d5 = char feet position
+	
+	; Check if feet are at the top surface (within 10 pixels)
+	; If so, we're on top of the object, not beside it
+	sub.w	d4,d5			; d5 = feet - obj_top
+	cmpi.w	#10,d5
+	ble.s	.ts_check_x_bounds	; Feet near top - might be standing on it
+	
+	; Feet are below the top - check if we actually overlap vertically
+	; for side collision (character body overlaps object body)
+	; Get object bottom
+	move.w	y_pos(a1),d4
+	moveq	#0,d5
+	move.b	height_pixels(a1),d5
+	lsr.w	#1,d5
+	add.w	d5,d4			; d4 = obj bottom
+	
+	; Get character head position
+	move.w	y_pos(a0),d5
+	moveq	#0,d3
+	move.b	height_pixels(a0),d3
+	lsr.w	#1,d3
+	sub.w	d3,d5			; d5 = char head (top)
+	
+	; If char head is below obj bottom, no side collision (walking past behind)
+	cmp.w	d4,d5
+	bgt.w	.ts_exit		; char head below obj bottom - no collision
+	
+	; Character overlaps object vertically - do side collision
+	bra.w	.ts_do_side_collision
+	
+	; Character feet are ON TOP of the object
+.ts_check_x_bounds:
+	; Check X bounds for fall-off
+	; Account for character width - stay on as long as collision boxes overlap
+	moveq	#0,d5
+	move.b	width_pixels(a1),d5
+	lsr.w	#1,d5			; d5 = obj half-width
+	moveq	#0,d3
+	move.b	width_pixels(a0),d3
+	lsr.w	#1,d3			; d3 = char half-width
+	
+	move.w	x_pos(a1),d4		; obj center x
+	move.w	d4,d1			; save for right edge
+	sub.w	d5,d4
+	sub.w	d3,d4			; d4 = obj left edge - char half (leftmost char center)
+	add.w	d5,d1
+	add.w	d3,d1			; d1 = obj right edge + char half (rightmost char center)
+	
+	move.w	x_pos(a0),d5
+	cmp.w	d4,d5
+	blt.s	.ts_fall_off		; char right edge past obj left edge
+	cmp.w	d1,d5
+	bgt.s	.ts_fall_off		; char left edge past obj right edge
+	
+	; On top and within bounds
+	; Always reposition Y on top of object every frame
+	bset	#3,status(a1)		; Sonic standing on me (object status)
+	btst	#3,status(a0)
+	beq.s	.ts_first_land		; First time - do full landing setup
+	
+	; Already standing - reposition Y to stay snapped on top
+	move.w	y_pos(a1),d4		; obj center y
+	moveq	#0,d5
+	move.b	height_pixels(a1),d5
+	lsr.w	#1,d5
+	sub.w	d5,d4			; d4 = obj top edge
+	move.w	#19,d5			; standing half-height
+	sub.w	d5,d4			; d4 = where char center should be
+	move.w	d4,y_pos(a0)		; snap Y on top
+	bra.w	.ts_exit
+	
+.ts_first_land:
+	; First time landing - set character flags too
+	bset	#3,status(a0)		; on object (character status)
+	bclr	#1,status(a0)		; not in air
+	move.w	a1,interact_obj(a0)
+	bra.w	.ts_exit
+
+.ts_fall_off:
+	; Character walked/rolled off the edge - put them in the air
+	bclr	#3,status(a0)		; Clear "on object" bit
+	bset	#1,status(a0)		; Set "in air" bit
+	clr.w	interact_obj(a0)	; Clear interact object
+	move.w	#$80,y_vel(a0)		; Initial downward velocity
+	; Clear the object's "being stood on" bit
+	movem.l	(sp)+,d0-d5
+	movem.l	d6,-(sp)
+	moveq	#3,d4			; bit 3 for main character
+	bclr	d4,status(a1)
+	movem.l	(sp)+,d6
+	rts
+
+.ts_do_side_collision:
+	; Calculate penetration delta using object width only
+	; d0 = offset from object left edge to character center
+	move.w	x_pos(a0),d0		; char_x
+	sub.w	x_pos(a1),d0		; char_x - obj_x
+	move.b	width_pixels(a1),d1
+	ext.w	d1			; d1 = obj half-width
+	add.w	d1,d0			; d0 = offset from obj left edge to char center
+	
+	; Get character half-width for boundary calculations
+	moveq	#0,d4
+	move.b	width_pixels(a0),d4
+	lsr.w	#1,d4			; d4 = char half-width
+	
+	; Entry check: d0 + char_half represents char RIGHT edge position
+	; If char right edge is left of obj left edge (d0 + char_half < 0), exit
+	move.w	d0,d5
+	add.w	d4,d5			; d5 = d0 + char_half
+	bmi.w	.ts_exit		; char right edge is left of obj left edge
+	
+	; d3 = full object width
+	move.w	d1,d3
+	add.w	d3,d3			; d3 = obj full width
+	cmp.w	d3,d0
+	bhi.w	.ts_exit		; char center is right of object right edge
+	
+	; Character overlaps object - determine which side
+	; If d0 < half_width (center in left half), push left
+	; If d0 >= half_width (center in right half), push right
+	cmp.w	d0,d1
+	bhi.s	.ts_push_left
+	
+.ts_push_right:
+	; Push character to the right
+	; delta = full_width - d0
+	sub.w	d0,d3			; d3 = delta
+	beq.s	.ts_exit_no_push	; delta = 0, no actual collision
+	add.w	d3,x_pos(a0)
+	clr.w	2+x_pos(a0)		; clear sub-pixel to prevent drift
+	bra.s	.ts_side_common
+
+.ts_push_left:
+	; Push character so right edge aligns with object's left visual edge
+	; Visual left edge = obj_x - obj_width/2 (true half)
+	; Target: char_x + char_half = obj_x - obj_width/2
+	; In handler coords: target d0 = obj_width/2 - char_half
+	; Push amount = d0 - target = d0 - obj_width/2 + char_half
+	move.w	d0,d5
+	add.w	d4,d5			; d5 = d0 + char_half
+	move.w	d1,d3
+	lsr.w	#1,d3			; d3 = obj_width/2 (true half-width)
+	sub.w	d3,d5			; d5 = d0 + char_half - obj_half = push amount
+	ble.s	.ts_exit_no_push	; delta <= 0, already at or past edge
+	sub.w	d5,x_pos(a0)		; push left by delta
+	clr.w	2+x_pos(a0)		; clear sub-pixel to prevent drift
+
+.ts_side_common:
+	clr.w	x_vel(a0)
+	clr.w	inertia(a0)
+	
+	; Set pushing if grounded
+	btst	#1,status(a0)
+	bne.w	.ts_exit
+	bset	#5,status(a0)
+	
+	movem.l	(sp)+,d0-d5
+	movem.l	d6,-(sp)
+	addq.b	#2,d6
+	bset	d6,status(a1)
+	movem.l	(sp)+,d6
+	rts
+
+.ts_exit_no_push:
+	; Character is at boundary edge with zero push delta
+	; Only block movement if character is pressing INTO the object
+	; d0 = offset from left edge, d1 = obj_width (both preserved)
+	cmp.w	d1,d0
+	bhs.s	.ts_np_right		; d0 >= d1 → character on right side
+	; Left side: only block if pressing rightward (into object)
+	tst.w	inertia(a0)
+	ble.w	.ts_exit		; inertia <= 0 → moving away or stopped, let go
+	bra.s	.ts_np_block
+.ts_np_right:
+	; Right side: only block if pressing leftward (into object)
+	tst.w	inertia(a0)
+	bge.w	.ts_exit		; inertia >= 0 → moving away or stopped, let go
+.ts_np_block:
+	clr.w	x_vel(a0)
+	clr.w	inertia(a0)
+	clr.w	2+x_pos(a0)		; clear sub-pixel to prevent drift
+	btst	#1,status(a0)
+	bne.w	.ts_exit		; in air, don't set pushing
+	bset	#5,status(a0)		; set pushing flag to prevent velocity gain
+	bra.w	.ts_exit
+
+.ts_do_top:
+	; Land character on top of object
+	; First, calculate the object's top edge
+	move.w	y_pos(a1),d4		; obj center y
+	moveq	#0,d5
+	move.b	height_pixels(a1),d5
+	lsr.w	#1,d5
+	sub.w	d5,d4			; d4 = obj top edge
+	
+	; Use standing half-height (19) for position calculation
+	; This ensures consistent landing whether in ball form or not
+	; (we'll exit ball form after landing anyway)
+	move.w	#19,d5			; $26/2 = 19 (standing half-height)
+	sub.w	d5,d4			; d4 = where char center should be
+	move.w	d4,y_pos(a0)		; Set position
+	
+	; Set up standing on object
+	clr.w	y_vel(a0)
+	move.w	x_vel(a0),inertia(a0)
+	clr.b	angle(a0)
+	bset	#3,status(a0)		; on object
+	bclr	#1,status(a0)		; not in air
+	bclr	#5,status(a0)		; not pushing
+	move.w	a1,interact_obj(a0)
+	
+	; Exit ball form if needed (position already calculated for standing)
+	btst	#2,status(a0)
+	beq.s	.ts_top_done
+	bclr	#2,status(a0)
+	bclr	#4,status(a0)
+	move.b	#$26,height_pixels(a0)
+	move.b	#18,width_pixels(a0)
+	clr.b	anim(a0)
+
+.ts_top_done:
+	bclr	#s3b_jumping,status3(a0)
+	bclr	#s2b_doublejump,status2(a0)
+	
+	movem.l	(sp)+,d0-d5
+	movem.l	d6,-(sp)
+	addq.b	#2,d6
+	bset	d6,status(a1)
+	movem.l	(sp)+,d6
+	rts
+
+.ts_do_bottom:
+	; Head bump - push character down
+	move.w	y_pos(a1),d4		; obj center y
+	moveq	#0,d5
+	move.b	height_pixels(a1),d5
+	lsr.w	#1,d5
+	add.w	d5,d4			; d4 = obj bottom edge
+	moveq	#0,d5
+	move.b	height_pixels(a0),d5
+	lsr.w	#1,d5
+	add.w	d5,d4			; d4 = where char center should be
+	addq.w	#1,d4			; 1 pixel below
+	move.w	d4,y_pos(a0)
+	clr.w	y_vel(a0)
+
+.ts_exit:
+	movem.l	(sp)+,d0-d5
+	rts
+
 ; ===========================================================================
 
 Touch_Enemy:
@@ -425,13 +1010,19 @@ SolidObject:
 	btst	d6,status(a0)
 	beq.w	SolidObject_cont
 	move.w	d1,d2
-	add.w	d2,d2
+	add.w	d2,d2			; d2 = full obj width
 	btst	#1,status(a1)
 	bne.s	loc_1975A
 	move.w	x_pos(a1),d0
 	sub.w	x_pos(a0),d0
-	add.w	d1,d0
+	add.w	d1,d0			; d0 += obj half-width
+	moveq	#0,d3
+	move.b	width_pixels(a1),d3
+	lsr.w	#1,d3
+	add.w	d3,d0			; d0 += char half-width
 	bmi.s	loc_1975A
+	add.w	d3,d2
+	add.w	d3,d2			; d2 += full char width
 	cmp.w	d2,d0
 	blo.s	loc_1976E
 
@@ -467,13 +1058,19 @@ loc_1978E:
 	btst	d6,status(a0)
 	beq.w	SolidObject2
 	move.w	d1,d2
-	add.w	d2,d2
+	add.w	d2,d2			; d2 = full obj width
 	btst	#1,status(a1)
 	bne.s	loc_197B2
 	move.w	x_pos(a1),d0
 	sub.w	x_pos(a0),d0
-	add.w	d1,d0
+	add.w	d1,d0			; d0 += obj half-width
+	moveq	#0,d3
+	move.b	width_pixels(a1),d3
+	lsr.w	#1,d3
+	add.w	d3,d0			; d0 += char half-width
 	bmi.s	loc_197B2
+	add.w	d3,d2
+	add.w	d3,d2			; d2 += full char width
 	cmp.w	d2,d0
 	blo.s	loc_197C6
 
@@ -507,13 +1104,19 @@ SolidObject_Simple:
 	btst	d6,status(a0)
 	beq.w	SolidObject86_30_alt
 	move.w	d1,d2
-	add.w	d2,d2
+	add.w	d2,d2			; d2 = full obj width
 	btst	#1,status(a1)
 	bne.s	loc_1980A
 	move.w	x_pos(a1),d0
 	sub.w	x_pos(a0),d0
-	add.w	d1,d0
+	add.w	d1,d0			; d0 += obj half-width
+	moveq	#0,d3
+	move.b	width_pixels(a1),d3
+	lsr.w	#1,d3
+	add.w	d3,d0			; d0 += char half-width
 	bmi.s	loc_1980A
+	add.w	d3,d2
+	add.w	d3,d2			; d2 += full char width
 	cmp.w	d2,d0
 	blo.s	loc_1981E
 
@@ -718,222 +1321,280 @@ SolidObject_Unk_cont:
 ; ===========================================================================
 ; loc_199E8:
 SolidObject_cont:
-	tst.b	render_flags(a0)
-	bpl.w	loc_19AC4
-
 SolidObject2:
+; ---------------------------------------------------------------------------
+; SolidObject2 - Check collision between character and solid object
+; ---------------------------------------------------------------------------
+; Input:
+;   a0 = object
+;   a1 = character
+;   d1.w = object half-width
+;   d2.w = object half-height
+;   d3.w = (unused, often same as d2)
+;   d4.w = object x_pos
+;   d6.b = character index (3=Sonic, 4=Tails) for status bits
+; Output:
+;   d4.w = -1 (top), 1 (side), -2 (bottom), 0 (no collision)
+;   Sets appropriate status bits on a0 and a1
+; ---------------------------------------------------------------------------
+
+	; Step 1: Check if object is on-screen
+	tst.b	render_flags(a0)
+	bpl.w	.no_collision
+
+	; Step 2: Calculate horizontal overlap
+	; d0 = character_x - object_x + half_width
+	; This gives offset from left edge of object
 	move.w	x_pos(a1),d0
 	sub.w	x_pos(a0),d0
 	add.w	d1,d0
-	bmi.w	loc_19AC4
+	bmi.w	.no_collision		; Character is to the left of object
+	
 	move.w	d1,d3
-	add.w	d3,d3
+	add.w	d3,d3			; d3 = full width
 	cmp.w	d3,d0
-	bhi.w	loc_19AC4
+	bhi.w	.no_collision		; Character is to the right of object
+	
+	; Step 3: Calculate vertical overlap
+	; Add character's half-height to object's half-height
 	move.b	height_pixels(a1),d3
 	lsr.b	#1,d3
 	ext.w	d3
-	add.w	d3,d2
+	add.w	d3,d2			; d2 = combined half-heights
+	
+	; d3 = character_y - object_y + 4 + combined_heights
 	move.w	y_pos(a1),d3
 	sub.w	y_pos(a0),d3
 	addq.w	#4,d3
 	add.w	d2,d3
-	bmi.w	loc_19AC4
-	andi.w	#$7FF,d3
+	bmi.w	.no_collision		; Character is above object
+	
+	andi.w	#$7FF,d3		; Mask to prevent wraparound issues
 	move.w	d2,d4
-	add.w	d4,d4
+	add.w	d4,d4			; d4 = full combined height
 	cmp.w	d4,d3
-	bhs.w	loc_19AC4
-
+	bhs.w	.no_collision		; Character is below object
+	
+	; Step 4: Check if character is dead/gone/respawning
 loc_19A2E:
 	btst	#s3b_lock_jumping,status3(a1)
-	bne.w	loc_19AC4
-	move.w	(MainCharacter).w,d2	
-	move.w	(Player_mode).w,d0
-	add.w	d0,d0	
-	move.w	SolidObject2_Check(pc,d0.w),d1
-	cmp.w	d1,d2
-	beq.w	loc_19AEA	
-	move.w	SolidObject2_Check2(pc,d0.w),d1
-	cmp.w	d1,d2
-	beq.w	loc_19AEA
-	move.w	SolidObject2_Check3(pc,d0.w),d1
-	cmp.w	d1,d2
-	beq.w	loc_19AEA		
-	tst.w	(Debug_placement_mode).w
-	bne.w	loc_19AEA
-	move.w	d0,d5
-	cmp.w	d0,d1
-	bhs.s	loc_19A56
-	add.w	d1,d1
-	sub.w	d1,d0
-	move.w	d0,d5
-	neg.w	d5
-
-loc_19A56:
-	move.w	d3,d1
-	cmp.w	d3,d2
-	bhs.s	loc_19A64
-	subq.w	#4,d3
-	sub.w	d4,d3
-	move.w	d3,d1
-	neg.w	d1
-
-loc_19A64:
-	cmp.w	d1,d5
-	bhi.w	loc_19AEE
-
-loc_19A6A:
-	cmpi.w	#4,d1
-	bls.s	loc_19AB6
-	tst.w	d0
-	beq.s	loc_19A90
-	bmi.s	loc_19A7E
-	tst.w	x_vel(a1)
-	bmi.s	loc_19A90
-	bra.s	loc_19A84
+	bne.w	.no_collision
 	
-SolidObject2_Check:
-		dc.w	objroutine(Sonic_Dead)
-		dc.w	objroutine(Sonic_Dead)
-		dc.w	objroutine(Tails_Dead)
-		dc.w	objroutine(Knuckles_Dead)
-
-SolidObject2_Check2:
-		dc.w	objroutine(Sonic_Gone)
-		dc.w	objroutine(Sonic_Gone)
-		dc.w	objroutine(Tails_Gone)
-		dc.w	objroutine(Knuckles_Gone)	
-
-SolidObject2_Check3:
-		dc.w	objroutine(Sonic_Respawning)
-		dc.w	objroutine(Sonic_Respawning)
-		dc.w	objroutine(Tails_Respawning)
-		dc.w	objroutine(Knuckles_Respawning)		
-; ===========================================================================
-
-loc_19A7E:
-	tst.w	x_vel(a1)
-	bpl.s	loc_19A90
-
-loc_19A84:
+	; Save collision registers before dead/gone check
+	movem.l	d0-d4,-(sp)
+	
+	move.w	(MainCharacter).w,d5
+	move.w	(Player_mode).w,d0
+	add.w	d0,d0
+	lea	.CheckTables(pc),a2
+	move.w	(a2,d0.w),d1		; Dead check
+	cmp.w	d1,d5
+	beq.w	.restore_exit
+	move.w	6(a2,d0.w),d1		; Gone check
+	cmp.w	d1,d5
+	beq.w	.restore_exit
+	move.w	12(a2,d0.w),d1		; Respawning check
+	cmp.w	d1,d5
+	beq.w	.restore_exit
+	tst.w	(Debug_placement_mode).w
+	bne.w	.restore_exit
+	
+	; Restore registers and continue
+	movem.l	(sp)+,d0-d4
+	
+	; Step 5: Determine which side was hit
+	; d0 = x offset from left edge
+	; d3 = y offset from top edge  
+	; d1 = half-width (reload it)
+	move.b	width_pixels(a0),d1
+	ext.w	d1
+	
+	; Calculate x distance from center
+	; If d0 < half_width, character is on left side
+	; If d0 >= half_width, character is on right side
+	move.w	d0,d5
+	sub.w	d1,d5			; d5 = offset from center (negative=left, positive=right)
+	bpl.s	.right_of_center
+	neg.w	d5			; d5 = absolute x distance from center
+	bra.s	.calc_y_dist
+	
+.right_of_center:
+	; d5 already positive
+	
+.calc_y_dist:
+	; Calculate y distance from center
+	; d2 = combined half-heights
+	; d3 = y offset from top + combined heights
+	; y distance from center = d3 - d2 (if < half, above center)
+	move.w	d3,d1
+	sub.w	d2,d1			; d1 = offset from object y center
+	bpl.s	.below_center
+	neg.w	d1			; d1 = absolute y distance from center
+	bra.s	.compare_distances
+	
+.below_center:
+	; d1 already positive (distance below center)
+	
+.compare_distances:
+	; Compare x distance (d5) with y distance (d1)
+	; If x < y, hit from side (left or right)
+	; If x >= y, hit from top or bottom
+	cmp.w	d1,d5
+	blo.w	.vertical_collision
+	
+	; ----- HORIZONTAL (SIDE) COLLISION -----
+.side_collision:
+	; d0 = x offset from left edge
+	; Determine if hit from left or right
+	move.b	width_pixels(a0),d1
+	ext.w	d1
+	cmp.w	d0,d1			; Is d0 < half_width?
+	bhi.s	.hit_from_left
+	
+.hit_from_right:
+	; Push character to the right
+	add.w	d1,d1			; full width
+	sub.w	d0,d1			; distance to push right
+	add.w	d1,x_pos(a1)
+	bra.s	.side_common
+	
+.hit_from_left:
+	; Push character to the left 
+	neg.w	d0
+	add.w	d1,d0			; distance to push left (negative)
+	add.w	d0,x_pos(a1)
+	
+.side_common:
+	; Zero velocity
 	move.w	#0,inertia(a1)
 	move.w	#0,x_vel(a1)
-
-loc_19A90:
-	sub.w	d0,x_pos(a1)
+	
+	; Check if in air
 	btst	#1,status(a1)
-	bne.s	loc_19AB6
+	bne.s	.side_in_air
+	
+	; On ground - set pushing flags
 	move.l	d6,d4
 	addq.b	#2,d4
-	bset	d4,status(a0)
-	bset	#5,status(a1)
-	move.w	d6,d4
-	addi.b	#$D,d4
-	bset	d4,d6
+	bset	d4,status(a0)		; Set object's "being pushed by character X" bit
+	bset	#5,status(a1)		; Set character's pushing bit
+	moveq	#1,d4			; Return side collision
+	rts
+
+.side_in_air:
+	; In air - clear pushing flags and return
+	bsr.s	.clear_push_flags
 	moveq	#1,d4
 	rts
-; ===========================================================================
 
-loc_19AB6:
-	bsr.s	loc_19ADC
+	; ----- VERTICAL COLLISION -----
+.vertical_collision:
+	; d3 = y offset from top + combined heights
+	; d2 = combined half-heights
+	; If d3 < d2, character is above center (top collision)
+	; If d3 >= d2, character is below center (bottom collision)
+	cmp.w	d2,d3
+	bhs.s	.bottom_collision
+	
+	; ----- TOP COLLISION (landing on object) -----
+.top_collision:
+	; Check if moving downward
+	tst.w	y_vel(a1)
+	bmi.s	.no_collision_d4	; Moving up, no top collision
+	
+	; Calculate how much to push character up
+	subq.w	#4,d3			; Undo the +4 offset
+	sub.w	d2,d3			; d3 = how far into object (negative = above surface)
+	sub.w	d3,y_pos(a1)
+	subq.w	#1,y_pos(a1)		; Extra pixel to ensure standing on top
+	
+	; Set up standing on object
+	bsr.w	loc_19E14
+	
+	; Set standing bit in return value
 	move.w	d6,d4
-	addi.b	#$D,d4
+	addi.b	#$11,d4
 	bset	d4,d6
-	moveq	#1,d4
+	moveq	#-1,d4			; Return top collision
 	rts
-; ===========================================================================
 
+	; ----- BOTTOM COLLISION (hitting head) -----
+.bottom_collision:
+	; Check if moving upward
+	tst.w	y_vel(a1)
+	beq.s	.bottom_stationary
+	bpl.s	.bottom_return		; Moving down, just return
+	
+	; Moving up - push character down
+	subq.w	#4,d3
+	sub.w	d4,d3			; d3 = how far past bottom
+	neg.w	d3
+	add.w	d3,y_pos(a1)
+	move.w	#0,y_vel(a1)
+	
+.bottom_return:
+	move.w	d6,d4
+	addi.b	#$F,d4
+	bset	d4,d6
+	moveq	#-2,d4			; Return bottom collision
+	rts
+
+.bottom_stationary:
+	; Character stationary, check if should land on top instead
+	btst	#1,status(a1)
+	bne.s	.bottom_return		; In air, return bottom
+	; On ground near object - treat as side collision
+	bra.w	.side_collision
+
+.no_collision_d4:
+	moveq	#0,d4
+	rts
+
+	; ----- EXIT PATHS -----
+.restore_exit:
+	movem.l	(sp)+,d0-d4
+	; Fall through to no_collision
+	
 loc_19AC4:
+.no_collision:
+	; Check if we were previously pushing this object
 	move.l	d6,d4
 	addq.b	#2,d4
 	btst	d4,status(a0)
-	beq.s	loc_19AEA
+	beq.s	.no_collision_return
+	
+	; Was pushing - switch to walking animation
 	cmpi.b	#2,anim(a1)
-	beq.s	loc_19ADC
+	beq.s	.clear_push_flags
 	move.w	#1,anim(a1)
 
-loc_19ADC:
+.clear_push_flags:
 	move.l	d6,d4
 	addq.b	#2,d4
 	bclr	d4,status(a0)
 	bclr	#5,status(a1)
 
-loc_19AEA:
+.no_collision_return:
 	moveq	#0,d4
 	rts
-; ===========================================================================
 
-loc_19AEE:
-	tst.w	d3
-	bmi.s	loc_19B06
-	cmpi.w	#$10,d3
-	blo.s	loc_19B56
-	cmpi.b	#-$7B,(a0)
-	bne.s	loc_19AC4
-	cmpi.w	#$14,d3
-	blo.s	loc_19B56
-	bra.s	loc_19AC4
-; ===========================================================================
+; ---------------------------------------------------------------------------
+; Data tables for dead/gone/respawning checks (OUTSIDE CODE FLOW)
+; ---------------------------------------------------------------------------
+.CheckTables:
+	; Dead check (offset 0)
+	dc.w	objroutine(Sonic_Dead)
+	dc.w	objroutine(Sonic_Dead)
+	dc.w	objroutine(Tails_Dead)
+	dc.w	objroutine(Knuckles_Dead)
+	; Gone check (offset 8)
+	dc.w	objroutine(Sonic_Gone)
+	dc.w	objroutine(Sonic_Gone)
+	dc.w	objroutine(Tails_Gone)
+	dc.w	objroutine(Knuckles_Gone)
+	; Respawning check (offset 16)
+	dc.w	objroutine(Sonic_Respawning)
+	dc.w	objroutine(Sonic_Respawning)
+	dc.w	objroutine(Tails_Respawning)
+	dc.w	objroutine(Knuckles_Respawning)
 
-loc_19B06:
-	tst.w	y_vel(a1)
-	beq.s	loc_19B28
-	bpl.s	loc_19B1C
-	tst.w	d3
-	bpl.s	loc_19B1C
-	sub.w	d3,y_pos(a1)
-	move.w	#0,y_vel(a1)
-
-loc_19B1C:
-	move.w	d6,d4
-	addi.b	#$F,d4
-	bset	d4,d6
-	moveq	#-2,d4
-	rts
-; ===========================================================================
-
-loc_19B28:
-	btst	#1,status(a1)
-	bne.s	loc_19B1C
-	mvabs.w	d0,d4
-	cmpi.w	#$10,d4
-	blo.w	loc_19A6A
-	move.l	a0,-(sp)
-	movea.l	a1,a0
-	jsr	(KillCharacter).l
-	movea.l	(sp)+,a0 ; load 0bj address
-	move.w	d6,d4
-	addi.b	#$F,d4
-	bset	d4,d6
-	moveq	#-2,d4
-	rts
-; ===========================================================================
-
-loc_19B56:
-	subq.w	#4,d3
-	moveq	#0,d1
-	move.b	width_pixels(a0),d1
-	move.w	d1,d2
-	add.w	d2,d2
-	add.w	x_pos(a1),d1
-	sub.w	x_pos(a0),d1
-	bmi.s	loc_19B8E
-	cmp.w	d2,d1
-	bhs.s	loc_19B8E
-	tst.w	y_vel(a1)
-	bmi.s	loc_19B8E
-	sub.w	d3,y_pos(a1)
-	subq.w	#1,y_pos(a1)
-	bsr.w	loc_19E14
-	move.w	d6,d4
-	addi.b	#$11,d4
-	bset	d4,d6
-	moveq	#-1,d4
-	rts
-; ===========================================================================
-
-loc_19B8E:
-	moveq	#0,d4
-	rts
-; ===========================================================================

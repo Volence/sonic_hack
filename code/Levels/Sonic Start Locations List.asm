@@ -1,43 +1,42 @@
 ; --------------------------------------------------------------------------------------
 ; CHARACTER START LOCATION ARRAY
-
-; 2 entries per act, corresponding to the X and Y locations that you want the player to
-; appear at when the level starts.
+; 2 entries per act, corresponding to the X and Y start positions.
+; Reserved zone slots use OJZ act 1 start position as fallback.
 ; --------------------------------------------------------------------------------------
 WrdArr_StartLocSonic: zoneOffsetTable 2,4
-	zoneTableEntry.w	$47,    $33C	; $00
-	zoneTableEntry.w	$60,	$2AF
-	zoneTableEntry.w	$60,	$4B0	; $01
-	zoneTableEntry.w	$60,	$2AF
-	zoneTableEntry.w	$60,	$1AC	; $02
-	zoneTableEntry.w	$60,	$1AC
-	zoneTableEntry.w	$60,	$28F	; $03
-	zoneTableEntry.w	$60,	$2AF
-	zoneTableEntry.w	$60,	$28C	; $04
-	zoneTableEntry.w	$60,	$5EC
-	zoneTableEntry.w	$60,	$20C	; $05
-	zoneTableEntry.w	$60,	$2AF
-	zoneTableEntry.w	$60,	$4CC	; $06
-	zoneTableEntry.w	$1E0,	$4CC
-	zoneTableEntry.w	$60,	$3EF	; $07
-	zoneTableEntry.w	$60,	$6AF
-	zoneTableEntry.w	$230,	$1AC	; $08
-	zoneTableEntry.w	$230,	$1AC
-	zoneTableEntry.w	$60,	$28F	; $09
-	zoneTableEntry.w	$60,	$2AF
-	zoneTableEntry.w	$60,	$6AC	; $0A
-	zoneTableEntry.w	$60,	$56C
-	zoneTableEntry.w	$60,	$6AC	; $0B
-	zoneTableEntry.w	$60,	$5AC
-	zoneTableEntry.w	$60,	$2AC	; $0C
-	zoneTableEntry.w	$60,	$58C
-	zoneTableEntry.w	$60,	$1EC	; $0D
-	zoneTableEntry.w	$60,	$12C
-	zoneTableEntry.w	$60,	$12D	; $0E
-	zoneTableEntry.w	$60,	$12D
-	zoneTableEntry.w	$60,	$37E	; $0F
-	zoneTableEntry.w	$60,	$37E
-	zoneTableEntry.w	$120,	$70	; $10
-	zoneTableEntry.w	$140,	$70
+	zoneTableEntry.w	$47,    $33C	; $00 - OJZ act 1
+	zoneTableEntry.w	$60,	$2AF	;      OJZ act 2
+	zoneTableEntry.w	$47,	$33C	; $01 - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $02 - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $03 - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $04 - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $05 - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $06 - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $07 - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $08 - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $09 - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $0A - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $0B - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $0C - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $0D - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $0E - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $0F - reserved
+	zoneTableEntry.w	$47,	$33C
+	zoneTableEntry.w	$47,	$33C	; $10 - reserved
+	zoneTableEntry.w	$47,	$33C
     zoneTableEnd
 	
